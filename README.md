@@ -10,7 +10,6 @@ terse interface for writing pipelines.
 npm install -g ramda-cli
 ```
 
-
 ## usage
 
 ```sh
@@ -50,6 +49,23 @@ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
 ```sh
 # parentheses can be used like in JavaScript, if necessary
 echo [1,2,3,4,5] | ramda 'pipe(map(multiply(2)), filter(gt(__, 4)))'
+```
+
+Given [`friends.json`](https://gist.github.com/raine/59c411488b5d0718f4f3):
+
+```sh
+cat friends.json |\
+  ramda 'first-word=(head . split " "); prop(\friends) >> map(first-word . prop(\fullName)) >> sortBy length'
+[
+    "Sara",
+    "Abby",
+    "Carla",
+    "Beach",
+    "Carroll",
+    "Belinda",
+    "Mitchell",
+    "Courtney"
+]
 ```
 
 ## debugging
