@@ -1,7 +1,8 @@
 {
   "name": "ramda-cli",
   "version": "0.0.3",
-  "description": "",
+  "description": "A command-line tool for processing JSON with Ramda and LiveScript",
+  "repository": "raine/ramda-cli",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
