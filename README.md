@@ -10,6 +10,18 @@ terse interface for writing pipelines.
 npm install -g ramda-cli
 ```
 
+
+## usage
+
+```sh
+cat data.json | ramda [code]
+```
+
+`code` should be a snippet of LiveScript that evaluates into a function.
+
+All Ramda's functions are available. See http://ramdajs.com/docs/ for the
+full list.
+
 ## examples
 
 ```sh
