@@ -47,6 +47,11 @@ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
 ]
 ```
 
+```sh
+# parentheses can be used like in JavaScript, if necessary
+echo [1,2,3,4,5] | ramda 'pipe(map(multiply(2)), filter(gt(__, 4)))'
+```
+
 ## debugging
 
 You can turn on the debug logging with `export DEBUG=*`.
@@ -62,7 +67,6 @@ ramda-cli [Function: f1] +4ms evaluated to
 > [LiveScript](http://livescript.net) is a fork of Coco and an indirect
 descendant of CoffeeScript, > with which it has much compatibility.
 
-- Optional parentheses.
 - Function composition operators `.`, `<<`, `>>`
 - Pipes for nested function calls `|>`
 - Partial application with `_`
