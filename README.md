@@ -22,8 +22,8 @@ cat data.json | ramda [code]
 The function is applied to the JSON data piped in through standard input, and
 the result is printed as JSON.
 
-All Ramda's functions are available. See http://ramdajs.com/docs/ for a
-full list.
+All Ramda's functions are available directly in the scope. See
+http://ramdajs.com/docs/ for a full list.
 
 ## examples
 
