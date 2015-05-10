@@ -53,3 +53,13 @@ ramda-cli 'R.sum' +0ms input code
 ramda-cli 'R.sum;' +14ms compiled code
 ramda-cli [Function: f1] +4ms evaluated to
 ```
+
+## why LiveScript?
+
+> [LiveScript](http://livescript.net) is a fork of Coco and an indirect
+descendant of CoffeeScript, > with which it has much compatibility.
+
+- Function composition operators `.`, `<<`, `>>`
+- Pipes for nested function calls `|>`
+- Partial application with `_`
+- It's awesome.
