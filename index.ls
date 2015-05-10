@@ -3,7 +3,7 @@
 require! LiveScript
 require! vm
 require! 'concat-stream'
-require! ramda: {pipe}
+require! ramda: {pipe}: R
 require! util: {inspect}
 debug = require 'debug' <| 'ramda-cli'
 
@@ -17,7 +17,7 @@ unless code then die "usage: ramda [code]"
 
 compiled = LiveScript.compile code, {+bare, -header}
 debug (inspect compiled), 'compiled code'
-sandbox = {}
+sandbox = {R}
 sandbox <<< require 'ramda'
 ctx = vm.create-context sandbox
 fn = vm.run-in-context compiled, ctx
