@@ -7,9 +7,7 @@ require! ramda: {pipe}: R
 require! util: {inspect}
 debug = require 'debug' <| 'ramda-cli'
 
-die = (err-or-str) ->
-    console.error err-or-str
-    process.exit 1
+die = console~error >> -> process.exit 1
 
 code = process.argv.2
 debug (inspect code), 'input code'
