@@ -65,7 +65,7 @@ ramda-cli [Function: f1] +4ms evaluated to
 ## why LiveScript?
 
 > [LiveScript](http://livescript.net) is a fork of Coco and an indirect
-descendant of CoffeeScript, > with which it has much compatibility.
+descendant of CoffeeScript, with which it has much compatibility.
 
 - Function composition operators `.`, `<<`, `>>`
 - Pipes for nested function calls `|>`
