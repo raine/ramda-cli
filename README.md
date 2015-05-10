@@ -22,7 +22,7 @@ cat data.json | ramda [code]
 The function is applied to the JSON data piped in through standard input, and
 the result is printed as JSON.
 
-All Ramda's functions are available. See http://ramdajs.com/docs/ for the
+All Ramda's functions are available. See http://ramdajs.com/docs/ for a
 full list.
 
 ## examples
@@ -62,6 +62,7 @@ ramda-cli [Function: f1] +4ms evaluated to
 > [LiveScript](http://livescript.net) is a fork of Coco and an indirect
 descendant of CoffeeScript, > with which it has much compatibility.
 
+- Optional parentheses.
 - Function composition operators `.`, `<<`, `>>`
 - Pipes for nested function calls `|>`
 - Partial application with `_`
