@@ -19,6 +19,9 @@ cat data.json | ramda [code]
 
 `code` should be a snippet of LiveScript that evaluates into a function.
 
+The function is applied to the JSON data piped in through standard input, and
+the result is printed as JSON.
+
 All Ramda's functions are available. See http://ramdajs.com/docs/ for the
 full list.
 
