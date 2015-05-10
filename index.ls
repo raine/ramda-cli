@@ -11,7 +11,7 @@ die = console~error >> -> process.exit 1
 
 code = process.argv.2
 debug (inspect code), 'input code'
-unless code then die "usage: ramda [code]"
+unless code then die 'usage: ramda [code]'
 
 compiled = LiveScript.compile code, {+bare, -header}
 debug (inspect compiled), 'compiled code'
@@ -22,7 +22,7 @@ try fn = vm.run-in-context compiled, ctx
 catch err then die err.message
 
 debug (inspect fn), 'evaluated to'
-unless typeof fn is 'function' then die "error: code did not evaluate into a function"
+unless typeof fn is 'function' then die 'error: code did not evaluate into a function'
 
 process.stdin.pipe concat-stream do
     pipe JSON.parse, fn, (JSON~stringify _, null, 4), console.log 
