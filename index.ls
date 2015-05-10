@@ -21,7 +21,7 @@ sandbox = {R}
 sandbox <<< require 'ramda'
 ctx = vm.create-context sandbox
 fn = vm.run-in-context compiled, ctx
-debug (inspect fn), 'evaluated'
+debug (inspect fn), 'evaluated to'
 unless typeof fn is 'function' then die "error: code did not evaluate into a function"
 
 process.stdin.pipe concat-stream do
