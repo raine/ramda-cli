@@ -43,3 +43,13 @@ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
     ...
 ]
 ```
+
+## debugging
+
+You can turn on the debug logging with `export DEBUG=*`.
+
+```
+ramda-cli 'R.sum' +0ms input code
+ramda-cli 'R.sum;' +14ms compiled code
+ramda-cli [Function: f1] +4ms evaluated
+```
