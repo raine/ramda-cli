@@ -20,7 +20,9 @@ debug (inspect compiled), 'compiled code'
 sandbox = {R}
 sandbox <<< require 'ramda'
 ctx = vm.create-context sandbox
-fn = vm.run-in-context compiled, ctx
+try fn = vm.run-in-context compiled, ctx
+catch err then die err.message
+
 debug (inspect fn), 'evaluated to'
 unless typeof fn is 'function' then die "error: code did not evaluate into a function"
 
