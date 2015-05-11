@@ -10,7 +10,7 @@ debug = require 'debug' <| 'ramda-cli'
 die = console~error >> -> process.exit 1
 code = process.argv.2
 debug (inspect code), 'input code'
-unless code then die 'usage: ramda [code]'
+unless code then die 'usage: ramda [function]'
 
 compile-and-eval = (code) ->
     compiled = LiveScript.compile code, {+bare, -header}

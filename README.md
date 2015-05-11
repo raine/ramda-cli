@@ -13,10 +13,10 @@ npm install -g ramda-cli
 ## usage
 
 ```sh
-cat data.json | ramda [code]
+cat data.json | ramda [function]
 ```
 
-`code` should be a snippet of LiveScript that evaluates into a function.
+`function` should be a snippet of LiveScript that evaluates into a function.
 
 The function is applied to the JSON data piped in through standard input, and
 the result is printed as JSON.
