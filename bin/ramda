@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
 require('LiveScript')
-require('../index.ls')
+require('../main.ls')(process.argv, process.stdin, process.stdout)
