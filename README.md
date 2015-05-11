@@ -74,6 +74,13 @@ cat friends.json |\
 ]
 ```
 
+You can also use use unix pipes:
+
+```sh
+alias R=ramda
+echo [[1,2,3],[4,5,6]] | R unnest | R sum # 21
+```
+
 ## debugging
 
 You can turn on the debug logging with `export DEBUG=*`.
