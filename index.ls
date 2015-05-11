@@ -17,8 +17,7 @@ unless code then die 'usage: ramda [function]'
 compile-and-eval = (code) ->
     compiled = LiveScript.compile code, {+bare, -header}
     debug (inspect compiled), 'compiled code'
-    sandbox = {R}
-    sandbox <<< require 'ramda'
+    sandbox = {R} <<< R
     ctx = vm.create-context sandbox
     vm.run-in-context compiled, ctx
 
