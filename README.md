@@ -1,4 +1,4 @@
-# ramda-cli
+# ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli)
 
 An experimental command-line tool for processing JSON with
 [Ramda](http://ramdajs.com).
