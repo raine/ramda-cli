@@ -9,7 +9,6 @@ require! JSONStream
 debug = require 'debug' <| 'ramda-cli'
 
 die = console~error >> -> process.exit 1
-to-pretty-json = JSON.stringify _, null, 2
 
 compile-and-eval = (code) ->
     compiled = LiveScript.compile code, {+bare, -header}
