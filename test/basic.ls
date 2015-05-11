@@ -1,6 +1,7 @@
 require! '../main'
 require! stream
 require! 'concat-stream'
+require! ramda: {repeat, join}
 
 run-main = (code, input, cb) ->
     stdin  = new stream.PassThrough!
@@ -25,4 +26,9 @@ describe 'basic' (,) ->
     it 'outputs an indented json' (done) ->
         output <-! run-main 'identity', '[1,2,3]'
         eq output, '[\n  1,\n  2,\n  3\n]\n'
+        done!
+
+    it 'reads multiple json objects' (done) ->
+        output <-! run-main 'identity', join ' ', repeat (JSON.stringify foo: \bar), 2
+        strip-eq output, """{"foo":"bar"}{"foo":"bar"}"""
         done!
