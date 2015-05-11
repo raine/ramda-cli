@@ -3,8 +3,10 @@
 require! LiveScript
 require! vm
 require! 'concat-stream'
+require! 'through2-map': map-stream
 require! ramda: {pipe}: R
 require! util: {inspect}
+require! JSONStream
 debug = require 'debug' <| 'ramda-cli'
 
 die = console~error >> -> process.exit 1
@@ -21,11 +23,15 @@ compile-and-eval = (code) ->
     ctx = vm.create-context sandbox
     vm.run-in-context compiled, ctx
 
-fn = try compile-and-eval code
+fun = try compile-and-eval code
 catch {msg} then die "error: #{msg}"
 
-debug (inspect fn), 'evaluated to'
-unless typeof fn is 'function' then die 'error: code did not evaluate into a function'
+debug (inspect fun), 'evaluated to'
+unless typeof fun is 'function' then die 'error: code did not evaluate into a function'
 
-process.stdin.pipe concat-stream do
-    pipe JSON.parse, fn, to-pretty-json, console.log
+process.stdin
+    .pipe JSONStream.parse!
+    .pipe map-stream.obj fun
+    .pipe JSONStream.stringify false,,, 2
+    .on \end -> process.stdout.write '\n'
+    .pipe process.stdout
