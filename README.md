@@ -79,6 +79,8 @@ You can also use use unix pipes:
 ```sh
 alias R=ramda
 echo [[1,2,3],[4,5,6]] | R unnest | R sum # 21
+cat latest.json | R 'pluck \name' | R 'take 7' | R 'map to-upper >> (+ \!)' | R 'join " "'
+"__! ADD! ADJUST! ALWAYS! APERTURE! APPLY! ARITY!"
 ```
 
 ## debugging
