@@ -4,7 +4,7 @@
   "description": "A command-line tool for processing JSON with Ramda and LiveScript",
   "repository": "raine/ramda-cli",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "make test"
   },
   "bin": {
     "ramda": "./bin/ramda"
@@ -17,5 +17,10 @@
     "debug": "^2.2.0",
     "ramda": "^0.13.0",
     "through2-map": "^1.4.0"
+  },
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "concat-stream": "^1.4.8",
+    "mocha": "^2.2.4"
   }
 }
