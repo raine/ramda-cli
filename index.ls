@@ -21,7 +21,7 @@ compile-and-eval = (code) ->
     vm.run-in-context compiled, ctx
 
 fn = try compile-and-eval code
-catch err then die "error: #{err.message}"
+catch {msg} then die "error: #{msg}"
 
 debug (inspect fn), 'evaluated to'
 unless typeof fn is 'function' then die 'error: code did not evaluate into a function'
