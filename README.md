@@ -34,6 +34,12 @@ echo 1 | ramda 'add 1' # 2
 echo [1,2,3] | ramda 'sum' # 6
 ```
 
+Reformat and check validity of JSON with [R.identity](http://ramdajs.com/docs/#identity):
+
+```sh
+cat data.json | ramda identity
+```
+
 ```sh
 curl -s http://raine.github.io/ramda-json-docs/latest.json | \
   ramda '(pluck \name) . filter where {category: \Logic}'
