@@ -8,8 +8,6 @@ require! util: {inspect}
 require! JSONStream
 debug = require 'debug' <| 'ramda-cli'
 
-die = console~error >> -> process.exit 1
-
 compile-and-eval = (code) ->
     compiled = LiveScript.compile code, {+bare, -header}
     debug (inspect compiled), 'compiled code'
@@ -17,17 +15,21 @@ compile-and-eval = (code) ->
     ctx = vm.create-context sandbox
     vm.run-in-context compiled, ctx
 
-main = (argv, stdin, stdout) ->
+main = (argv, stdin, stdout, stderr) ->
+    log-error = (+ '\n') >> stderr~write
+    die = log-error >> -> process.exit 1
+
     code = argv.2
     debug (inspect code), 'input code'
     unless code then die 'usage: ramda [function]'
 
-    fun = try compile-and-eval code
-    catch {message} then die "error: #{message}"
+    try fun = compile-and-eval code
+    catch {message}
+        return die "error: #{message}"
 
     debug (inspect fun), 'evaluated to'
     unless typeof fun is 'function'
-        die "error: evaluated into type of #{type fun} instead of Function"
+        return die "error: evaluated into type of #{type fun} instead of Function"
 
     stdin
         .pipe JSONStream.parse!
