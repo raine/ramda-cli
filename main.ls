@@ -23,7 +23,7 @@ main = (argv, stdin, stdout) ->
     unless code then die 'usage: ramda [function]'
 
     fun = try compile-and-eval code
-    catch {msg} then die "error: #{msg}"
+    catch {message} then die "error: #{message}"
 
     debug (inspect fun), 'evaluated to'
     unless typeof fun is 'function' then die 'error: code did not evaluate into a function'
