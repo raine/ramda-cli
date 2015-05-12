@@ -2,11 +2,12 @@ require! '../main'
 require! stream
 require! sinon
 require! 'concat-stream'
-require! ramda: {repeat, join, flip}
+require! ramda: {repeat, join, flip, split, head}
 {called-with} = sinon.assert
 
 stringify = JSON.stringify _, 2
 unwords   = join ' '
+lines     = split '\n'
 repeat-n  = flip repeat
 repeat-obj-as-str = (obj, times) ->
     unwords repeat-n times, stringify obj
@@ -43,20 +44,6 @@ describe 'basic' (,) ->
         output `strip-eq` """{"foo":"bar"}{"foo":"bar"}"""
         done!
 
-describe '--compact -c' (,) ->
-    it 'prints compact json output' (done) ->
-        output, errput <-! run-main ['identity', '-c'], stringify foo: \bar
-        output `strip-eq` """{"foo":"bar"}\n"""
-        done!
-
-    it 'prints compact json output f' (done) ->
-        output, errput <-! run-main ['identity', '-c'], repeat-obj-as-str foo: \bar, 2
-        """
-        {"foo":"bar"}
-        {"foo":"bar"}\n
-        """ `eq` output
-        done!
-
 describe 'errors' (,) ->
     sandbox = null
 
@@ -78,3 +65,32 @@ describe 'errors' (,) ->
             <-! set-immediate
             called-with process.exit, 1
             done!
+
+describe '--compact -c' (,) ->
+    it 'prints compact json output' (done) ->
+        output, errput <-! run-main ['identity', '-c'], stringify foo: \bar
+        output `strip-eq` """{"foo":"bar"}\n"""
+        done!
+
+    it 'prints compact json output f' (done) ->
+        output, errput <-! run-main ['identity', '-c'], repeat-obj-as-str foo: \bar, 2
+        """
+        {"foo":"bar"}
+        {"foo":"bar"}\n
+        """ `eq` output
+        done!
+
+describe '--help' (,) ->
+    sandbox = null
+
+    before-each ->
+        sandbox := sinon.sandbox.create!
+        sandbox.stub process, \exit
+
+    after-each ->
+        sandbox.restore!
+
+    it 'shows help' (done) ->
+        output, errput <-! run-main ['identity', '-h'], '[1,2,3]'
+        "Usage: ramda [options] [function]" `eq` head lines errput
+        done!

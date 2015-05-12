@@ -25,7 +25,7 @@ main = (process-argv, stdin, stdout, stderr) ->
 
     code = opts._.0
     debug (inspect code), 'input code'
-    unless code then die argv.generate-help!
+    if not code or opts.help then return die argv.generate-help!
 
     try fun = compile-and-eval code
     catch {message}

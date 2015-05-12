@@ -1,7 +1,7 @@
 VERSION = require '../package.json' .version
 
 optionator = require 'optionator' <| do
-    prepend: 'Usage: ramda [options] [code]'
+    prepend: 'Usage: ramda [options] [function]'
     append: "Version #VERSION"
     options: [
         * option      : \compact
