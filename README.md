@@ -24,6 +24,15 @@ the result is printed as JSON.
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
 
+## options
+
+```
+Usage: ramda [options] [functions]
+
+  -c, --compact  compact output
+  -h, --help     displays help
+```
+
 ## examples
 
 ```sh
