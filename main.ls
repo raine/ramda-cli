@@ -3,7 +3,7 @@
 require! LiveScript
 require! vm
 require! 'through2-map': map-stream
-require! ramda: {pipe}: R
+require! ramda: {pipe, type}: R
 require! util: {inspect}
 require! JSONStream
 debug = require 'debug' <| 'ramda-cli'
@@ -26,7 +26,8 @@ main = (argv, stdin, stdout) ->
     catch {message} then die "error: #{message}"
 
     debug (inspect fun), 'evaluated to'
-    unless typeof fun is 'function' then die 'error: code did not evaluate into a function'
+    unless typeof fun is 'function'
+        die "error: evaluated into type of #{type fun} instead of Function"
 
     stdin
         .pipe JSONStream.parse!
