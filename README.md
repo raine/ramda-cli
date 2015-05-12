@@ -92,6 +92,12 @@ cat latest.json | R 'pluck \name' | R 'take 7' | R 'map to-upper >> (+ \!)' | R 
 "__! ADD! ADJUST! ALWAYS! APERTURE! APPLY! ARITY!"
 ```
 
+Read *Line Delimited JSON* and filter by properties:
+
+```sh
+cat bunyan-logfile | ./bin/ramda 'if-else((where-eq level: 40), identity, always void)'
+```
+
 ## debugging
 
 You can turn on the debug logging with `export DEBUG=*`.
