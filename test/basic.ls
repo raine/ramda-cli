@@ -2,39 +2,59 @@ require! '../main'
 require! stream
 require! sinon
 require! 'concat-stream'
-require! ramda: {repeat, join}
+require! ramda: {repeat, join, flip}
 {called-with} = sinon.assert
 
-run-main = (code, input, cb) ->
+stringify = JSON.stringify _, 2
+unwords   = join ' '
+repeat-n  = flip repeat
+repeat-obj-as-str = (obj, times) ->
+    unwords repeat-n times, stringify obj
+
+run-main = (args, input, cb) ->
     stdin  = new stream.PassThrough!
     stdout = new stream.PassThrough {+object-mode}
         ..pipe concat-stream -> cb it, null
     stderr = new stream.PassThrough!
         .on \data, (data) -> cb null, data.to-string!
 
-    main [,,code], stdin, stdout, stderr
+    main ([,,] ++ args), stdin, stdout, stderr
     stdin.write input
     stdin.end!
 
 describe 'basic' (,) ->
     it 'outputs an incremented number' (done) ->
         output <-! run-main 'add 1', '1\n'
-        eq output, '2\n'
+        output `eq` '2\n'
         done!
 
     it 'outputs a sum of a list' (done) ->
         output <-! run-main 'sum', '[1,2,3]'
-        eq output, '6\n'
+        output `eq` '6\n'
         done!
 
     it 'outputs an indented json' (done) ->
         output <-! run-main 'identity', '[1,2,3]'
-        eq output, '[\n  1,\n  2,\n  3\n]\n'
+        output `eq` '[\n  1,\n  2,\n  3\n]\n'
         done!
 
     it 'reads multiple json objects' (done) ->
-        output <-! run-main 'identity', join ' ', repeat (JSON.stringify foo: \bar), 2
-        strip-eq output, """{"foo":"bar"}{"foo":"bar"}"""
+        output <-! run-main 'identity', repeat-obj-as-str foo: \bar, 2
+        output `strip-eq` """{"foo":"bar"}{"foo":"bar"}"""
+        done!
+
+describe '--compact -c' (,) ->
+    it 'prints compact json output' (done) ->
+        output, errput <-! run-main ['identity', '-c'], stringify foo: \bar
+        output `strip-eq` """{"foo":"bar"}\n"""
+        done!
+
+    it 'prints compact json output f' (done) ->
+        output, errput <-! run-main ['identity', '-c'], repeat-obj-as-str foo: \bar, 2
+        """
+        {"foo":"bar"}
+        {"foo":"bar"}\n
+        """ `eq` output
         done!
 
 describe 'errors' (,) ->
@@ -50,7 +70,7 @@ describe 'errors' (,) ->
     describe 'with code that does not evaluate to a function' (,) ->
         it 'outputs an error' (done) ->
             output, errput <-! run-main '1', '[1,2,3]'
-            eq errput, 'error: evaluated into type of Number instead of Function\n'
+            errput `eq` 'error: evaluated into type of Number instead of Function\n'
             done!
 
         it 'exits with 1' (done) ->

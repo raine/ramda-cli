@@ -3,9 +3,10 @@
 require! LiveScript
 require! vm
 require! 'through2-map': map-stream
-require! ramda: {pipe, type}: R
+require! ramda: {pipe, type, apply}: R
 require! util: {inspect}
 require! JSONStream
+require! './lib/argv'
 debug = require 'debug' <| 'ramda-cli'
 
 compile-and-eval = (code) ->
@@ -15,13 +16,16 @@ compile-and-eval = (code) ->
     ctx = vm.create-context sandbox
     vm.run-in-context compiled, ctx
 
-main = (argv, stdin, stdout, stderr) ->
+main = (process-argv, stdin, stdout, stderr) ->
     log-error = (+ '\n') >> stderr~write
     die = log-error >> -> process.exit 1
 
-    code = argv.2
+    try opts = argv.parse process-argv
+    catch e then return die [argv.generate-help!, e.message] * '\n\n'
+
+    code = opts._.0
     debug (inspect code), 'input code'
-    unless code then die 'usage: ramda [function]'
+    unless code then die argv.generate-help!
 
     try fun = compile-and-eval code
     catch {message}
@@ -34,7 +38,8 @@ main = (argv, stdin, stdout, stderr) ->
     stdin
         .pipe JSONStream.parse!
         .pipe map-stream.obj fun
-        .pipe JSONStream.stringify false,,, 2
+        .pipe apply JSONStream.stringify,
+            (if opts.compact then [false] else [false, void, void, 2])
         .on \end -> stdout.write '\n'
         .pipe stdout
 
