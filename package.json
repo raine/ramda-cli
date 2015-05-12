@@ -17,7 +17,7 @@
     "debug": "^2.2.0",
     "optionator": "^0.6.0",
     "ramda": "^0.14.0",
-    "through2-map": "^1.4.0"
+    "through2": "^0.6.5"
   },
   "devDependencies": {
     "chai": "^2.3.0",

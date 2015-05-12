@@ -2,8 +2,8 @@
 
 require! LiveScript
 require! vm
-require! 'through2-map': map-stream
-require! ramda: {pipe, type, apply}: R
+require! through2
+require! ramda: {pipe, type, apply, is-nil}: R
 require! util: {inspect}
 require! JSONStream
 require! './lib/argv'
@@ -37,7 +37,10 @@ main = (process-argv, stdin, stdout, stderr) ->
 
     stdin
         .pipe JSONStream.parse!
-        .pipe map-stream.obj fun
+        .pipe through2.obj (chunk, encoding, next) ->
+            val = fun chunk
+            this.push val unless is-nil val
+            next!
         .pipe apply JSONStream.stringify,
             (if opts.compact then [false] else [false, void, void, 2])
         .on \end -> stdout.write '\n'
