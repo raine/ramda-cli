@@ -27,7 +27,7 @@ http://ramdajs.com/docs/ for a full list.
 ## options
 
 ```
-Usage: ramda [options] [functions]
+Usage: ramda [options] [function]
 
   -c, --compact  compact output
   -h, --help     displays help
@@ -92,10 +92,11 @@ cat latest.json | R 'pluck \name' | R 'take 7' | R 'map to-upper >> (+ \!)' | R 
 "__! ADD! ADJUST! ALWAYS! APERTURE! APPLY! ARITY!"
 ```
 
-Read *Line Delimited JSON* and filter by properties:
+Read *Line Delimited JSON* and filter by properties by returning `undefined`
+for some objects:
 
 ```sh
-cat bunyan-logfile | ./bin/ramda 'if-else((where-eq level: 40), identity, always void)'
+cat bunyan-logfile | ramda 'if-else((where-eq level: 40), identity, always void)'
 ```
 
 ## debugging
