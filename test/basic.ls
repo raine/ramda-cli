@@ -69,14 +69,14 @@ describe 'errors' (,) ->
 describe '--compact' (,) ->
     it 'prints compact json output' (done) ->
         output <-! run-main <[ identity -c ]>, stringify foo: \bar
-        output `eq` """{"foo":"bar"}\n"""
+        output `eq` '{"foo":"bar"}'
         done!
 
     it 'prints compact json output f' (done) ->
         output <-! run-main <[ identity -c ]>, repeat-obj-as-str foo: \bar, 2
         output `eq` """
         {"foo":"bar"}
-        {"foo":"bar"}\n
+        {"foo":"bar"}
         """
         done!
 

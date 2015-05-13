@@ -40,7 +40,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         return die "error: evaluated into type of #{type fun} instead of Function"
 
     json-stringify-stream = apply JSONStream.stringify,
-        (if opts.compact then [false] else [false, void, void, 2])
+        (if opts.compact then [false] else ['', '\n', '\n', 2])
 
     concat-stream = stream-reduce flip(append), []
     pass-through  = PassThrough object-mode: true
@@ -53,7 +53,6 @@ main = (process-argv, stdin, stdout, stderr) ->
             this.push val unless is-nil val
             next!
         .pipe json-stringify-stream
-        .on \end -> stdout.write '\n'
         .pipe stdout
 
 module.exports = main
