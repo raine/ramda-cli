@@ -42,17 +42,20 @@ main = (process-argv, stdin, stdout, stderr) ->
     json-stringify-stream = apply JSONStream.stringify,
         (if opts.compact then [false] else ['', '\n', '\n', 2])
 
-    concat-stream = stream-reduce flip(append), []
-    pass-through  = PassThrough object-mode: true
+    concat-stream  = stream-reduce flip(append), []
+    pass-through   = PassThrough object-mode: true
+    inspect-stream = through2.obj (chunk,, next) ->
+        this.push (inspect chunk, colors: true) + '\n'
+        next!
 
     stdin
         .pipe JSONStream.parse!
-        .pipe if opts.slurp? then concat-stream else pass-through
-        .pipe through2.obj (chunk, encoding, next) ->
+        .pipe if opts.slurp then concat-stream else pass-through
+        .pipe through2.obj (chunk,, next) ->
             val = fun chunk
             this.push val unless is-nil val
             next!
-        .pipe json-stringify-stream
+        .pipe if opts.inspect then inspect-stream else json-stringify-stream
         .pipe stdout
 
 module.exports = main

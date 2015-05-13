@@ -8,6 +8,10 @@ optionator = require 'optionator' <| do
           alias       : \c
           type        : \Boolean
           description : 'compact output'
+        * option      : \inspect
+          alias       : \i
+          type        : \Boolean
+          description : 'pretty-printed output with colors'
         * option      : \slurp
           alias       : \s
           type        : \Boolean

@@ -30,6 +30,7 @@ http://ramdajs.com/docs/ for a full list.
 Usage: ramda [options] [function]
 
   -c, --compact  compact output
+  -i, --inspect  pretty-printed output with colors
   -s, --slurp    read JSON objects from stdin as one big list
   -h, --help     displays help
 ```
@@ -106,6 +107,13 @@ operations:
 ```sh
 echo [1,2,3][1,2,3] | ramda -c --slurp 'map map multiply 2'
 [[2,4,6],[2,4,6]]
+
+$ cat text
+"foo bar"
+"test lol"
+"hello world"
+$ ramda -c --slurp identity
+["foo bar","test lol","hello world"]
 ```
 
 ## debugging

@@ -113,6 +113,18 @@ describe '--slurp' (,) ->
         output `strip-eq` expected
         done!
 
+describe '--inspect' (,) ->
+    it 'pretty prints objects' (done) ->
+        args     = <[ identity -i ]>
+        input    = '{"foo":"bar"}{"foo":"bar"}'
+        expected = """
+        { foo: \u001b[32m'bar'\u001b[39m }
+        { foo: \u001b[32m'bar'\u001b[39m }\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--help' (,) ->
     sandbox = null
 
