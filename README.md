@@ -112,7 +112,7 @@ $ cat text
 "foo bar"
 "test lol"
 "hello world"
-$ ramda -c --slurp identity
+$ cat text | ramda -c --slurp identity
 ["foo bar","test lol","hello world"]
 ```
 
