@@ -18,8 +18,8 @@ cat data.json | ramda [function]
 
 `function` should be a snippet of LiveScript that evaluates into a function.
 
-The function is applied to the JSON data piped in through standard input, and
-the result is printed as JSON.
+The evaluated function is applied to a stream of JSON data read from stdin,
+and the output data is sent to standard out as stringified JSON.
 
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
