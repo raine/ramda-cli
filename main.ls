@@ -1,5 +1,6 @@
 #!/usr/bin/env lsc
 
+require! treis
 require! LiveScript
 require! vm
 require! through2
@@ -12,7 +13,7 @@ debug = require 'debug' <| 'ramda-cli'
 compile-and-eval = (code) ->
     compiled = LiveScript.compile code, {+bare, -header}
     debug (inspect compiled), 'compiled code'
-    sandbox = {R} <<< R
+    sandbox = {R, treis} <<< R
     ctx = vm.create-context sandbox
     vm.run-in-context compiled, ctx
 
