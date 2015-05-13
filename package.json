@@ -17,6 +17,7 @@
     "debug": "^2.2.0",
     "optionator": "^0.6.0",
     "ramda": "^0.14.0",
+    "stream-reduce": "^1.0.3",
     "through2": "^0.6.5",
     "treis": "^2.3.9"
   },

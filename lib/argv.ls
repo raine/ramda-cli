@@ -8,6 +8,10 @@ optionator = require 'optionator' <| do
           alias       : \c
           type        : \Boolean
           description : 'compact output'
+        * option      : \slurp
+          alias       : \s
+          type        : \Boolean
+          description : 'read JSON objects from stdin as one big list'
         * option      : \help
           alias       : \h
           type        : \Boolean

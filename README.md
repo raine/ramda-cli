@@ -30,6 +30,7 @@ http://ramdajs.com/docs/ for a full list.
 Usage: ramda [options] [function]
 
   -c, --compact  compact output
+  -s, --slurp    read JSON objects from stdin as one big list
   -h, --help     displays help
 ```
 
@@ -99,11 +100,19 @@ for some objects:
 cat bunyan-logfile | ramda 'if-else((where-eq level: 40), identity, always void)'
 ```
 
+Use `--slurp` to read multiple JSON objects into a single list before any
+operations:
+
+```sh
+echo [1,2,3][1,2,3] | ramda -c --slurp 'map map multiply 2'
+[[2,4,6],[2,4,6]]
+```
+
 ## debugging
 
 You can turn on the debug logging with `export DEBUG=*`.
 
-```
+```sh
 ramda-cli 'R.sum' +0ms input code
 ramda-cli 'R.sum;' +14ms compiled code
 ramda-cli [Function: f1] +4ms evaluated to

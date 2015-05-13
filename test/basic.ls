@@ -66,18 +66,51 @@ describe 'errors' (,) ->
             called-with process.exit, 1
             done!
 
-describe '--compact -c' (,) ->
+describe '--compact' (,) ->
     it 'prints compact json output' (done) ->
-        output, errput <-! run-main ['identity', '-c'], stringify foo: \bar
-        output `strip-eq` """{"foo":"bar"}\n"""
+        output <-! run-main <[ identity -c ]>, stringify foo: \bar
+        output `eq` """{"foo":"bar"}\n"""
         done!
 
     it 'prints compact json output f' (done) ->
-        output, errput <-! run-main ['identity', '-c'], repeat-obj-as-str foo: \bar, 2
-        """
+        output <-! run-main <[ identity -c ]>, repeat-obj-as-str foo: \bar, 2
+        output `eq` """
         {"foo":"bar"}
         {"foo":"bar"}\n
-        """ `eq` output
+        """
+        done!
+
+describe '--slurp' (,) ->
+    it 'reads lists into a list of lists' (done) ->
+        args     = <[ identity -s ]>
+        input    = '[1,2,3] [1,2,3]'
+        expected = '[[1,2,3],[1,2,3]]'
+        output <-! run-main args, input
+        output `strip-eq` expected
+        done!
+
+    it 'reads objects into list of objects' (done) ->
+        args     = <[ identity -s ]>
+        input    = '{"foo":"bar"}\n{"foo":"bar"}'
+        expected = '[{"foo":"bar"},{"foo":"bar"}]'
+        output <-! run-main args, input
+        output `strip-eq` expected
+        done!
+
+    it 'reads number in to a list of numbers' (done) ->
+        args     = <[ identity -s ]>
+        input    = '1\n2\n3\n'
+        expected = '[1,2,3]'
+        output <-! run-main args, input
+        output `strip-eq` expected
+        done!
+
+    it 'reads strings in to a list of strings' (done) ->
+        args     = <[ identity -s ]>
+        input    = '"foo"\n"bar"'
+        expected = '["foo", "bar"]'
+        output <-! run-main args, input
+        output `strip-eq` expected
         done!
 
 describe '--help' (,) ->
