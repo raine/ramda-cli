@@ -32,16 +32,18 @@ Usage: ramda [options] [function]
   -c, --compact     compact output
   -i, --inspect     pretty-printed output with colors
   -s, --slurp       read JSON objects from stdin as one big list
+  -S, --unslurp     unwraps a list before output of so that each item is
+                    stringified separately (reverse of --slurp)
   -r, --raw-output  raw output
   -h, --help        displays help
 ```
 
 ## examples
 
-`R.add(1)` is applied to `1`:
+`R.add` partially applied with `2` is applied to `1` from stdin:
 
 ```sh
-$ echo 1 | ramda 'add 1' # 2
+$ echo 1 | ramda 'add 2' # 3
 ```
 
 ```sh
@@ -119,7 +121,15 @@ $ cat text | ramda -c --slurp identity
 ["foo bar","test lol","hello world"]
 ```
 
-Use `--raw-output` to print a list of values without formatting them as JSON:
+Use `--unslurp` to output a list's items separately:
+
+```sh
+$ echo '["hello", "world"]' | ramda --unslurp identity
+"hello"
+"world"
+```
+
+Use `--raw-output` to print a list of strings without formatting them as JSON:
 
 ```sh
 $ echo '["foo", "bar"]' | ramda --raw-output 'map to-upper'
