@@ -22,6 +22,7 @@ compile-and-eval = (code) ->
     vm.run-in-context compiled, ctx
 
 main = (process-argv, stdin, stdout, stderr) ->
+    debug {argv: process-argv}
     log-error = (+ '\n') >> stderr~write
     die       = log-error >> -> process.exit 1
 
