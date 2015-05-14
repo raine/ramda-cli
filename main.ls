@@ -42,36 +42,44 @@ main = (process-argv, stdin, stdout, stderr) ->
     unless typeof fun is 'function'
         return die "error: evaluated into type of #{type fun} instead of Function"
 
-    json-stringify-stream = apply JSONStream.stringify,
-        (if opts.compact then [false] else ['', '\n', '\n', 2])
+    concat-stream   = stream-reduce flip(append), []
+    unconcat-stream = through2.obj (chunk,, next) ->
+        switch type chunk
+        | \Array    => chunk.for-each ~> this.push it
+        | otherwise => this.push chunk
+        next!
 
-    concat-stream  = stream-reduce flip(append), []
-    pass-through   = PassThrough object-mode: true
+    raw-output-stream = through2.obj (chunk,, next) ->
+        this.push ensure-single-newline chunk.to-string!
+        next!
+
     inspect-stream = through2.obj (chunk,, next) ->
         this.push (inspect chunk, colors: true) + '\n'
         next!
 
-    raw-output-stream = through2.obj (chunk,, next) ->
-        switch
-        | (type chunk) is \Array => chunk.for-each (~> this.push it + '\n')
-        | otherwise              => this.push ensure-single-newline chunk.to-string!
-        next!
+    json-stringify-stream = apply JSONStream.stringify,
+        (if opts.compact then [false] else ['', '\n', '\n', 2])
 
     map-stream = (func) -> through2.obj (chunk,, next) ->
         val = func chunk
         this.push val unless is-nil val
         next!
 
-    output-stream = switch
+    output-formatter = switch
     | opts.inspect    => inspect-stream
     | opts.raw-output => raw-output-stream
     | otherwise       => json-stringify-stream
 
+    pass-through-unless = (val, stream) ->
+        switch | val       => stream
+               | otherwise => PassThrough object-mode: true
+
     stdin
         .pipe JSONStream.parse!
-        .pipe if opts.slurp then concat-stream else pass-through
+        .pipe pass-through-unless opts.slurp, concat-stream
         .pipe map-stream fun
-        .pipe output-stream
+        .pipe pass-through-unless opts.unslurp, unconcat-stream
+        .pipe output-formatter
         .pipe stdout
 
 module.exports = main

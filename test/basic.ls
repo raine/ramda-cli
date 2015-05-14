@@ -125,19 +125,50 @@ describe '--inspect' (,) ->
         output `eq` expected
         done!
 
-describe '--raw-output' (,) ->
-    it 'prints list of strings on separated by newline' (done) ->
-        args     = <[ identity -r ]>
+describe '--unslurp' (,) ->
+    it 'prints list of strings separated by newline' (done) ->
+        args     = <[ identity -S ]>
         input    = '["foo", "bar"]'
         expected = """
-        foo
-        bar\n
+        "foo"
+        "bar"\n
         """
         output <-! run-main args, input
         output `eq` expected
         done!
 
-    it 'prints strings separated by newline' (done) ->
+    it 'prints list of numbers separated by newline' (done) ->
+        args     = <[ identity -S ]>
+        input    = '[1,2,3]'
+        expected = '1\n2\n3\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints list of objects as separate objects' (done) ->
+        args     = <[ identity -S ]>
+        input    = '[{"foo":"bar"},{"foo":"bar"}]'
+        expected = """
+        {
+          "foo": "bar"
+        }
+        {
+          "foo": "bar"
+        }\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'reverses --slurp' (done) ->
+        args     = <[ identity -sS ]>
+        input    = '["foo", "bar"]\n["hello", "world"]'
+        output <-! run-main args, input
+        output `strip-eq` input
+        done!
+
+describe '--raw-output' (,) ->
+    it 'prints strings without quotes separated by newline' (done) ->
         args     = <[ identity -r ]>
         input    = '"foo"\n"bar"'
         expected = """
@@ -148,22 +179,10 @@ describe '--raw-output' (,) ->
         output `eq` expected
         done!
 
-    it 'prints numbers separated by newline' (done) ->
+    it 'prints list of numbers separated by newline' (done) ->
         args     = <[ identity -r ]>
-        input    = '[1,2,3]'
-        expected = """
-        1
-        2
-        3\n
-        """
-        output <-! run-main args, input
-        output `eq` expected
-        done!
-
-    it 'prints objects' (done) ->
-        args     = <[ identity -r ]>
-        input    = '{"foo": "bar"}'
-        expected = '[object Object]\n'
+        input    = '1\n2\n3\n'
+        expected = '1\n2\n3\n'
         output <-! run-main args, input
         output `eq` expected
         done!

@@ -13,18 +13,27 @@ optionator = require 'optionator' <| do
           alias       : \c
           type        : \Boolean
           description : 'compact output'
+
         * option      : \inspect
           alias       : \i
           type        : \Boolean
           description : 'pretty-printed output with colors'
+
         * option      : \slurp
           alias       : \s
           type        : \Boolean
           description : 'read JSON objects from stdin as one big list'
+
+        * option      : \unslurp
+          alias       : \S
+          type        : \Boolean
+          description : 'unwraps a list before output of so that each item is stringified separately (reverse of --slurp)'
+
         * option      : \raw-output
           alias       : \r
           type        : \Boolean
           description : 'raw output'
+
         * option      : \help
           alias       : \h
           type        : \Boolean
