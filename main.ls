@@ -10,7 +10,7 @@ require! ramda: {type, apply, is-nil, append, flip, type, replace}: R
 require! util: {inspect}
 require! JSONStream
 require! './lib/argv'
-debug = require 'debug' <| 'ramda-cli'
+debug = require 'debug' <| 'ramda-cli:main'
 
 ensure-single-newline = replace /\n*$/, '\n'
 

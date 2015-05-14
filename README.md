@@ -129,7 +129,7 @@ BAR
 
 ## debugging
 
-You can turn on the debug logging with `export DEBUG=*`.
+You can turn on the debug logging with `export DEBUG=ramda-cli:*`.
 
 ```sh
 ramda-cli 'R.sum' +0ms input code

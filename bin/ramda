@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+require('debug')('ramda-cli:bin')('init');
 require('LiveScript')
 require('../main.ls')(
   process.argv,
