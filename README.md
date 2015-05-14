@@ -38,6 +38,8 @@ Usage: ramda [options] [function]
 
 ## examples
 
+`R.add(1)` is applied to `1`:
+
 ```sh
 $ echo 1 | ramda 'add 1' # 2
 ```
