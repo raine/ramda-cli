@@ -1,15 +1,31 @@
 .PHONY: test
 
+SRC = $(shell find src -name "*.ls" -type f | sort)
+LIB = $(patsubst src/%.ls, lib/%.js, $(SRC))
+
 MOCHA = ./node_modules/.bin/mocha
+LSC = ./node_modules/.bin/lsc
 NAME = $(shell node -e "console.log(require('./package.json').name)")
 REPORTER ?= spec
 GREP ?= ".*"
 MOCHA_ARGS = --grep $(GREP)
 
-install:
+default: all
+
+lib:
+	mkdir -p lib/
+
+lib/%.js: src/%.ls lib
+	$(LSC) -c -o "$(@D)" "$<"
+
+all: compile
+
+compile: $(LIB) package.json
+
+install: clean all
 	npm install -g .
 
-reinstall:
+reinstall: clean
 	$(MAKE) uninstall
 	$(MAKE) install
 
@@ -19,7 +35,10 @@ uninstall:
 dev-install: package.json
 	npm install .
 
-publish: test
+clean:
+	rm -rf lib
+
+publish: all test
 	git push --tags origin HEAD:master
 	npm publish
 

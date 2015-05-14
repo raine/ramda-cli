@@ -1,4 +1,4 @@
-require! '../main'
+require! '../src/main'
 require! stream
 require! sinon
 require! 'concat-stream'

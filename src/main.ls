@@ -1,7 +1,7 @@
 #!/usr/bin/env lsc
 
 require! treis
-require! LiveScript
+require! livescript
 require! vm
 require! through2
 require! stream: {PassThrough}
@@ -9,13 +9,13 @@ require! 'stream-reduce'
 require! ramda: {type, apply, is-nil, append, flip, type, replace}: R
 require! util: {inspect}
 require! JSONStream
-require! './lib/argv'
+require! './argv'
 debug = require 'debug' <| 'ramda-cli:main'
 
 ensure-single-newline = replace /\n*$/, '\n'
 
 compile-and-eval = (code) ->
-    compiled = LiveScript.compile code, {+bare, -header}
+    compiled = livescript.compile code, {+bare, -header}
     debug (inspect compiled), 'compiled code'
     sandbox = {R, treis} <<< R
     ctx = vm.create-context sandbox
