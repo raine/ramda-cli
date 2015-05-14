@@ -1,10 +1,9 @@
 # ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli)
 
-An experimental command-line tool for processing JSON with
-[Ramda](http://ramdajs.com).
+A command-line tool for processing JSON with functional pipelines.
 
-Takes advantage of [LiveScript](http://livescript.net) to provide a nice and
-terse interface for writing pipelines.
+Takes advantage of [Ramda's](http://ramdajs.com) curried, data-last API and
+[LiveScript's](http://livescript.net) nice and terse syntax.
 
 ```sh
 npm install -g ramda-cli
@@ -16,10 +15,14 @@ npm install -g ramda-cli
 $ cat data.json | ramda [function]
 ```
 
-`function` should be a snippet of LiveScript that evaluates into a function.
+The idea is to [compose][1] functions into a pipeline of operations that when
+applied to given data, produces the desired output.
 
-The evaluated function is applied to a stream of JSON data read from stdin,
-and the output data is sent to standard out as stringified JSON.
+Technically, `[function]` should be a snippet of LiveScript that evaluates
+into a function.
+
+The function is applied to a stream of JSON data read from stdin, and the
+output data is sent to standard out as stringified JSON.
 
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
@@ -40,7 +43,8 @@ Usage: ramda [options] [function]
 
 ## examples
 
-`R.add` partially applied with `2` is applied to `1` from stdin:
+[`R.add`](http://ramdajs.com/docs/#add) partially applied with `2` is applied
+to `1` from stdin:
 
 ```sh
 $ echo 1 | ramda 'add 2' # 3
@@ -165,3 +169,6 @@ descendant of CoffeeScript, with which it has much compatibility.
 --
 
 [![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
+
+
+[1]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
