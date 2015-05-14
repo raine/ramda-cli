@@ -1,0 +1,7 @@
+src/*
+test
+*.ls
+*.js.map
+.gitignore
+Makefile
+wercker.yml
