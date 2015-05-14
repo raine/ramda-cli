@@ -161,3 +161,7 @@ descendant of CoffeeScript, with which it has much compatibility.
 - Pipes for nested function calls `|>`
 - Partial application with `_`
 - It's awesome.
+
+--
+
+[![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
