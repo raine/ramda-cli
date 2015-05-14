@@ -33,7 +33,7 @@ Usage: ramda [options] [function]
   -i, --inspect     pretty-printed output with colors
   -s, --slurp       read JSON objects from stdin as one big list
   -S, --unslurp     unwraps a list before output of so that each item is
-                    stringified separately (reverse of --slurp)
+                    stringified separately
   -r, --raw-output  raw output
   -h, --help        displays help
 ```

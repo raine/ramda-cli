@@ -27,7 +27,7 @@ optionator = require 'optionator' <| do
         * option      : \unslurp
           alias       : \S
           type        : \Boolean
-          description : 'unwraps a list before output of so that each item is stringified separately (reverse of --slurp)'
+          description : 'unwraps a list before output of so that each item is stringified separately'
 
         * option      : \raw-output
           alias       : \r
