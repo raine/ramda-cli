@@ -147,6 +147,11 @@ ramda-cli 'R.sum;' +14ms compiled code
 ramda-cli [Function: f1] +4ms evaluated to
 ```
 
+[`treis`](https://github.com/raine/treis) is available for debugging
+individual functions in the pipeline:
+
+<img width="370" height="99" src="https://raw.githubusercontent.com/raine/ramda-cli/media/treis-face.png" />
+
 ## why LiveScript?
 
 > [LiveScript](http://livescript.net) is a fork of Coco and an indirect
