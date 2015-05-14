@@ -6,7 +6,7 @@ require! vm
 require! through2
 require! stream: {PassThrough}
 require! 'stream-reduce'
-require! ramda: {type, apply, is-nil, append, flip}: R
+require! ramda: {type, apply, is-nil, append, flip, type}: R
 require! util: {inspect}
 require! JSONStream
 require! './lib/argv'
@@ -42,11 +42,22 @@ main = (process-argv, stdin, stdout, stderr) ->
     json-stringify-stream = apply JSONStream.stringify,
         (if opts.compact then [false] else ['', '\n', '\n', 2])
 
-    concat-stream  = stream-reduce flip(append), []
-    pass-through   = PassThrough object-mode: true
+    concat-stream = stream-reduce flip(append), []
+    pass-through = PassThrough object-mode: true
     inspect-stream = through2.obj (chunk,, next) ->
         this.push (inspect chunk, colors: true) + '\n'
         next!
+
+    raw-output-stream = through2.obj (chunk,, next) ->
+        switch
+        | (type chunk) is \Array => chunk.for-each (~> this.push it + '\n')
+        | otherwise              => this.push chunk + '\n'
+        next!
+
+    output-stream = switch
+    | opts.inspect    => inspect-stream
+    | opts.raw-output => raw-output-stream
+    | otherwise       => json-stringify-stream
 
     stdin
         .pipe JSONStream.parse!
@@ -55,7 +66,7 @@ main = (process-argv, stdin, stdout, stderr) ->
             val = fun chunk
             this.push val unless is-nil val
             next!
-        .pipe if opts.inspect then inspect-stream else json-stringify-stream
+        .pipe output-stream
         .pipe stdout
 
 module.exports = main

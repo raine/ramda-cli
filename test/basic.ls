@@ -125,6 +125,41 @@ describe '--inspect' (,) ->
         output `eq` expected
         done!
 
+describe '--raw-output' (,) ->
+    it 'prints list of strings on separated by newline' (done) ->
+        args     = <[ identity -r ]>
+        input    = '["foo", "bar"]'
+        expected = """
+        foo
+        bar\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints strings separated by newline' (done) ->
+        args     = <[ identity -r ]>
+        input    = '"foo"\n"bar"'
+        expected = """
+        foo
+        bar\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints numbers separated by newline' (done) ->
+        args     = <[ identity -r ]>
+        input    = '[1,2,3]'
+        expected = """
+        1
+        2
+        3\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--help' (,) ->
     sandbox = null
 

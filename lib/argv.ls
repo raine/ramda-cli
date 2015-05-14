@@ -21,6 +21,10 @@ optionator = require 'optionator' <| do
           alias       : \s
           type        : \Boolean
           description : 'read JSON objects from stdin as one big list'
+        * option      : \raw-output
+          alias       : \r
+          type        : \Boolean
+          description : 'raw output'
         * option      : \help
           alias       : \h
           type        : \Boolean

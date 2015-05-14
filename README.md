@@ -29,10 +29,11 @@ http://ramdajs.com/docs/ for a full list.
 ```
 Usage: ramda [options] [function]
 
-  -c, --compact  compact output
-  -i, --inspect  pretty-printed output with colors
-  -s, --slurp    read JSON objects from stdin as one big list
-  -h, --help     displays help
+  -c, --compact     compact output
+  -i, --inspect     pretty-printed output with colors
+  -s, --slurp       read JSON objects from stdin as one big list
+  -r, --raw-output  raw output
+  -h, --help        displays help
 ```
 
 ## examples
@@ -114,6 +115,14 @@ $ cat text
 "hello world"
 $ cat text | ramda -c --slurp identity
 ["foo bar","test lol","hello world"]
+```
+
+Use `--raw-output` to print a list of values without formatting them as JSON:
+
+```sh
+$ echo '["foo", "bar"]' | ramda --raw-output 'map to-upper'
+FOO
+BAR
 ```
 
 ## debugging
