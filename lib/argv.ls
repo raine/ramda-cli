@@ -2,7 +2,12 @@ VERSION = require '../package.json' .version
 
 optionator = require 'optionator' <| do
     prepend: 'Usage: ramda [options] [function]'
-    append: "Version #VERSION"
+    append:
+        """
+        README: https://github.com/raine/ramda-cli
+
+        Version #VERSION
+        """
     options: [
         * option      : \compact
           alias       : \c
