@@ -160,6 +160,22 @@ describe '--raw-output' (,) ->
         output `eq` expected
         done!
 
+    it 'prints objects' (done) ->
+        args     = <[ identity -r ]>
+        input    = '{"foo": "bar"}'
+        expected = '[object Object]\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'should remove extra newlines from end' (done) ->
+        args     = ['(+ "\\n\\n")', '-r']
+        input    = '"foo"'
+        expected = 'foo\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--help' (,) ->
     sandbox = null
 

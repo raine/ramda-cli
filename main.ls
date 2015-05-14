@@ -6,11 +6,13 @@ require! vm
 require! through2
 require! stream: {PassThrough}
 require! 'stream-reduce'
-require! ramda: {type, apply, is-nil, append, flip, type}: R
+require! ramda: {type, apply, is-nil, append, flip, type, replace}: R
 require! util: {inspect}
 require! JSONStream
 require! './lib/argv'
 debug = require 'debug' <| 'ramda-cli'
+
+ensure-single-newline = replace /\n*$/, '\n'
 
 compile-and-eval = (code) ->
     compiled = LiveScript.compile code, {+bare, -header}
@@ -21,7 +23,7 @@ compile-and-eval = (code) ->
 
 main = (process-argv, stdin, stdout, stderr) ->
     log-error = (+ '\n') >> stderr~write
-    die = log-error >> -> process.exit 1
+    die       = log-error >> -> process.exit 1
 
     try opts = argv.parse process-argv
     catch e then return die [argv.generate-help!, e.message] * '\n\n'
@@ -42,8 +44,8 @@ main = (process-argv, stdin, stdout, stderr) ->
     json-stringify-stream = apply JSONStream.stringify,
         (if opts.compact then [false] else ['', '\n', '\n', 2])
 
-    concat-stream = stream-reduce flip(append), []
-    pass-through = PassThrough object-mode: true
+    concat-stream  = stream-reduce flip(append), []
+    pass-through   = PassThrough object-mode: true
     inspect-stream = through2.obj (chunk,, next) ->
         this.push (inspect chunk, colors: true) + '\n'
         next!
@@ -51,14 +53,13 @@ main = (process-argv, stdin, stdout, stderr) ->
     raw-output-stream = through2.obj (chunk,, next) ->
         switch
         | (type chunk) is \Array => chunk.for-each (~> this.push it + '\n')
-        | otherwise              => this.push chunk + '\n'
+        | otherwise              => this.push ensure-single-newline chunk.to-string!
         next!
 
-    map-stream = (func) ->
-        through2.obj (chunk,, next) ->
-            val = func chunk
-            this.push val unless is-nil val
-            next!
+    map-stream = (func) -> through2.obj (chunk,, next) ->
+        val = func chunk
+        this.push val unless is-nil val
+        next!
 
     output-stream = switch
     | opts.inspect    => inspect-stream
