@@ -54,6 +54,12 @@ main = (process-argv, stdin, stdout, stderr) ->
         | otherwise              => this.push chunk + '\n'
         next!
 
+    map-stream = (func) ->
+        through2.obj (chunk,, next) ->
+            val = func chunk
+            this.push val unless is-nil val
+            next!
+
     output-stream = switch
     | opts.inspect    => inspect-stream
     | opts.raw-output => raw-output-stream
@@ -62,10 +68,7 @@ main = (process-argv, stdin, stdout, stderr) ->
     stdin
         .pipe JSONStream.parse!
         .pipe if opts.slurp then concat-stream else pass-through
-        .pipe through2.obj (chunk,, next) ->
-            val = fun chunk
-            this.push val unless is-nil val
-            next!
+        .pipe map-stream fun
         .pipe output-stream
         .pipe stdout
 
