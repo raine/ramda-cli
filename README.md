@@ -60,9 +60,11 @@ Reformat and check validity of JSON with [`R.identity`](http://ramdajs.com/docs/
 $ cat data.json | ramda identity
 ```
 
+Get Ramda's functions in some category:
+
 ```sh
 $ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
-  ramda '(pluck \name) . filter where-eq {category: \Logic}'
+  ramda '(filter where-eq {category: \Logic}) >> (pluck \name)'
 [
     "and",
     "both",
@@ -85,6 +87,13 @@ $ alias R=ramda
 $ echo [[1,2,3],[4,5,6]] | R unnest | R sum # 21
 $ cat latest.json | R 'pluck \name' | R 'take 7' | R 'map to-upper >> (+ \!)' | R 'join " "'
 "__! ADD! ADJUST! ALWAYS! APERTURE! APPLY! ARITY!"
+```
+
+Get a list of people who tweeted about `#ramda` and pretty print [the
+result](https://raw.githubusercontent.com/raine/ramda-cli/media/twarc-ramda.png):
+
+``` sh
+$ twarc --search '#ramda' | R -s 'map path [\user, \screen_name]' | R uniq -i
 ```
 
 Read *Line Delimited JSON* and filter by properties by returning `undefined`
