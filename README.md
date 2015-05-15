@@ -98,15 +98,15 @@ Use `--slurp` to read multiple JSON objects into a single list before any
 operations:
 
 ```sh
-$ echo [1,2,3][1,2,3] | ramda -c --slurp 'map map multiply 2'
-[[2,4,6],[2,4,6]]
-
 $ cat text
 "foo bar"
 "test lol"
 "hello world"
 $ cat text | ramda -c --slurp identity
 ["foo bar","test lol","hello world"]
+
+$ echo "1\n2\n3\n" | ramda -c --slurp 'map multiply 2'
+[2,4,6]
 ```
 
 Use `--unslurp` to output a list's items separately:
