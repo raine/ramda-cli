@@ -9,6 +9,7 @@ require! 'stream-reduce'
 require! ramda: {type, apply, is-nil, append, flip, type, replace}: R
 require! util: {inspect}
 require! JSONStream
+require! 'fast-csv': csv
 require! './argv'
 debug = require 'debug' <| 'ramda-cli:main'
 
@@ -80,10 +81,14 @@ main = (process-argv, stdin, stdout, stderr) ->
     unless typeof fun is 'function'
         return die "error: evaluated into type of #{type fun} instead of Function"
 
+    if opts.output-type is \csv
+        opts.unslurp = true
+
     output-formatter = switch
-    | opts.inspect    => inspect-stream!
-    | opts.raw-output => raw-output-stream!
-    | otherwise       => json-stringify-stream opts.compact
+    | opts.inspect             => inspect-stream!
+    | opts.raw-output          => raw-output-stream!
+    | opts.output-type is \csv => csv.create-write-stream headers: true
+    | otherwise                => json-stringify-stream opts.compact
 
     stdin
         .pipe JSONStream.parse!

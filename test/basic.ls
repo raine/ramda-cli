@@ -15,7 +15,7 @@ repeat-obj-as-str = (obj, times) ->
 run-main = (args, input, cb) ->
     stdin  = new stream.PassThrough!
     stdout = new stream.PassThrough {+object-mode}
-        ..pipe concat-stream -> cb it, null
+        ..pipe concat-stream encoding: \string, -> cb it, null
     stderr = new stream.PassThrough!
         .on \data, (data) -> cb null, data.to-string!
 
@@ -212,6 +212,65 @@ describe '--raw-output' (,) ->
         args     = ['(+ "\\n\\n")', '-r']
         input    = '"foo"'
         expected = 'foo\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+describe '--output csv' (,) ->
+    it 'prints a list of objects as CSV with headers' (done) ->
+        args  = <[ identity -o csv ]>
+        input = """
+        [ { "name": "Afghanistan", "code": "AF" },
+          { "name": "Åland Islands", "code": "AX" },
+          { "name": "Albania", "code": "AL" } ]
+        """
+        expected = """
+        name,code
+        Afghanistan,AF
+        Åland Islands,AX
+        Albania,AL
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints a stream of bare objects as CSV' (done) ->
+        args  = <[ identity -o csv ]>
+        input = """
+        { "name": "Afghanistan", "code": "AF" }
+        { "name": "Åland Islands", "code": "AX" }
+        { "name": "Albania", "code": "AL" }
+        """
+        expected = """
+        name,code
+        Afghanistan,AF
+        Åland Islands,AX
+        Albania,AL
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints array of arrays as CSV' (done) ->
+        args  = <[ identity -o csv ]>
+        input = """
+        [ ["foo", "bar"], ["hello", "world"] ]
+        """
+        expected = """
+        foo,bar
+        hello,world
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints a stream of bare arrays but needs --slurp too' (done) ->
+        args     = <[ identity -o csv --slurp ]>
+        input    = '["foo", "bar"]\n["hello", "world"]'
+        expected = """
+        foo,bar
+        hello,world
+        """
         output <-! run-main args, input
         output `eq` expected
         done!

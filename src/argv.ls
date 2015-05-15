@@ -34,6 +34,12 @@ optionator = require 'optionator' <| do
           type        : \Boolean
           description : 'raw output'
 
+        * option      : \output-type
+          alias       : \o
+          type        : \String
+          enum        : <[ csv ]>
+          description : 'output type'
+
         * option      : \help
           alias       : \h
           type        : \Boolean

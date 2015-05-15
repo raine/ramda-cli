@@ -14,6 +14,7 @@
   "dependencies": {
     "JSONStream": "^1.0.3",
     "debug": "^2.2.0",
+    "fast-csv": "^0.6.0",
     "livescript": "^1.4.0",
     "optionator": "^0.6.0",
     "ramda": "^0.14.0",
