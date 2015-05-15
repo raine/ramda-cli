@@ -45,14 +45,7 @@ describe 'basic' (,) ->
         done!
 
 describe 'errors' (,) ->
-    sandbox = null
-
-    before-each ->
-        sandbox := sinon.sandbox.create!
-        sandbox.stub process, \exit
-
-    after-each ->
-        sandbox.restore!
+    stub-process-exit!
 
     describe 'with code that does not evaluate to a function' (,) ->
         it 'outputs an error' (done) ->
@@ -196,6 +189,14 @@ describe '--raw-output' (,) ->
         done!
 
 describe '--help' (,) ->
+    stub-process-exit!
+
+    it 'shows help' (done) ->
+        output, errput <-! run-main ['identity', '-h'], '[1,2,3]'
+        'Usage: ramda [options] [function]' `eq` head lines errput
+        done!
+
+function stub-process-exit
     sandbox = null
 
     before-each ->
@@ -205,7 +206,4 @@ describe '--help' (,) ->
     after-each ->
         sandbox.restore!
 
-    it 'shows help' (done) ->
-        output, errput <-! run-main ['identity', '-h'], '[1,2,3]'
-        'Usage: ramda [options] [function]' `eq` head lines errput
-        done!
+    return sandbox
