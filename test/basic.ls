@@ -180,6 +180,14 @@ describe '--unslurp' (,) ->
         output `strip-eq` input
         done!
 
+    it 'does nothing if list is already separate objects' (done) ->
+        args     = <[ identity -S ]>
+        input    = '{"foo":"bar"}\n{"foo":"bar"}\n'
+        expected = '{"foo":"bar"}{"foo":"bar"}'
+        output <-! run-main args, input
+        output `strip-eq` expected
+        done!
+
 describe '--raw-output' (,) ->
     it 'prints strings without quotes separated by newline' (done) ->
         args     = <[ identity -r ]>
