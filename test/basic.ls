@@ -5,7 +5,7 @@ require! 'concat-stream'
 require! ramda: {repeat, join, flip, split, head}
 {called-with} = sinon.assert
 
-stringify = JSON.stringify _, 2
+stringify = JSON.stringify _, null, 2
 unwords   = join ' '
 lines     = split '\n'
 repeat-n  = flip repeat
@@ -61,16 +61,36 @@ describe 'errors' (,) ->
 
 describe '--compact' (,) ->
     it 'prints compact json output' (done) ->
-        output <-! run-main <[ identity -c ]>, stringify foo: \bar
-        output `eq` '{"foo":"bar"}'
+        args     = <[ identity -c ]>
+        input    = """
+        [
+          1,
+          2,
+          3
+        ]
+        """
+        expected = '[1,2,3]\n'
+        output <-! run-main args, input
+        output `eq` expected
         done!
 
-    it 'prints compact json output f' (done) ->
-        output <-! run-main <[ identity -c ]>, repeat-obj-as-str foo: \bar, 2
-        output `eq` """
-        {"foo":"bar"}
-        {"foo":"bar"}
+    it 'prints newline separated compact objects' (done) ->
+        args  = <[ identity -c ]>
+        input = """
+        {
+          "foo": "bar"
+        }
+        {
+          "foo": "bar"
+        }
         """
+        expected = """
+        {"foo":"bar"}
+        {"foo":"bar"}\n
+        """
+
+        output <-! run-main args, input
+        output `eq` expected
         done!
 
 describe '--slurp' (,) ->

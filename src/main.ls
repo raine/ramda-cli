@@ -3,7 +3,7 @@
 require! treis
 require! livescript
 require! vm
-require! through2
+require! through2: through
 require! stream: {PassThrough}
 require! 'stream-reduce'
 require! ramda: {type, apply, is-nil, append, flip, type, replace}: R
@@ -20,6 +20,44 @@ compile-and-eval = (code) ->
     sandbox = {R, treis} <<< R
     ctx = vm.create-context sandbox
     vm.run-in-context compiled, ctx
+
+concat-stream   = -> stream-reduce flip(append), []
+unconcat-stream = -> through.obj (chunk,, next) ->
+    switch type chunk
+    | \Array    => chunk.for-each ~> this.push it
+    | otherwise => this.push chunk
+    next!
+
+raw-output-stream = -> through.obj (chunk,, next) ->
+    this.push ensure-single-newline chunk.to-string!
+    next!
+
+inspect-stream = -> through.obj (chunk,, next) ->
+    this.push (inspect chunk, colors: true) + '\n'
+    next!
+
+debug-stream = (debug, object-mode) ->
+    (if object-mode then through~obj else through)
+    <| (chunk,, next) ->
+        debug {chunk}
+        this.push chunk
+        next!
+
+json-stringify-stream = (compact) ->
+    indent = if not compact then 2 else void
+    through.obj (data,, next) ->
+        json = JSON.stringify data, null, indent
+        this.push json + '\n'
+        next!
+
+pass-through-unless = (val, stream) ->
+    switch | val       => stream
+           | otherwise => PassThrough object-mode: true
+
+map-stream = (func) -> through.obj (chunk,, next) ->
+    val = func chunk
+    this.push val unless is-nil val
+    next!
 
 main = (process-argv, stdin, stdout, stderr) ->
     debug {argv: process-argv}
@@ -42,44 +80,18 @@ main = (process-argv, stdin, stdout, stderr) ->
     unless typeof fun is 'function'
         return die "error: evaluated into type of #{type fun} instead of Function"
 
-    concat-stream   = stream-reduce flip(append), []
-    unconcat-stream = through2.obj (chunk,, next) ->
-        switch type chunk
-        | \Array    => chunk.for-each ~> this.push it
-        | otherwise => this.push chunk
-        next!
-
-    raw-output-stream = through2.obj (chunk,, next) ->
-        this.push ensure-single-newline chunk.to-string!
-        next!
-
-    inspect-stream = through2.obj (chunk,, next) ->
-        this.push (inspect chunk, colors: true) + '\n'
-        next!
-
-    json-stringify-stream = apply JSONStream.stringify,
-        (if opts.compact then [false] else ['', '\n', '\n', 2])
-
-    map-stream = (func) -> through2.obj (chunk,, next) ->
-        val = func chunk
-        this.push val unless is-nil val
-        next!
-
     output-formatter = switch
-    | opts.inspect    => inspect-stream
-    | opts.raw-output => raw-output-stream
-    | otherwise       => json-stringify-stream
-
-    pass-through-unless = (val, stream) ->
-        switch | val       => stream
-               | otherwise => PassThrough object-mode: true
+    | opts.inspect    => inspect-stream!
+    | opts.raw-output => raw-output-stream!
+    | otherwise       => json-stringify-stream opts.compact
 
     stdin
         .pipe JSONStream.parse!
-        .pipe pass-through-unless opts.slurp, concat-stream
+        .pipe pass-through-unless opts.slurp, concat-stream!
         .pipe map-stream fun
-        .pipe pass-through-unless opts.unslurp, unconcat-stream
+        .pipe pass-through-unless opts.unslurp, unconcat-stream!
         .pipe output-formatter
+        .pipe debug-stream debug, object-mode: true
         .pipe stdout
 
 module.exports = main
