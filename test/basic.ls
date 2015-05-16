@@ -44,6 +44,15 @@ describe 'basic' (,) ->
         output `strip-eq` """{"foo":"bar"}{"foo":"bar"}"""
         done!
 
+describe 'multiple functions as arguments' (,) ->
+    it 'composes multiple function arguments from left to right' (done) ->
+        args     = ['replace "foo", "bar"', 'to-upper']
+        input    = '"foo"'
+        expected = '"BAR"\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe 'errors' (,) ->
     stub-process-exit!
 
@@ -298,7 +307,7 @@ describe '--help' (,) ->
 
     it 'shows help' (done) ->
         output, errput <-! run-main ['identity', '-h'], '[1,2,3]'
-        'Usage: ramda [options] [function]' `eq` head lines errput
+        'Usage: ramda [options] [function] ...' `eq` head lines errput
         done!
 
 function stub-process-exit

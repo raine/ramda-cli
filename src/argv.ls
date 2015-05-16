@@ -1,7 +1,7 @@
 VERSION = require '../package.json' .version
 
 optionator = require 'optionator' <| do
-    prepend: 'Usage: ramda [options] [function]'
+    prepend: 'Usage: ramda [options] [function] ...'
     append:
         """
         README: https://github.com/raine/ramda-cli

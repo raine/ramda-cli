@@ -6,7 +6,7 @@ require! vm
 require! through2: through
 require! stream: {PassThrough}
 require! 'stream-reduce'
-require! ramda: {type, apply, is-nil, append, flip, type, replace, merge}: R
+require! ramda: {type, apply, is-nil, append, flip, type, replace, merge, map, join}: R
 require! util: {inspect}
 require! JSONStream
 require! 'fast-csv': csv
@@ -14,6 +14,7 @@ require! './argv'
 debug = require 'debug' <| 'ramda-cli:main'
 
 ensure-single-newline = replace /\n*$/, '\n'
+wrap-in-parens = (str) -> "(#str)"
 
 compile-and-eval = (code) ->
     compiled = livescript.compile code, {+bare, -header}
@@ -79,8 +80,9 @@ main = (process-argv, stdin, stdout, stderr) ->
 
     try opts = argv.parse process-argv
     catch e then return die [argv.generate-help!, e.message] * '\n\n'
+    debug opts
 
-    code = opts._.0
+    code = join ' >> ', map wrap-in-parens, opts._
     debug (inspect code), 'input code'
     if not code or opts.help
         return die argv.generate-help!

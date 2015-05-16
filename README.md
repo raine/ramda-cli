@@ -18,12 +18,15 @@ $ cat data.json | ramda [function] ...
 The idea is to [compose][1] functions into a pipeline of operations that when
 applied to given data, produces the desired output.
 
+The function is applied to a stream of JSON data read from stdin, and the
+output data is sent to standard out as stringified JSON.
+
 Technically, `[function]` should be a snippet of LiveScript that evaluates
 into a function. Basic JavaScript is valid LS, so if more suitable,
 JavaScript can be used when writing functions.
 
-The function is applied to a stream of JSON data read from stdin, and the
-output data is sent to standard out as stringified JSON.
+If multiple `[function]` arguments are passed, they are composed in order
+from left to right, as with [`R.pipe`](http://ramdajs.com/docs/#pipe).
 
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
@@ -31,7 +34,7 @@ http://ramdajs.com/docs/ for a full list.
 ## options
 
 ```
-Usage: ramda [options] [function]
+Usage: ramda [options] [function] ...
 
   -c, --compact     compact JSON output
   -s, --slurp       read JSON objects from stdin as one big list
