@@ -38,7 +38,8 @@ Usage: ramda [options] [function] ...
 
   -c, --compact     compact JSON output
   -s, --slurp       read JSON objects from stdin as one big list
-  -S, --unslurp     unwraps a list before output so that each item is stringified separately
+  -S, --unslurp     unwraps a list before output so that each item is
+                    stringified separately
   -o, --output-type format output sent to stdout (one of: pretty, csv, tsv, raw)
   -p, --pretty      pretty-printed output with colors, alias to -o pretty
   -r, --raw-output  raw output, alias to -o raw
@@ -56,8 +57,11 @@ $ echo 1 | ramda 'add 2' # 3
 
 ```sh
 $ echo [1,2,3] | ramda 'sum' # 6
+```
 
-# same as pipe( map(multiply, 2), sum );
+Following is equivalent to `R.pipe( R.map(multiply, 2), R.sum )([1,2,3])`:
+
+```sh
 $ echo [1,2,3] | ramda 'map multiply 2' sum
 ```
 
