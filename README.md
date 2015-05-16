@@ -59,7 +59,7 @@ $ echo 1 | ramda 'add 2' # 3
 $ echo [1,2,3] | ramda 'sum' # 6
 ```
 
-Following is equivalent to `R.pipe( R.map(multiply, 2), R.sum )([1,2,3])`:
+Following is equivalent to `R.pipe( R.map(R.multiply(2)), R.sum )([1,2,3])`:
 
 ```sh
 $ echo [1,2,3] | ramda 'map multiply 2' sum
