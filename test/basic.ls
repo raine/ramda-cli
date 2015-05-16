@@ -275,6 +275,24 @@ describe '--output csv' (,) ->
         output `eq` expected
         done!
 
+describe '--output tsv' (,) ->
+    it 'prints a list of objects as TSV with headers' (done) ->
+        args  = <[ identity -o tsv ]>
+        input = """
+        [ { "name": "Afghanistan", "code": "AF" },
+          { "name": "Åland Islands", "code": "AX" },
+          { "name": "Albania", "code": "AL" } ]
+        """
+        expected = """
+        name\tcode
+        Afghanistan\tAF
+        Åland Islands\tAX
+        Albania\tAL
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--help' (,) ->
     stub-process-exit!
 

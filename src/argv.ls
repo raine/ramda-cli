@@ -37,7 +37,7 @@ optionator = require 'optionator' <| do
         * option      : \output-type
           alias       : \o
           type        : \String
-          enum        : <[ csv ]>
+          enum        : <[ csv tsv ]>
           description : 'output type'
 
         * option      : \help

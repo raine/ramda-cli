@@ -6,7 +6,7 @@ require! vm
 require! through2: through
 require! stream: {PassThrough}
 require! 'stream-reduce'
-require! ramda: {type, apply, is-nil, append, flip, type, replace}: R
+require! ramda: {type, apply, is-nil, append, flip, type, replace, merge}: R
 require! util: {inspect}
 require! JSONStream
 require! 'fast-csv': csv
@@ -40,7 +40,7 @@ inspect-stream = -> through.obj (chunk,, next) ->
 debug-stream = (debug, object-mode) ->
     (if object-mode then through~obj else through)
     <| (chunk,, next) ->
-        debug {chunk}
+        debug {chunk: chunk.to-string!}
         this.push chunk
         next!
 
@@ -59,6 +59,14 @@ map-stream = (func) -> through.obj (chunk,, next) ->
     val = func chunk
     this.push val unless is-nil val
     next!
+
+csv-opts-by-type = (type) ->
+    opts = headers: true
+    switch type
+    | \csv => opts
+    | \tsv => opts <<< delimiter: '\t'
+
+output-type-to-stream = csv-opts-by-type >> csv.create-write-stream
 
 main = (process-argv, stdin, stdout, stderr) ->
     debug {argv: process-argv}
@@ -81,14 +89,14 @@ main = (process-argv, stdin, stdout, stderr) ->
     unless typeof fun is 'function'
         return die "error: evaluated into type of #{type fun} instead of Function"
 
-    if opts.output-type is \csv
+    if opts.output-type in <[ csv tsv ]>
         opts.unslurp = true
 
     output-formatter = switch
-    | opts.inspect             => inspect-stream!
-    | opts.raw-output          => raw-output-stream!
-    | opts.output-type is \csv => csv.create-write-stream headers: true
-    | otherwise                => json-stringify-stream opts.compact
+    | opts.inspect      => inspect-stream!
+    | opts.raw-output   => raw-output-stream!
+    | opts.output-type? => output-type-to-stream opts.output-type
+    | otherwise         => json-stringify-stream opts.compact
 
     stdin
         .pipe JSONStream.parse!
