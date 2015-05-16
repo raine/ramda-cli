@@ -12,7 +12,7 @@ optionator = require 'optionator' <| do
         * option      : \compact
           alias       : \c
           type        : \Boolean
-          description : 'compact output'
+          description : 'compact JSON output'
 
         * option      : \slurp
           alias       : \s

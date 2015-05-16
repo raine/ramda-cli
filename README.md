@@ -33,7 +33,7 @@ http://ramdajs.com/docs/ for a full list.
 ```
 Usage: ramda [options] [function]
 
-  -c, --compact     compact output
+  -c, --compact     compact JSON output
   -s, --slurp       read JSON objects from stdin as one big list
   -S, --unslurp     unwraps a list before output so that each item is stringified separately
   -o, --output-type format output sent to stdout (one of: pretty, csv, tsv, raw)
