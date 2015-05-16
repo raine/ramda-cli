@@ -24,21 +24,21 @@ optionator = require 'optionator' <| do
           type        : \Boolean
           description : 'unwraps a list before output so that each item is stringified separately'
 
-        * option      : \raw-output
-          alias       : \r
-          type        : \Boolean
-          description : 'raw output'
-
         * option      : \output-type
           alias       : \o
           type        : \String
-          enum        : <[ pretty csv tsv ]>
+          enum        : <[ pretty csv tsv raw ]>
           description : 'format output sent to stdout'
 
         * option      : \pretty
           alias       : \p
           type        : \Boolean
           description : 'pretty-printed output with colors, alias to -o pretty'
+
+        * option      : \raw-output
+          alias       : \r
+          type        : \Boolean
+          description : 'raw output, alias to -o raw'
 
         * option      : \help
           alias       : \h
@@ -48,7 +48,8 @@ optionator = require 'optionator' <| do
 
 export parse = (argv) ->
     args = optionator.parse argv
-    if args.pretty then args.output-type = \pretty
+    if args.pretty     then args.output-type = \pretty
+    if args.raw-output then args.output-type = \raw
     args
 
 export generate-help = ->

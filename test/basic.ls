@@ -176,9 +176,9 @@ describe '--unslurp' (,) ->
         output `strip-eq` expected
         done!
 
-describe '--raw-output' (,) ->
+describe '--output-type raw' (,) ->
     it 'prints strings without quotes separated by newline' (done) ->
-        args     = <[ identity -r ]>
+        args     = <[ identity -o raw ]>
         input    = '"foo"\n"bar"'
         expected = """
         foo
@@ -189,7 +189,7 @@ describe '--raw-output' (,) ->
         done!
 
     it 'prints list of numbers separated by newline' (done) ->
-        args     = <[ identity -r ]>
+        args     = <[ identity -o raw ]>
         input    = '1\n2\n3\n'
         expected = '1\n2\n3\n'
         output <-! run-main args, input
@@ -197,7 +197,7 @@ describe '--raw-output' (,) ->
         done!
 
     it 'should remove extra newlines from end' (done) ->
-        args     = ['(+ "\\n\\n")', '-r']
+        args     = ['(+ "\\n\\n")', '-o', 'raw']
         input    = '"foo"'
         expected = 'foo\n'
         output <-! run-main args, input

@@ -126,10 +126,10 @@ $ echo '["hello", "world"]' | ramda --unslurp identity
 "world"
 ```
 
-Use `--raw-output` to print strings without JSON formatting:
+Use `--output-type raw` to print strings without JSON formatting:
 
 ```sh
-$ echo '"foo"\n"bar"' | ramda to-upper --raw-output
+$ echo '"foo"\n"bar"' | ramda to-upper -o raw
 FOO
 BAR
 ```
