@@ -3,6 +3,7 @@
   "version": "0.8.0",
   "description": "A command-line tool for processing JSON with Ramda and LiveScript",
   "repository": "raine/ramda-cli",
+  "keywords": ["ramda", "cli", "json"],
   "scripts": {
     "test": "make test"
   },
@@ -20,7 +21,6 @@
     "ramda": "^0.14.0",
     "stream-reduce": "^1.0.3",
     "through2": "^0.6.5",
-    "to-csv": "^0.1.0",
     "treis": "^2.3.9"
   },
   "devDependencies": {
