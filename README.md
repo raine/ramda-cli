@@ -33,11 +33,11 @@ http://ramdajs.com/docs/ for a full list.
 Usage: ramda [options] [function]
 
   -c, --compact     compact output
-  -i, --inspect     pretty-printed output with colors
   -s, --slurp       read JSON objects from stdin as one big list
-  -S, --unslurp     unwraps a list before output so that each item is
-                    stringified separately
+  -S, --unslurp     unwraps a list before output so that each item is stringified separately
   -r, --raw-output  raw output
+  -o, --output-type format output sent to stdout (one of: pretty, csv, tsv)
+  -p, --pretty      pretty-printed output with colors, alias to -o pretty
   -h, --help        displays help
 ```
 
@@ -93,7 +93,7 @@ Get a list of people who tweeted about `#ramda` and pretty print [the
 result](https://raw.githubusercontent.com/raine/ramda-cli/media/twarc-ramda.png):
 
 ``` sh
-$ twarc --search '#ramda' | R -s 'map path [\user, \screen_name]' | R uniq -i
+$ twarc --search '#ramda' | R -s 'map path [\user, \screen_name]' | R uniq -p
 ```
 
 Read *Line Delimited JSON* and filter by properties by returning `undefined`
