@@ -19,7 +19,8 @@ The idea is to [compose][1] functions into a pipeline of operations that when
 applied to given data, produces the desired output.
 
 Technically, `[function]` should be a snippet of LiveScript that evaluates
-into a function.
+into a function. For our purposes JavaScript is valid LS, so JS can be used
+if more suitable.
 
 The function is applied to a stream of JSON data read from stdin, and the
 output data is sent to standard out as stringified JSON.
@@ -141,7 +142,7 @@ challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using `--ou
 #!/usr/bin/env bash
 
 data_url=https://gist.githubusercontent.com/jorin-vogel/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
-curl $data_url | R '(filter where creditcard: Boolean) >> map pick <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
+curl $data_url | R '(filter where creditcard: (!= null)) >> map pick <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
 ```
 
 ## debugging
