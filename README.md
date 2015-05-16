@@ -3,7 +3,7 @@
 A command-line tool for processing JSON with functional pipelines.
 
 Takes advantage of [Ramda's](http://ramdajs.com) curried, data-last API and
-[LiveScript's](http://livescript.net) nice and terse syntax.
+[LiveScript's](http://livescript.net) terse and powerful syntax.
 
 ```sh
 npm install -g ramda-cli
@@ -12,15 +12,15 @@ npm install -g ramda-cli
 ## usage
 
 ```sh
-$ cat data.json | ramda [function]
+$ cat data.json | ramda [function] ...
 ```
 
 The idea is to [compose][1] functions into a pipeline of operations that when
 applied to given data, produces the desired output.
 
 Technically, `[function]` should be a snippet of LiveScript that evaluates
-into a function. For our purposes JavaScript is valid LS, so JS can be used
-if more suitable.
+into a function. Basic JavaScript is valid LS, so if more suitable,
+JavaScript can be used when writing functions.
 
 The function is applied to a stream of JSON data read from stdin, and the
 output data is sent to standard out as stringified JSON.
