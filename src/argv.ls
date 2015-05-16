@@ -35,13 +35,22 @@ optionator = require 'optionator' <| do
           enum        : <[ pretty csv tsv ]>
           description : 'format output sent to stdout'
 
+        * option      : \pretty
+          alias       : \p
+          type        : \Boolean
+          description : 'pretty-printed output with colors, alias to -o pretty'
+
         * option      : \help
           alias       : \h
           type        : \Boolean
           description : 'displays help'
     ]
 
-export parse         = optionator.parse
+export parse = (argv) ->
+    args = optionator.parse argv
+    if args.pretty then args.output-type = \pretty
+    args
+
 export generate-help = ->
     optionator.generate-help!
         .replace /One of: (.+)  (.*)$/m, (m, vals, desc) ->
