@@ -134,6 +134,16 @@ FOO
 BAR
 ```
 
+Solution to the [credit card JSON to CSV
+challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using `--output-type csv`:
+
+```bash
+#!/usr/bin/env bash
+
+data_url=https://gist.githubusercontent.com/jorin-vogel/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
+curl $data_url | R '(filter where creditcard: Boolean) >> map pick <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
+```
+
 ## debugging
 
 You can turn on the debug logging with `export DEBUG=ramda-cli:*`.
