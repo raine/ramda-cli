@@ -38,7 +38,7 @@ optionator = require 'optionator' <| do
           alias       : \o
           type        : \String
           enum        : <[ csv tsv ]>
-          description : 'output type'
+          description : 'format output sent to stdout'
 
         * option      : \help
           alias       : \h
@@ -47,4 +47,7 @@ optionator = require 'optionator' <| do
     ]
 
 export parse         = optionator.parse
-export generate-help = optionator.generate-help
+export generate-help = ->
+    optionator.generate-help!
+        .replace /One of: (.+)  (.*)$/m, (m, vals, desc) ->
+            "#desc (one of: #{vals.trim!.to-lower-case!})"
