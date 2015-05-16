@@ -56,6 +56,9 @@ $ echo 1 | ramda 'add 2' # 3
 
 ```sh
 $ echo [1,2,3] | ramda 'sum' # 6
+
+# same as pipe( map(multiply, 2), sum );
+$ echo [1,2,3] | ramda 'map multiply 2' sum
 ```
 
 Reformat and check validity of JSON with [`R.identity`](http://ramdajs.com/docs/#identity):
@@ -68,7 +71,7 @@ Get Ramda's functions in some category:
 
 ```sh
 $ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
-  ramda '(filter where-eq {category: \Logic}) >> (pluck \name)'
+  ramda 'filter where-eq {category: \Logic}' 'pluck \name'
 [
     "and",
     "both",
@@ -81,7 +84,7 @@ $ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
 Parentheses can be used like in JavaScript, if necessary:
 
 ```sh
-$ echo [1,2,3,4,5] | ramda 'pipe(map(multiply(2)), filter(gt(__, 4)))'
+$ echo [1,2,3,4,5] | ramda 'map(multiply(2))' 'filter(gt(__, 4))'
 ```
 
 You can also use use unix pipes:
