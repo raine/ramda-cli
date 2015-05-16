@@ -66,7 +66,10 @@ csv-opts-by-type = (type) ->
     | \csv => opts
     | \tsv => opts <<< delimiter: '\t'
 
-output-type-to-stream = csv-opts-by-type >> csv.create-write-stream
+output-type-to-stream = (type) ->
+    switch type
+    | \pretty       => inspect-stream!
+    | <[ csv tsv ]> => csv.create-write-stream csv-opts-by-type type
 
 main = (process-argv, stdin, stdout, stderr) ->
     debug {argv: process-argv}
@@ -93,7 +96,6 @@ main = (process-argv, stdin, stdout, stderr) ->
         opts.unslurp = true
 
     output-formatter = switch
-    | opts.inspect      => inspect-stream!
     | opts.raw-output   => raw-output-stream!
     | opts.output-type? => output-type-to-stream opts.output-type
     | otherwise         => json-stringify-stream opts.compact

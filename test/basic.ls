@@ -126,18 +126,6 @@ describe '--slurp' (,) ->
         output `strip-eq` expected
         done!
 
-describe '--inspect' (,) ->
-    it 'pretty prints objects' (done) ->
-        args     = <[ identity -i ]>
-        input    = '{"foo":"bar"}{"foo":"bar"}'
-        expected = """
-        { foo: \u001b[32m'bar'\u001b[39m }
-        { foo: \u001b[32m'bar'\u001b[39m }\n
-        """
-        output <-! run-main args, input
-        output `eq` expected
-        done!
-
 describe '--unslurp' (,) ->
     it 'prints list of strings separated by newline' (done) ->
         args     = <[ identity -S ]>
@@ -216,7 +204,19 @@ describe '--raw-output' (,) ->
         output `eq` expected
         done!
 
-describe '--output csv' (,) ->
+describe '--output-type pretty' (,) ->
+    it 'pretty prints objects' (done) ->
+        args     = <[ identity -o pretty ]>
+        input    = '{"foo":"bar"}{"foo":"bar"}'
+        expected = """
+        { foo: \u001b[32m'bar'\u001b[39m }
+        { foo: \u001b[32m'bar'\u001b[39m }\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+describe '--output-type csv' (,) ->
     it 'prints a list of objects as CSV with headers' (done) ->
         args  = <[ identity -o csv ]>
         input = """
@@ -275,7 +275,7 @@ describe '--output csv' (,) ->
         output `eq` expected
         done!
 
-describe '--output tsv' (,) ->
+describe '--output-type tsv' (,) ->
     it 'prints a list of objects as TSV with headers' (done) ->
         args  = <[ identity -o tsv ]>
         input = """

@@ -14,11 +14,6 @@ optionator = require 'optionator' <| do
           type        : \Boolean
           description : 'compact output'
 
-        * option      : \inspect
-          alias       : \i
-          type        : \Boolean
-          description : 'pretty-printed output with colors'
-
         * option      : \slurp
           alias       : \s
           type        : \Boolean
@@ -37,7 +32,7 @@ optionator = require 'optionator' <| do
         * option      : \output-type
           alias       : \o
           type        : \String
-          enum        : <[ csv tsv ]>
+          enum        : <[ pretty csv tsv ]>
           description : 'format output sent to stdout'
 
         * option      : \help
