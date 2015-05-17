@@ -1,5 +1,9 @@
 VERSION = require '../package.json' .version
 
+OUTPUT_TYPES     = <[ pretty raw csv tsv ]>
+INPUT_TYPES      = <[ raw ]>
+format-enum-list = (.join ', ') >> ('one of: ' +)
+
 optionator = require 'optionator' <| do
     prepend: 'Usage: ramda [options] [function] ...'
     append:
@@ -27,14 +31,12 @@ optionator = require 'optionator' <| do
         * option      : \input-type
           alias       : \i
           type        : \String
-          enum        : <[ raw ]>
-          description : 'read input from stdin as'
+          description : "read input from stdin as (#{format-enum-list INPUT_TYPES})"
 
         * option      : \output-type
           alias       : \o
           type        : \String
-          enum        : <[ pretty csv tsv raw ]>
-          description : 'format output sent to stdout'
+          description : "format output sent to stdout (#{format-enum-list OUTPUT_TYPES})"
 
         * option      : \pretty
           alias       : \p
@@ -56,9 +58,13 @@ export parse = (argv) ->
     args = optionator.parse argv
     if args.pretty     then args.output-type = \pretty
     if args.raw-output then args.output-type = \raw
+
+    if args.output-type? and args.output-type not in OUTPUT_TYPES
+        throw new Error "Output type should be #{format-enum-list OUTPUT_TYPES}"
+
+    if args.input-type? and args.input-type not in INPUT_TYPES
+        throw new Error "Input type should be #{format-enum-list INPUT_TYPES}"
+
     args
 
-export generate-help = ->
-    optionator.generate-help!
-        .replace /One of: (.+)  (.*)$/mg, (m, vals, desc) ->
-            "#desc (one of: #{vals.trim!.to-lower-case!})"
+export generate-help = optionator.generate-help

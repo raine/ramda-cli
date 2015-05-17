@@ -11,3 +11,13 @@ describe 'argv.parse' (,) ->
     describe '-r, --raw-output' (,) ->
         it 'is an alias for --output-type raw' ->
             parse '-r' .output-type `eq` \raw
+
+    describe '-o, --output-type' (,) ->
+        it 'should throw an error with bad value' ->
+            assert.throws (-> parse '-o lol'),
+                'Output type should be one of: pretty, raw, csv, tsv'
+
+    describe '-i, --input-type' (,) ->
+        it 'should throw an error with bad value' ->
+            assert.throws (-> parse '-i lol'),
+                'Input type should be one of: raw'
