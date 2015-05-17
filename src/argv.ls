@@ -24,6 +24,12 @@ optionator = require 'optionator' <| do
           type        : \Boolean
           description : 'unwraps a list before output so that each item is stringified separately'
 
+        * option      : \input-type
+          alias       : \i
+          type        : \String
+          enum        : <[ raw ]>
+          description : 'read input from stdin as'
+
         * option      : \output-type
           alias       : \o
           type        : \String
@@ -54,5 +60,5 @@ export parse = (argv) ->
 
 export generate-help = ->
     optionator.generate-help!
-        .replace /One of: (.+)  (.*)$/m, (m, vals, desc) ->
+        .replace /One of: (.+)  (.*)$/mg, (m, vals, desc) ->
             "#desc (one of: #{vals.trim!.to-lower-case!})"

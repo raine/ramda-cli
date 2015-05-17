@@ -61,6 +61,10 @@ map-stream = (func) -> through.obj (chunk,, next) ->
     this.push val unless is-nil val
     next!
 
+raw-input-stream = -> through.obj (chunk,, next) ->
+    this.push chunk.to-string!
+    next!
+
 csv-opts-by-type = (type) ->
     opts = headers: true
     switch type
@@ -98,12 +102,16 @@ main = (process-argv, stdin, stdout, stderr) ->
     if opts.output-type in <[ csv tsv ]>
         opts.unslurp = true
 
+    input-parser = switch
+    | opts.input-type is \raw => raw-input-stream!
+    | otherwise               => JSONStream.parse!
+
     output-formatter = switch
     | opts.output-type? => output-type-to-stream opts.output-type
     | otherwise         => json-stringify-stream opts.compact
 
     stdin
-        .pipe JSONStream.parse!
+        .pipe input-parser
         .pipe pass-through-unless opts.slurp, concat-stream!
         .pipe map-stream fun
         .pipe pass-through-unless opts.unslurp, unconcat-stream!

@@ -185,6 +185,31 @@ describe '--unslurp' (,) ->
         output `strip-eq` expected
         done!
 
+describe '--input-type raw' (,) ->
+    it 'allows reading raw strings through stdin' (done) ->
+        args     = <[ -i raw identity ]>
+        input    = 'foo'
+        expected = '"foo"\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'works together with -o raw as expected' (done) ->
+        args  = <[ -i raw -o raw identity ]>
+        input = """
+        foo
+        bar
+        xyz
+        """
+        expected = """
+        foo
+        bar
+        xyz\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--output-type raw' (,) ->
     it 'prints strings without quotes separated by newline' (done) ->
         args     = <[ identity -o raw ]>
