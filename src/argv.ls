@@ -8,9 +8,12 @@ optionator = require 'optionator' <| do
     prepend: 'Usage: ramda [options] [function] ...'
     append:
         """
-        README: https://github.com/raine/ramda-cli
+        If multiple functions are given as strings, they are composed into a
+        pipeline in order from left to right, similarly to R.pipe.
 
-        Version #VERSION
+        Example: cat data.json | ramda 'pluck \\name' 'take 5'
+
+        README: https://github.com/raine/ramda-cli
         """
     options: [
         * option      : \compact
