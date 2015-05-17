@@ -36,46 +36,66 @@ http://ramdajs.com/docs/ for a full list.
 ```
 Usage: ramda [options] [function] ...
 
-  -c, --compact     compact JSON output
-  -s, --slurp       read JSON objects from stdin as one big list
-  -S, --unslurp     unwraps a list before output so that each item is
-                    stringified separately
-  -o, --output-type format output sent to stdout (one of: pretty, csv, tsv, raw)
-  -p, --pretty      pretty-printed output with colors, alias to -o pretty
-  -r, --raw-output  raw output, alias to -o raw
-  -h, --help        displays help
+  -c, --compact             compact JSON output
+  -s, --slurp               read JSON objects from stdin as one big list
+  -S, --unslurp             unwraps a list before output so that each item is
+                            stringified separately
+  -i, --input-type String   read input from stdin as (one of: raw)
+  -o, --output-type String  format output sent to stdout (one of: pretty, raw, csv, tsv)
+  -p, --pretty              pretty-printed output with colors, alias to -o pretty
+  -r, --raw-output          raw output, alias to -o raw
+  -h, --help                displays help
 ```
 
+## output types
+
+Aside from JSON, few other types of output are supported:
+
+- `--output-type {csv, tsv}`  
+  CSV or TSV output type can be used when pipeline evaluates to an array of
+  objects, array of arrays or when stdin consists of a stream of bare
+  objects. First object's keys will determine the headers.
+
+- `--output-type pretty`  
+  Pretty print output stream with
+  [`util.inspect`](https://nodejs.org/api/util.html#util_util_inspect_object_options).
+
+- `--output-type raw`  
+  With raw output type when a string value is produced, the result will be
+  written to stdout as is without any formatting.
+
 ## examples
+
+In the examples, `ramda` is aliased to `R`.
 
 [`R.add`](http://ramdajs.com/docs/#add) partially applied with `2` is applied
 to `1` from stdin:
 
 ```sh
-$ echo 1 | ramda 'add 2' # 3
+$ echo 1 | R 'add 2' # 3
 ```
 
 ```sh
-$ echo [1,2,3] | ramda 'sum' # 6
+$ echo [1,2,3] | R 'sum' # 6
 ```
 
 Following is equivalent to `R.pipe( R.map(R.multiply(2)), R.sum )([1,2,3])`:
 
 ```sh
-$ echo [1,2,3] | ramda 'map multiply 2' sum
+$ echo [1,2,3] | R 'map multiply 2' sum
 ```
 
 Reformat and check validity of JSON with [`R.identity`](http://ramdajs.com/docs/#identity):
 
 ```sh
-$ cat data.json | ramda identity
+$ cat data.json | R identity
 ```
 
 Get Ramda's functions in some category:
 
 ```sh
 $ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
-  ramda 'filter where-eq {category: \Logic}' 'pluck \name'
+  R 'filter where-eq {category: \Logic}' 'pluck \name'
 [
     "and",
     "both",
@@ -88,13 +108,12 @@ $ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
 Parentheses can be used like in JavaScript, if necessary:
 
 ```sh
-$ echo [1,2,3,4,5] | ramda 'map(multiply(2))' 'filter(gt(__, 4))'
+$ echo [1,2,3,4,5] | R 'map(multiply(2))' 'filter(gt(__, 4))'
 ```
 
 You can also use use unix pipes:
 
 ```sh
-$ alias R=ramda
 $ echo [[1,2,3],[4,5,6]] | R unnest | R sum # 21
 $ cat latest.json | R 'pluck \name' | R 'take 7' | R 'map to-upper >> (+ \!)' | R 'join " "'
 "__! ADD! ADJUST! ALWAYS! APERTURE! APPLY! ARITY!"
@@ -104,14 +123,15 @@ Get a list of people who tweeted about `#ramda` and pretty print [the
 result](https://raw.githubusercontent.com/raine/ramda-cli/media/twarc-ramda.png):
 
 ``` sh
-$ twarc --search '#ramda' | R -s 'map path [\user, \screen_name]' | R uniq -p
+$ twarc --search '#ramda' | R -s -p 'map path [\user, \screen_name]' uniq
 ```
 
 Read *Line Delimited JSON* and filter by properties by returning `undefined`
 for some objects:
 
 ```sh
-$ cat bunyan-logfile | ramda 'if-else((where-eq level: 40), identity, always void)'
+# Filter WARN log level from bunyan log format
+$ cat bunyan-logfile | R 'if-else((where-eq level: 40), identity, always void)'
 ```
 
 Use `--slurp` to read multiple JSON objects into a single list before any
@@ -122,17 +142,17 @@ $ cat text
 "foo bar"
 "test lol"
 "hello world"
-$ cat text | ramda -c --slurp identity
+$ cat text | R -c --slurp identity
 ["foo bar","test lol","hello world"]
 
-$ echo "1\n2\n3\n" | ramda -c --slurp 'map multiply 2'
+$ echo "1\n2\n3\n" | R -c --slurp 'map multiply 2'
 [2,4,6]
 ```
 
 Use `--unslurp` to output a list's items separately:
 
 ```sh
-$ echo '["hello", "world"]' | ramda --unslurp identity
+$ echo '["hello", "world"]' | R --unslurp identity
 "hello"
 "world"
 ```
@@ -140,13 +160,14 @@ $ echo '["hello", "world"]' | ramda --unslurp identity
 Use `--output-type raw` to print strings without JSON formatting:
 
 ```sh
-$ echo '"foo"\n"bar"' | ramda to-upper -o raw
+$ echo '"foo"\n"bar"' | R to-upper -o raw
 FOO
 BAR
 ```
 
 Solution to the [credit card JSON to CSV
-challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using `--output-type csv`:
+challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using
+`--output-type csv`:
 
 ```bash
 #!/usr/bin/env bash
@@ -183,6 +204,5 @@ descendant of CoffeeScript, with which it has much compatibility.
 --
 
 [![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
-
 
 [1]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
