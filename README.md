@@ -18,8 +18,8 @@ $ cat data.json | ramda [function] ...
 The idea is to [compose][1] functions into a pipeline of operations that when
 applied to given data, produces the desired output.
 
-The function is applied to a stream of JSON data read from stdin, and the
-output data is sent to standard out as stringified JSON.
+By default, the function is applied to a stream of JSON data read from stdin,
+and the output data is sent to standard out as stringified JSON.
 
 Technically, `[function]` should be a snippet of LiveScript that evaluates
 into a function. Basic JavaScript is valid LS, so if more suitable,
