@@ -40,7 +40,7 @@ Usage: ramda [options] [function] ...
   -c, --compact             compact JSON output
   -s, --slurp               read JSON objects from stdin as one big list
   -S, --unslurp             unwraps a list before output so that each item is
-                            stringified separately
+                            formatted and printed separately
   -i, --input-type String   read input from stdin as (one of: raw)
   -o, --output-type String  format output sent to stdout (one of: pretty, raw, csv, tsv)
   -p, --pretty              pretty-printed output with colors, alias to -o pretty

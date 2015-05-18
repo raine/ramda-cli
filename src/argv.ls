@@ -29,7 +29,7 @@ optionator = require 'optionator' <| do
         * option      : \unslurp
           alias       : \S
           type        : \Boolean
-          description : 'unwraps a list before output so that each item is stringified separately'
+          description : 'unwraps a list before output so that each item is formatted and printed separately'
 
         * option      : \input-type
           alias       : \i
