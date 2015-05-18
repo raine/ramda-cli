@@ -3,7 +3,7 @@
 A command-line tool for processing JSON with functional pipelines.
 
 Takes advantage of [Ramda's](http://ramdajs.com) curried, data-last API and
-[LiveScript's](http://livescript.net) terse and powerful syntax.
+[LiveScript's][livescript] terse and powerful syntax.
 
 ```sh
 npm install -g ramda-cli
@@ -52,18 +52,21 @@ Usage: ramda [options] [function] ...
 
 Aside from JSON, few other types of output are supported:
 
-- `--output-type {csv, tsv}`  
-  CSV or TSV output type can be used when pipeline evaluates to an array of
-  objects, array of arrays or when stdin consists of a stream of bare
-  objects. First object's keys will determine the headers.
+##### `--output-type pretty`
 
-- `--output-type pretty`  
-  Pretty print output stream with
-  [`util.inspect`](https://nodejs.org/api/util.html#util_util_inspect_object_options).
+Pretty print output stream with
+[`util.inspect`](https://nodejs.org/api/util.html#util_util_inspect_object_options).
 
-- `--output-type raw`  
-  With raw output type when a string value is produced, the result will be
-  written to stdout as is without any formatting.
+##### `--output-type raw`
+
+With raw output type when a string value is produced, the result will be
+written to stdout as is without any formatting.
+
+##### `--output-type {csv,tsv}`
+
+CSV or TSV output type can be used when pipeline evaluates to an array of
+objects, an array of arrays or when stdin consists of a stream of bare
+objects. First object's keys will determine the headers.
 
 ## examples
 
@@ -96,7 +99,7 @@ Get Ramda's functions in some category:
 
 ```sh
 $ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
-  R 'filter where-eq {category: \Logic}' 'pluck \name'
+  R 'filter where-eq category: \Logic' 'pluck \name'
 [
     "and",
     "both",
@@ -106,7 +109,7 @@ $ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
 ]
 ```
 
-Parentheses can be used like in JavaScript, if necessary:
+Parentheses can be used like in JavaScript, if preferred:
 
 ```sh
 $ echo [1,2,3,4,5] | R 'map(multiply(2))' 'filter(gt(__, 4))'
@@ -188,14 +191,14 @@ ramda-cli 'R.sum;' +14ms compiled code
 ramda-cli [Function: f1] +4ms evaluated to
 ```
 
-[`treis`](https://github.com/raine/treis) is available for debugging
-individual functions in the pipeline:
+[`treis`][treis] is available for debugging individual functions in the
+pipeline:
 
 <img width="370" height="99" src="https://raw.githubusercontent.com/raine/ramda-cli/media/treis-face.png" />
 
 ## why LiveScript?
 
-> [LiveScript](http://livescript.net) is a fork of Coco and an indirect
+> [LiveScript][livescript] is a fork of Coco and an indirect
 descendant of CoffeeScript, with which it has much compatibility.
 
 - Function composition operators `.`, `<<`, `>>`
@@ -208,3 +211,5 @@ descendant of CoffeeScript, with which it has much compatibility.
 [![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
 
 [1]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
+[livescript]: http://livescript.net
+[treis]: https://github.com/raine/treis
