@@ -21,12 +21,13 @@ applied to given data, produces the desired output.
 By default, the function is applied to a stream of JSON data read from stdin,
 and the output data is sent to standard out as stringified JSON.
 
-Technically, `[function]` should be a snippet of LiveScript that evaluates
+Technically, `function` should be a snippet of LiveScript that evaluates
 into a function. Basic JavaScript is valid LS, so if more suitable,
 JavaScript can be used when writing functions.
 
-If multiple `[function]` arguments are passed, they are composed in order
-from left to right, as with [`R.pipe`](http://ramdajs.com/docs/#pipe).
+If multiple `function` arguments are supplied, they are composed into a
+pipeline in  order from left to right, as with
+[`R.pipe`](http://ramdajs.com/docs/#pipe).
 
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
@@ -82,7 +83,7 @@ $ echo [1,2,3] | R 'sum' # 6
 Following is equivalent to `R.pipe( R.map(R.multiply(2)), R.sum )([1,2,3])`:
 
 ```sh
-$ echo [1,2,3] | R 'map multiply 2' sum
+$ echo [1,2,3] | R 'map multiply 2' sum # 12
 ```
 
 Reformat and check validity of JSON with [`R.identity`](http://ramdajs.com/docs/#identity):
@@ -109,6 +110,7 @@ Parentheses can be used like in JavaScript, if necessary:
 
 ```sh
 $ echo [1,2,3,4,5] | R 'map(multiply(2))' 'filter(gt(__, 4))'
+[6,8,10]
 ```
 
 You can also use use unix pipes:
@@ -173,7 +175,7 @@ challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using
 #!/usr/bin/env bash
 
 data_url=https://gist.githubusercontent.com/jorin-vogel/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
-curl $data_url | R '(filter where creditcard: (!= null)) >> map pick <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
+curl $data_url | R 'filter where creditcard: (!= null)' 'map pick <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
 ```
 
 ## debugging
