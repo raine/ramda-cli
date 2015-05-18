@@ -1,7 +1,7 @@
 VERSION = require '../package.json' .version
 
 OUTPUT_TYPES     = <[ pretty raw csv tsv ]>
-INPUT_TYPES      = <[ raw ]>
+INPUT_TYPES      = <[ raw csv tsv ]>
 format-enum-list = (.join ', ') >> ('one of: ' +)
 
 optionator = require 'optionator' <| do

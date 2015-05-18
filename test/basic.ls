@@ -186,7 +186,7 @@ describe '--unslurp' (,) ->
         done!
 
 describe '--input-type raw' (,) ->
-    it 'allows reading raw strings through stdin' (done) ->
+    it 'reads raw strings through stdin' (done) ->
         args     = <[ -i raw identity ]>
         input    = 'foo'
         expected = '"foo"\n'
@@ -208,6 +208,42 @@ describe '--input-type raw' (,) ->
         """
         output <-! run-main args, input
         output `eq` expected
+        done!
+
+describe '--input-type csv' (,) ->
+    it 'reads csv with headers into a list of objects' (done) ->
+        args  = <[ -i csv identity ]>
+        input = """
+        name,code
+        Afghanistan,AF
+        Åland Islands,AX
+        Albania,AL
+        """
+        expected = """
+        [ { "name": "Afghanistan", "code": "AF" },
+          { "name": "Åland Islands", "code": "AX" },
+          { "name": "Albania", "code": "AL" } ]
+        """
+        output <-! run-main args, input
+        output `strip-eq` expected
+        done!
+
+describe '--input-type tsv' (,) ->
+    it 'reads tsv with headers into a list of objects' (done) ->
+        args  = <[ -i tsv identity ]>
+        input = """
+        name\tcode
+        Afghanistan\tAF
+        Åland Islands\tAX
+        Albania\tAL
+        """
+        expected = """
+        [ { "name": "Afghanistan", "code": "AF" },
+          { "name": "Åland Islands", "code": "AX" },
+          { "name": "Albania", "code": "AL" } ]
+        """
+        output <-! run-main args, input
+        output `strip-eq` expected
         done!
 
 describe '--output-type raw' (,) ->

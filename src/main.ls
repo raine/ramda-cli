@@ -74,11 +74,18 @@ csv-opts-by-type = (type) ->
     | \csv => opts
     | \tsv => opts <<< delimiter: '\t'
 
-output-type-to-stream = (type) ->
+output-type-to-stream = (type, compact-json) ->
     switch type
     | \pretty       => inspect-stream!
     | \raw          => raw-output-stream!
     | <[ csv tsv ]> => csv.create-write-stream csv-opts-by-type type
+    | otherwise     => json-stringify-stream compact-json
+
+input-type-to-stream = (type) ->
+    switch type
+    | \raw          => raw-input-stream!
+    | <[ csv tsv ]> => csv csv-opts-by-type type
+    | otherwise     => JSONStream.parse!
 
 main = (process-argv, stdin, stdout, stderr) ->
     debug {argv: process-argv}
@@ -110,16 +117,14 @@ main = (process-argv, stdin, stdout, stderr) ->
         unless typeof fun is 'function'
             return die "error: evaluated into type of #{type fun} instead of Function"
 
+    if opts.input-type in <[ csv tsv ]>
+        opts.slurp = true
+
     if opts.output-type in <[ csv tsv ]>
         opts.unslurp = true
 
-    input-parser = switch
-    | opts.input-type is \raw => raw-input-stream!
-    | otherwise               => JSONStream.parse!
-
-    output-formatter = switch
-    | opts.output-type? => output-type-to-stream opts.output-type
-    | otherwise         => json-stringify-stream opts.compact
+    input-parser     = input-type-to-stream opts.input-type
+    output-formatter = output-type-to-stream opts.output-type, opts.compact
 
     stdin
         .pipe input-parser
