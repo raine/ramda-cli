@@ -166,8 +166,7 @@ Use `--output-type raw` to print strings without JSON formatting:
 
 ```sh
 $ echo '"foo"\n"bar"' | R to-upper -o raw
-FOO
-BAR
+FOOBAR
 ```
 
 Solution to the [credit card JSON to CSV

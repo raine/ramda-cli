@@ -13,7 +13,9 @@ require! 'fast-csv': csv
 require! './argv'
 debug = require 'debug' <| 'ramda-cli:main'
 
-ensure-single-newline = replace /\n*$/, '\n'
+remove-extra-newlines = (str) ->
+    if /\n$/ == str then str.replace /\n*$/, '\n' else str
+
 wrap-in-parens = (str) -> "(#str)"
 
 compile-and-eval = (code) ->
@@ -31,7 +33,7 @@ unconcat-stream = -> through.obj (chunk,, next) ->
     next!
 
 raw-output-stream = -> through.obj (chunk,, next) ->
-    this.push ensure-single-newline chunk.to-string!
+    this.push remove-extra-newlines chunk.to-string!
     next!
 
 inspect-stream = -> through.obj (chunk,, next) ->

@@ -204,36 +204,49 @@ describe '--input-type raw' (,) ->
         expected = """
         foo
         bar
-        xyz\n
+        xyz
         """
         output <-! run-main args, input
         output `eq` expected
         done!
 
 describe '--output-type raw' (,) ->
-    it 'prints strings without quotes separated by newline' (done) ->
+    it 'prints a string without quotes and without newline in the end' (done) ->
+        args     = <[ identity -o raw ]>
+        input    = '"foo"'
+        expected = 'foo'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints strings concatenated' (done) ->
         args     = <[ identity -o raw ]>
         input    = '"foo"\n"bar"'
-        expected = """
-        foo
-        bar\n
-        """
+        expected = 'foobar'
         output <-! run-main args, input
         output `eq` expected
         done!
 
-    it 'prints list of numbers separated by newline' (done) ->
+    it 'prints a list of numbers' (done) ->
         args     = <[ identity -o raw ]>
         input    = '1\n2\n3\n'
-        expected = '1\n2\n3\n'
+        expected = '123'
         output <-! run-main args, input
         output `eq` expected
         done!
 
-    it 'should remove extra newlines from end' (done) ->
+    it 'removes extra newlines from end' (done) ->
         args     = ['(+ "\\n\\n")', '-o', 'raw']
         input    = '"foo"'
         expected = 'foo\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'requires actual newlines in the data if those are needed in output' (done) ->
+        args     = ['(+ "\\n")', '-o', 'raw']
+        input    = '"foo"\n"bar"'
+        expected = 'foo\nbar\n'
         output <-! run-main args, input
         output `eq` expected
         done!
