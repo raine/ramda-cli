@@ -340,11 +340,42 @@ describe '--output-type tsv' (,) ->
         output `eq` expected
         done!
 
+describe '--file' (,) ->
+    stub-process-exit!
+
+    it 'reads function from a LiveScript file' (done) ->
+        args     = <[ -i raw -o raw -f test/data/shout.ls ]>
+        input    = 'foo'
+        expected = 'FOO!'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'reads function from a JavaScript file' (done) ->
+        args     = <[ -i raw -o raw -f test/data/capitalize.js ]>
+        input    = 'hello'
+        expected = 'Hello'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'produces an error if file does not exist' (done) ->
+        args = <[ -f does/not/exist ]>
+        output, errput <-! run-main args, ''
+        assert.match (head lines errput), /^Cannot find module .*does\/not\/exist/
+        done!
+
+    it 'produces an error if file does not export a function' (done) ->
+        args = <[ -f test/data/dummy.ls ]>
+        output, errput <-! run-main args, ''
+        errput `eq` 'error: test/data/dummy.ls does not export a function\n'
+        done!
+
 describe '--help' (,) ->
     stub-process-exit!
 
     it 'shows help' (done) ->
-        output, errput <-! run-main ['identity', '-h'], '[1,2,3]'
+        output, errput <-! run-main <[ identity -h ]>, '[1,2,3]'
         'Usage: ramda [options] [function] ...' `eq` head lines errput
         done!
 

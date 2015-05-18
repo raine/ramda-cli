@@ -37,10 +37,12 @@ http://ramdajs.com/docs/ for a full list.
 ```
 Usage: ramda [options] [function] ...
 
+  -f, --file String         read a function from a js/ls file instead of args; useful for
+                            larger scripts
   -c, --compact             compact JSON output
   -s, --slurp               read JSON objects from stdin as one big list
-  -S, --unslurp             unwraps a list before output so that each item is
-                            formatted and printed separately
+  -S, --unslurp             unwraps a list before output so that each item is formatted and
+                            printed separately
   -i, --input-type String   read input from stdin as (one of: raw)
   -o, --output-type String  format output sent to stdout (one of: pretty, raw, csv, tsv)
   -p, --pretty              pretty-printed output with colors, alias to -o pretty
@@ -178,6 +180,16 @@ challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using
 
 data_url=https://gist.githubusercontent.com/jorin-vogel/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
 curl $data_url | R 'filter where creditcard: (!= null)' 'map pick <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
+```
+
+Load function from a file with the `--file` option:
+
+```sh
+$ cat shout.js
+var R = require('ramda');
+module.exports = R.pipe(R.toUpper, R.add(R.__, '!'));
+$ echo -n 'hello world' | R -i raw --file shout.js
+"HELLO WORLD!"
 ```
 
 ## debugging

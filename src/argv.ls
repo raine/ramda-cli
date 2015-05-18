@@ -16,6 +16,11 @@ optionator = require 'optionator' <| do
         README: https://github.com/raine/ramda-cli
         """
     options: [
+        * option      : \file
+          alias       : \f
+          type        : \String
+          description : 'read a function from a js/ls file instead of args; useful for larger scripts'
+
         * option      : \compact
           alias       : \c
           type        : \Boolean

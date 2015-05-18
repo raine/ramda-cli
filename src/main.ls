@@ -11,6 +11,7 @@ require! util: {inspect}
 require! JSONStream
 require! 'fast-csv': csv
 require! './argv'
+require! path
 debug = require 'debug' <| 'ramda-cli:main'
 
 remove-extra-newlines = (str) ->
@@ -88,18 +89,26 @@ main = (process-argv, stdin, stdout, stderr) ->
     catch e then return die [argv.generate-help!, e.message] * '\n\n'
     debug opts
 
-    code = join ' >> ', map wrap-in-parens, opts._
-    debug (inspect code), 'input code'
-    if not code or opts.help
-        return die argv.generate-help!
+    if opts.file
+        try fun = require path.resolve opts.file
+        catch {message}
+            return die message
 
-    try fun = compile-and-eval code
-    catch {message}
-        return die "error: #{message}"
+        unless typeof fun is 'function'
+            return die "error: #{opts.file} does not export a function"
+    else
+        code = join ' >> ', map wrap-in-parens, opts._
+        debug (inspect code), 'input code'
+        if not code or opts.help
+            return die argv.generate-help!
 
-    debug (inspect fun), 'evaluated to'
-    unless typeof fun is 'function'
-        return die "error: evaluated into type of #{type fun} instead of Function"
+        try fun = compile-and-eval code
+        catch {message}
+            return die "error: #{message}"
+
+        debug (inspect fun), 'evaluated to'
+        unless typeof fun is 'function'
+            return die "error: evaluated into type of #{type fun} instead of Function"
 
     if opts.output-type in <[ csv tsv ]>
         opts.unslurp = true
