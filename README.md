@@ -2,7 +2,7 @@
 
 A command-line tool for processing JSON with functional pipelines.
 
-Takes advantage of [Ramda's](http://ramdajs.com) curried, data-last API and
+Utilizes [Ramda's](http://ramdajs.com) curried, data-last API and
 [LiveScript's][livescript] terse and powerful syntax.
 
 ```sh
