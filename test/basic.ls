@@ -398,7 +398,7 @@ describe '--file' (,) ->
     it 'produces an error if file does not exist' (done) ->
         args = <[ -f does/not/exist ]>
         output, errput <-! run-main args, ''
-        assert.match (head lines errput), /^Cannot find module .*does\/not\/exist/
+        assert.match (head lines errput), /Error: Cannot find module .*does\/not\/exist/
         done!
 
     it 'produces an error if file does not export a function' (done) ->

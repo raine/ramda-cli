@@ -6,7 +6,7 @@ require! vm
 require! through2: through
 require! stream: {PassThrough}
 require! 'stream-reduce'
-require! ramda: {type, apply, is-nil, append, flip, type, replace, merge, map, join}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join}: R
 require! util: {inspect}
 require! JSONStream
 require! 'fast-csv': csv
@@ -98,8 +98,8 @@ main = (process-argv, stdin, stdout, stderr) ->
 
     if opts.file
         try fun = require path.resolve opts.file
-        catch {message}
-            return die message
+        catch {stack}
+            return die stack
 
         unless typeof fun is 'function'
             return die "error: #{opts.file} does not export a function"
