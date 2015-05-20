@@ -255,7 +255,7 @@ describe '--output-type raw' (,) ->
         output `eq` expected
         done!
 
-    it 'prints strings concatenated' (done) ->
+    it 'prints a stream of strings concatenated' (done) ->
         args     = <[ identity -o raw ]>
         input    = '"foo"\n"bar"'
         expected = 'foobar'
@@ -263,7 +263,7 @@ describe '--output-type raw' (,) ->
         output `eq` expected
         done!
 
-    it 'prints a list of numbers' (done) ->
+    it 'prints a stream of numbers concatenated' (done) ->
         args     = <[ identity -o raw ]>
         input    = '1\n2\n3\n'
         expected = '123'
@@ -283,6 +283,18 @@ describe '--output-type raw' (,) ->
         args     = ['(+ "\\n")', '-o', 'raw']
         input    = '"foo"\n"bar"'
         expected = 'foo\nbar\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints a list\'s items separately' (done) ->
+        args     = <[ identity -o raw ]>
+        input    = '["foo", "bar", "xyz"]'
+        expected = """
+        foo
+        bar
+        xyz\n
+        """
         output <-! run-main args, input
         output `eq` expected
         done!

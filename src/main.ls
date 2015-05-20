@@ -6,7 +6,7 @@ require! vm
 require! through2: through
 require! stream: {PassThrough}
 require! 'stream-reduce'
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each}: R
 require! util: {inspect}
 require! JSONStream
 require! 'fast-csv': csv
@@ -29,12 +29,14 @@ compile-and-eval = (code) ->
 concat-stream   = -> stream-reduce flip(append), []
 unconcat-stream = -> through.obj (chunk,, next) ->
     switch type chunk
-    | \Array    => chunk.for-each ~> this.push it
+    | \Array    => for-each this~push, chunk
     | otherwise => this.push chunk
     next!
 
 raw-output-stream = -> through.obj (chunk,, next) ->
-    this.push remove-extra-newlines chunk.to-string!
+    switch type chunk
+    | \Array    => for-each (~> this.push "#it\n"), chunk
+    | otherwise => this.push remove-extra-newlines chunk.to-string!
     next!
 
 inspect-stream = -> through.obj (chunk,, next) ->
