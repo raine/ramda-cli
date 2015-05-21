@@ -10,7 +10,7 @@ HELP =
     """
     Usage: ramda [options] [function] ...
 
-      -f, --file String  read a function from a js/ls file instead of args; useful for
+      -f, --file         read a function from a js/ls file instead of args; useful for
                          larger scripts
       -c, --compact      compact JSON output
       -s, --slurp        read JSON objects from stdin as one big list
