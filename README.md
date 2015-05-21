@@ -9,6 +9,8 @@ A command-line tool for processing JSON with functional pipelines.
 Utilizes [Ramda's][ramda] curried, data-last API and
 [LiveScript's][livescript] terse and powerful syntax.
 
+[**Examples**](#examples)
+
 ## install
 
 ```sh
@@ -94,8 +96,6 @@ $ echo 1 | R 'add 2' # 3
 $ echo [1,2,3] | R sum # 6
 ```
 
-Following is equivalent to `R.pipe( R.map(R.multiply(2)), R.sum )([1,2,3])`:
-
 ```sh
 $ echo [1,2,3] | R 'map multiply 2' sum # 12
 ```
@@ -130,19 +130,16 @@ $ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
 ]
 ```
 
+```sh
+$ cat latest.json | R -r 'pluck \name' 'take 7' 'map to-upper >> (+ \!)' 'join " "'
+__! ADD! ADJUST! ALWAYS! APERTURE! APPLY! ARITY!
+```
+
 Parentheses can be used like in JavaScript, if preferred:
 
 ```sh
 $ echo [1,2,3,4,5] | R 'map(multiply(2))' 'filter(gt(__, 4))'
 [6,8,10]
-```
-
-You can also use use unix pipes:
-
-```sh
-$ echo [[1,2,3],[4,5,6]] | R unnest | R sum # 21
-$ cat latest.json | R 'pluck \name' | R 'take 7' | R 'map to-upper >> (+ \!)' | R 'join " "'
-"__! ADD! ADJUST! ALWAYS! APERTURE! APPLY! ARITY!"
 ```
 
 Get a list of people who tweeted about `#ramda` and pretty print [the
@@ -214,6 +211,17 @@ $ cat countries.json | R 'take 3' -o table
 ├───────────────┼──────┤
 │ Albania       │ AL   │
 └───────────────┴──────┘
+```
+
+```sh
+$ npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table
+┌───────────────┬────────┐
+│ data.maybe    │ 1.2.0  │
+├───────────────┼────────┤
+│ data.task     │ 3.0.0  │
+├───────────────┼────────┤
+│ es5-ext       │ 0.10.7 │
+└───────────────┴────────┘
 ```
 
 Load function from a file with the `--file` option:
