@@ -1,15 +1,11 @@
 #!/usr/bin/env lsc
 
-require! livescript
-require! vm
+require! {livescript, vm, JSONStream, path, 'stream-reduce'}
 require! through2: through
 require! stream: {PassThrough}
-require! 'stream-reduce'
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each}: R
 require! util: {inspect}
-require! JSONStream
 require! './argv'
-require! path
 debug = require 'debug' <| 'ramda-cli:main'
 
 remove-extra-newlines = (str) ->
