@@ -1,6 +1,5 @@
 #!/usr/bin/env lsc
 
-require! treis
 require! livescript
 require! vm
 require! through2: through
@@ -21,7 +20,8 @@ wrap-in-parens = (str) -> "(#str)"
 compile-and-eval = (code) ->
     compiled = livescript.compile code, {+bare, -header}
     debug (inspect compiled), 'compiled code'
-    sandbox = {R, treis} <<< R
+    sandbox = {R} <<< R
+    sandbox.treis = -> apply (require 'treis'), &
     ctx = vm.create-context sandbox
     vm.run-in-context compiled, ctx
 
