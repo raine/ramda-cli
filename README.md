@@ -1,12 +1,12 @@
 # ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli)
 
 ```sh
-$ cat people.json | R 'pluck \name' 'filter (.starts-with \B)'
+$ cat people.json | R 'pluck \name' 'filter (.starts-with \Rob)'
 ```
 
 A command-line tool for processing JSON with functional pipelines.
 
-Utilizes [Ramda's](http://ramdajs.com) curried, data-last API and
+Utilizes [Ramda's][ramda] curried, data-last API and
 [LiveScript's][livescript] terse and powerful syntax.
 
 ## install
@@ -64,8 +64,7 @@ Aside from JSON, few other types of output are supported:
 
 ##### `--output-type pretty`
 
-Pretty print output stream with
-[`util.inspect`](https://nodejs.org/api/util.html#util_util_inspect_object_options).
+Print pretty output.
 
 ##### `--output-type raw`
 
@@ -209,7 +208,7 @@ $ echo -n 'hello world' | R -i raw --file shout.js
 
 ## debugging
 
-You can turn on the debug logging with `export DEBUG=ramda-cli:*`.
+You can turn on the debug output with `-v, --verbose` flag.
 
 ```sh
 ramda-cli 'R.sum' +0ms input code
@@ -239,3 +238,4 @@ descendant of CoffeeScript, with which it has much compatibility.
 [1]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
 [livescript]: http://livescript.net
 [treis]: https://github.com/raine/treis
+[ramda]: http://ramdajs.com
