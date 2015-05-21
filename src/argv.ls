@@ -20,6 +20,7 @@ HELP =
       -o, --output-type  format output sent to stdout (#{format-enum-list OUTPUT_TYPES})
       -p, --pretty       pretty-printed output with colors, alias to -o pretty
       -r, --raw-output   raw output, alias to -o raw
+          --version      print version
       -h, --help         displays help
 
     If multiple functions are given as strings, they are composed into a

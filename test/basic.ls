@@ -20,7 +20,7 @@ run-main = (args, input, cb) ->
         .on \data, (data) -> cb null, data.to-string!
 
     main ([,,] ++ args), stdin, stdout, stderr
-    stdin.write input
+    stdin.write input if input
     stdin.end!
 
 describe 'basic' (,) ->
@@ -425,6 +425,14 @@ describe '--help' (,) ->
     it 'shows help' (done) ->
         output, errput <-! run-main <[ identity -h ]>, '[1,2,3]'
         'Usage: ramda [options] [function] ...' `eq` head lines errput
+        done!
+
+describe '--version' (,) ->
+    stub-process-exit!
+
+    it 'shows version' (done) ->
+        output, errput <-! run-main <[ --version ]>, null
+        (require '../package.json' .version) `eq` head lines errput
         done!
 
 function stub-process-exit

@@ -94,6 +94,9 @@ main = (process-argv, stdin, stdout, stderr) ->
     catch e then return die [argv.help!, e.message] * '\n\n'
     debug opts
 
+    if opts.help    then return die argv.help!
+    if opts.version then return die <| require '../package.json' .version
+
     if opts.file
         try fun = require path.resolve opts.file
         catch {stack}
@@ -104,8 +107,7 @@ main = (process-argv, stdin, stdout, stderr) ->
     else
         code = join ' >> ', map wrap-in-parens, opts._
         debug (inspect code), 'input code'
-        if not code or opts.help
-            return die argv.help!
+        if not code then return die argv.help!
 
         try fun = compile-and-eval code
         catch {message}
