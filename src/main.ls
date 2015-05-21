@@ -9,7 +9,6 @@ require! 'stream-reduce'
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each}: R
 require! util: {inspect}
 require! JSONStream
-require! 'fast-csv': csv
 require! './argv'
 require! path
 debug = require 'debug' <| 'ramda-cli:main'
@@ -80,13 +79,13 @@ output-type-to-stream = (type, compact-json) ->
     switch type
     | \pretty       => inspect-stream!
     | \raw          => raw-output-stream!
-    | <[ csv tsv ]> => csv.create-write-stream csv-opts-by-type type
+    | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts-by-type type
     | otherwise     => json-stringify-stream compact-json
 
 input-type-to-stream = (type) ->
     switch type
     | \raw          => raw-input-stream!
-    | <[ csv tsv ]> => csv csv-opts-by-type type
+    | <[ csv tsv ]> => (require 'fast-csv') csv-opts-by-type type
     | otherwise     => JSONStream.parse!
 
 main = (process-argv, stdin, stdout, stderr) ->
