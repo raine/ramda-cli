@@ -43,6 +43,7 @@ inspect-stream = -> through.obj (chunk,, next) ->
     next!
 
 debug-stream = (debug, object-mode) ->
+    unless debug.enabled then return PassThrough {object-mode}
     (if object-mode then through~obj else through)
     <| (chunk,, next) ->
         debug {chunk: chunk.to-string!}
