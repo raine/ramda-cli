@@ -80,15 +80,12 @@ objects. First object's keys will determine the headers.
 
 In the examples, `ramda` is aliased to `R`.
 
-[`R.add`](http://ramdajs.com/docs/#add) partially applied with `2` is applied
-to `1` from stdin:
-
 ```sh
 $ echo 1 | R 'add 2' # 3
 ```
 
 ```sh
-$ echo [1,2,3] | R 'sum' # 6
+$ echo [1,2,3] | R sum # 6
 ```
 
 Following is equivalent to `R.pipe( R.map(R.multiply(2)), R.sum )([1,2,3])`:
