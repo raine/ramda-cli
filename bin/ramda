@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+if (process.argv.indexOf('-v') >= 0 ||
+    process.argv.indexOf('--verbose') >= 0) {
+  require('debug').enable('ramda-cli:*');
+}
+
 require('debug')('ramda-cli:bin')('init');
 require('../lib/main')(
   process.argv,

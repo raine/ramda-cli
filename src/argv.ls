@@ -20,6 +20,7 @@ HELP =
       -o, --output-type  format output sent to stdout (#{format-enum-list OUTPUT_TYPES})
       -p, --pretty       pretty-printed output with colors, alias to -o pretty
       -r, --raw-output   raw output, alias to -o raw
+      -v, --verbose      print debugging information
           --version      print version
       -h, --help         displays help
 
@@ -39,6 +40,7 @@ parse-aliases = pipe do
 export parse = (argv) ->
     args = camelize minimist (argv.slice 2),
         string: <[ file input-type output-type ]>
+        boolean: <[ compact slurp unslurp pretty raw-output verbose version ]>
         alias: parse-aliases HELP
 
     args._ = args.''; delete args.''
