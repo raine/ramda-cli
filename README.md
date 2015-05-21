@@ -1,12 +1,18 @@
 # ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli)
 
+```sh
+$ cat people.json | R 'pluck \name' 'filter (.starts-with \B)'
+```
+
 A command-line tool for processing JSON with functional pipelines.
 
 Utilizes [Ramda's](http://ramdajs.com) curried, data-last API and
 [LiveScript's][livescript] terse and powerful syntax.
 
+## install
+
 ```sh
-npm install -g ramda-cli
+$ npm install -g ramda-cli
 ```
 
 ## usage
@@ -97,17 +103,27 @@ Reformat and check validity of JSON with [`R.identity`](http://ramdajs.com/docs/
 $ cat data.json | R identity
 ```
 
+Get a list of people whose first name starts with "B":
+
+```sh
+$ cat people.json | R 'pluck \name' 'filter -> it.0 is \B' -o raw
+Brando Jacobson
+Betsy Bayer
+Beverly Gleichner
+Beryl Lindgren
+```
+
 Get Ramda's functions in some category:
 
 ```sh
 $ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
   R 'filter where-eq category: \Logic' 'pluck \name'
 [
-    "and",
-    "both",
-    "complement",
-    "cond",
-    ...
+  "and",
+  "both",
+  "complement",
+  "cond",
+  ...
 ]
 ```
 
@@ -179,7 +195,7 @@ challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using
 #!/usr/bin/env bash
 
 data_url=https://gist.githubusercontent.com/jorin-vogel/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
-curl $data_url | R 'filter where creditcard: (!= null)' 'map pick <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
+curl $data_url | R 'filter where creditcard: (!= null)' 'project <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
 ```
 
 Load function from a file with the `--file` option:
@@ -215,7 +231,7 @@ descendant of CoffeeScript, with which it has much compatibility.
 - Function composition operators `.`, `<<`, `>>`
 - Pipes for nested function calls `|>`
 - Partial application with `_`
-- It's awesome.
+- Implicit access `(.length)`
 
 --
 
