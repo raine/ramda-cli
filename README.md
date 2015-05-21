@@ -43,17 +43,19 @@ http://ramdajs.com/docs/ for a full list.
 ```
 Usage: ramda [options] [function] ...
 
-  -f, --file String         read a function from a js/ls file instead of args; useful
-                            for larger scripts
-  -c, --compact             compact JSON output
-  -s, --slurp               read JSON objects from stdin as one big list
-  -S, --unslurp             unwraps a list before output so that each item is
-                            formatted and printed separately
-  -i, --input-type String   read input from stdin as (one of: raw, csv, tsv)
-  -o, --output-type String  format output sent to stdout (one of: pretty, raw, csv, tsv)
-  -p, --pretty              pretty-printed output with colors, alias to -o pretty
-  -r, --raw-output          raw output, alias to -o raw
-  -h, --help                displays help
+  -f, --file         read a function from a js/ls file instead of args; useful for
+                     larger scripts
+  -c, --compact      compact JSON output
+  -s, --slurp        read JSON objects from stdin as one big list
+  -S, --unslurp      unwraps a list before output so that each item is formatted and
+                     printed separately
+  -i, --input-type   read input from stdin as (one of: raw, csv, tsv)
+  -o, --output-type  format output sent to stdout (one of: pretty, raw, csv, tsv)
+  -p, --pretty       pretty-printed output with colors, alias to -o pretty
+  -r, --raw-output   raw output, alias to -o raw
+  -v, --verbose      print debugging information
+      --version      print version
+  -h, --help         displays help
 ```
 
 ## output types
