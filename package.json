@@ -18,10 +18,11 @@
   "license": "ISC",
   "dependencies": {
     "JSONStream": "^1.0.3",
+    "camelize": "^1.0.0",
     "debug": "^2.2.0",
     "fast-csv": "^0.6.0",
     "livescript": "^1.4.0",
-    "optionator": "^0.6.0",
+    "minimist": "^1.1.1",
     "ramda": "^0.14.0",
     "stream-reduce": "^1.0.3",
     "through2": "^0.6.5",

@@ -1,6 +1,5 @@
 #!/usr/bin/env lsc
 
-require! treis
 require! livescript
 require! vm
 require! through2: through
@@ -9,7 +8,6 @@ require! 'stream-reduce'
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each}: R
 require! util: {inspect}
 require! JSONStream
-require! 'fast-csv': csv
 require! './argv'
 require! path
 debug = require 'debug' <| 'ramda-cli:main'
@@ -22,7 +20,8 @@ wrap-in-parens = (str) -> "(#str)"
 compile-and-eval = (code) ->
     compiled = livescript.compile code, {+bare, -header}
     debug (inspect compiled), 'compiled code'
-    sandbox = {R, treis} <<< R
+    sandbox = {R} <<< R
+    sandbox.treis = -> apply (require 'treis'), &
     ctx = vm.create-context sandbox
     vm.run-in-context compiled, ctx
 
@@ -44,6 +43,7 @@ inspect-stream = -> through.obj (chunk,, next) ->
     next!
 
 debug-stream = (debug, object-mode) ->
+    unless debug.enabled then return PassThrough {object-mode}
     (if object-mode then through~obj else through)
     <| (chunk,, next) ->
         debug {chunk: chunk.to-string!}
@@ -80,13 +80,13 @@ output-type-to-stream = (type, compact-json) ->
     switch type
     | \pretty       => inspect-stream!
     | \raw          => raw-output-stream!
-    | <[ csv tsv ]> => csv.create-write-stream csv-opts-by-type type
+    | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts-by-type type
     | otherwise     => json-stringify-stream compact-json
 
 input-type-to-stream = (type) ->
     switch type
     | \raw          => raw-input-stream!
-    | <[ csv tsv ]> => csv csv-opts-by-type type
+    | <[ csv tsv ]> => (require 'fast-csv') csv-opts-by-type type
     | otherwise     => JSONStream.parse!
 
 main = (process-argv, stdin, stdout, stderr) ->
@@ -95,7 +95,7 @@ main = (process-argv, stdin, stdout, stderr) ->
     die       = log-error >> -> process.exit 1
 
     try opts = argv.parse process-argv
-    catch e then return die [argv.generate-help!, e.message] * '\n\n'
+    catch e then return die [argv.help!, e.message] * '\n\n'
     debug opts
 
     if opts.file
@@ -109,7 +109,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         code = join ' >> ', map wrap-in-parens, opts._
         debug (inspect code), 'input code'
         if not code or opts.help
-            return die argv.generate-help!
+            return die argv.help!
 
         try fun = compile-and-eval code
         catch {message}
