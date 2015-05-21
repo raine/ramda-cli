@@ -2,7 +2,7 @@ require! minimist
 require! camelize
 require! ramda: {map, split, match: match-str, pipe, replace, from-pairs}
 
-OUTPUT_TYPES     = <[ pretty raw csv tsv ]>
+OUTPUT_TYPES     = <[ pretty raw csv tsv table ]>
 INPUT_TYPES      = <[ raw csv tsv ]>
 format-enum-list = (.join ', ') >> ('one of: ' +)
 

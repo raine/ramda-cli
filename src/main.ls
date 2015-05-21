@@ -66,6 +66,12 @@ raw-input-stream = -> through.obj (chunk,, next) ->
     this.push chunk.to-string!
     next!
 
+table-output-stream = ->
+    require! './format-table'
+    through.obj (chunk,, next) ->
+        this.push "#{format-table chunk}\n"
+        next!
+
 csv-opts-by-type = (type) ->
     opts = headers: true
     switch type
@@ -77,6 +83,7 @@ output-type-to-stream = (type, compact-json) ->
     | \pretty       => inspect-stream!
     | \raw          => raw-output-stream!
     | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts-by-type type
+    | \table        => table-output-stream!
     | otherwise     => json-stringify-stream compact-json
 
 input-type-to-stream = (type) ->

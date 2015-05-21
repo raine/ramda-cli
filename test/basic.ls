@@ -2,6 +2,7 @@ require! '../src/main'
 require! stream
 require! sinon
 require! 'concat-stream'
+require! 'strip-ansi'
 require! ramda: {repeat, join, flip, split, head}
 {called-with} = sinon.assert
 
@@ -386,6 +387,29 @@ describe '--output-type tsv' (,) ->
         """
         output <-! run-main args, input
         output `eq` expected
+        done!
+
+describe '--output-type table' (,) ->
+    it 'prints a table' (done) ->
+        args  = <[ identity -o table ]>
+        input = """
+        [ { "name": "Afghanistan", "code": "AF" },
+          { "name": "Åland Islands", "code": "AX" },
+          { "name": "Albania", "code": "AL" } ]
+        """
+        expected = """
+        ┌───────────────┬──────┐
+        │ name          │ code │
+        ├───────────────┼──────┤
+        │ Afghanistan   │ AF   │
+        ├───────────────┼──────┤
+        │ Åland Islands │ AX   │
+        ├───────────────┼──────┤
+        │ Albania       │ AL   │
+        └───────────────┴──────┘\n
+        """
+        output <-! run-main args, input
+        (strip-ansi output) `eq` expected
         done!
 
 describe '--file' (,) ->

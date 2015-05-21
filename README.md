@@ -50,7 +50,7 @@ Usage: ramda [options] [function] ...
   -S, --unslurp      unwraps a list before output so that each item is formatted and
                      printed separately
   -i, --input-type   read input from stdin as (one of: raw, csv, tsv)
-  -o, --output-type  format output sent to stdout (one of: pretty, raw, csv, tsv)
+  -o, --output-type  format output sent to stdout (one of: pretty, raw, csv, tsv, table)
   -p, --pretty       pretty-printed output with colors, alias to -o pretty
   -r, --raw-output   raw output, alias to -o raw
   -v, --verbose      print debugging information
@@ -76,6 +76,11 @@ written to stdout as is without any formatting.
 CSV or TSV output type can be used when pipeline evaluates to an array of
 objects, an array of arrays or when stdin consists of a stream of bare
 objects. First object's keys will determine the headers.
+
+##### `--output-type table`
+
+Print ~any shape of data as a table. If used with a list of objects, uses the
+first object's keys as headers. See an example below.
 
 ## examples
 
@@ -194,6 +199,21 @@ challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using
 
 data_url=https://gist.githubusercontent.com/jorin-vogel/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
 curl $data_url | R 'filter where creditcard: (!= null)' 'project <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
+```
+
+Print a table with `--output-type table`:
+
+```sh
+$ cat countries.json | R 'take 3' -o table
+┌───────────────┬──────┐
+│ name          │ code │
+├───────────────┼──────┤
+│ Afghanistan   │ AF   │
+├───────────────┼──────┤
+│ Åland Islands │ AX   │
+├───────────────┼──────┤
+│ Albania       │ AL   │
+└───────────────┴──────┘
 ```
 
 Load function from a file with the `--file` option:
