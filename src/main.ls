@@ -95,7 +95,7 @@ main = (process-argv, stdin, stdout, stderr) ->
     die       = log-error >> -> process.exit 1
 
     try opts = argv.parse process-argv
-    catch e then return die [argv.generate-help!, e.message] * '\n\n'
+    catch e then return die [argv.help!, e.message] * '\n\n'
     debug opts
 
     if opts.file
@@ -109,7 +109,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         code = join ' >> ', map wrap-in-parens, opts._
         debug (inspect code), 'input code'
         if not code or opts.help
-            return die argv.generate-help!
+            return die argv.help!
 
         try fun = compile-and-eval code
         catch {message}
