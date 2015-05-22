@@ -195,7 +195,7 @@ describe '--input-type raw' (,) ->
         output `eq` expected
         done!
 
-    it 'works together with -o raw as expected' (done) ->
+    it 'works together with -o raw' (done) ->
         args  = <[ -i raw -o raw identity ]>
         input = """
         foo
@@ -203,9 +203,23 @@ describe '--input-type raw' (,) ->
         xyz
         """
         expected = """
+        foobarxyz
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'reads lines separately' (done) ->
+        args  = <[ -i raw identity ]>
+        input = """
         foo
         bar
         xyz
+        """
+        expected = """
+        "foo"
+        "bar"
+        "xyz"\n
         """
         output <-! run-main args, input
         output `eq` expected

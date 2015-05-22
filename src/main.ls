@@ -1,6 +1,6 @@
 #!/usr/bin/env lsc
 
-require! {livescript, vm, JSONStream, path, 'stream-reduce'}
+require! {livescript, vm, JSONStream, path, 'stream-reduce', split2}
 require! through2: through
 require! stream: {PassThrough}
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each}: R
@@ -61,10 +61,6 @@ map-stream = (func) -> through.obj (chunk,, next) ->
     this.push val unless is-nil val
     next!
 
-raw-input-stream = -> through.obj (chunk,, next) ->
-    this.push chunk.to-string!
-    next!
-
 table-output-stream = ->
     require! './format-table'
     through.obj (chunk,, next) ->
@@ -87,7 +83,7 @@ output-type-to-stream = (type, compact-json) ->
 
 input-type-to-stream = (type) ->
     switch type
-    | \raw          => raw-input-stream!
+    | \raw          => split2!
     | <[ csv tsv ]> => (require 'fast-csv') csv-opts-by-type type
     | otherwise     => JSONStream.parse!
 

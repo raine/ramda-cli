@@ -25,6 +25,7 @@
     "livescript": "^1.4.0",
     "minimist": "^1.1.1",
     "ramda": "^0.14.0",
+    "split2": "^0.2.1",
     "stream-reduce": "^1.0.3",
     "through2": "^0.6.5",
     "treis": "^2.3.9"
