@@ -9,7 +9,7 @@ A command-line tool for processing JSON with functional pipelines.
 Utilizes [Ramda's][ramda] curried, data-last API and
 [LiveScript's][livescript] terse and powerful syntax.
 
-[**Examples**](#examples)
+[**Examples**](#examples) | [**Tutorial**][tutorial]
 
 ## install
 
@@ -267,3 +267,4 @@ descendant of CoffeeScript, with which it has much compatibility.
 [livescript]: http://livescript.net
 [treis]: https://github.com/raine/treis
 [ramda]: http://ramdajs.com
+[tutorial]: https://gist.github.com/raine/d12d0ec3e72b2945510b
