@@ -9,7 +9,8 @@ A command-line tool for processing JSON with functional pipelines.
 Utilizes [Ramda's][ramda] curried, data-last API and
 [LiveScript's][livescript] terse and powerful syntax.
 
-[**Examples**](#examples) | [**Tutorial**][tutorial]
+- [Examples](#examples)
+- [Tutorial: Using ramda-cli to process and display data from GitHub API][tutorial]
 
 ## install
 
