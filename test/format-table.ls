@@ -3,7 +3,7 @@ require! 'strip-ansi'
 format = strip-ansi << format-table
 
 describe 'format-table' (,) ->
-    it 'formats a table with first object\'s keys as header' ->
+    it 'formats a list of objects with first object\'s keys as header' ->
         objs =
             * name: 'Afghanistan', code: 'AF'
             * name: 'Åland Islands', code: 'AX'
