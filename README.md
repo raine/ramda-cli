@@ -1,7 +1,7 @@
 # ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli)
 
 ```sh
-$ cat people.json | R 'pluck \name' 'filter (.starts-with \Rob)'
+$ cat people.json | R 'pluck \name' 'filter -> it.starts-with \Rob'
 ```
 
 A command-line tool for processing JSON with functional pipelines.
@@ -90,14 +90,11 @@ first object's keys as headers. See an example below.
 In the examples, `ramda` is aliased to `R`.
 
 ```sh
-$ echo 1 | R 'add 2' # 3
-```
-
-```sh
 $ echo [1,2,3] | R sum # 6
 ```
 
 ```sh
+# Multiply each value by 2 and sum them
 $ echo [1,2,3] | R 'map multiply 2' sum # 12
 ```
 
@@ -110,7 +107,7 @@ $ cat data.json | R identity
 Get a list of people whose first name starts with "B":
 
 ```sh
-$ cat people.json | R 'pluck \name' 'filter -> it.0 is \B' -o raw
+$ cat people.json | R 'pluck \name' 'filter (.0 is \B)' -o raw
 Brando Jacobson
 Betsy Bayer
 Beverly Gleichner
@@ -139,8 +136,8 @@ __! ADD! ADJUST! ALWAYS! APERTURE! APPLY! ARITY!
 Parentheses can be used like in JavaScript, if preferred:
 
 ```sh
-$ echo [1,2,3,4,5] | R 'map(multiply(2))' 'filter(gt(__, 4))'
-[6,8,10]
+$ echo [1,2,3,4,5] | R 'map(multiply(2))'
+[2,4,6,8,10]
 ```
 
 Get a list of people who tweeted about `#ramda` and pretty print [the
@@ -213,6 +210,8 @@ $ cat countries.json | R 'take 3' -o table
 │ Albania       │ AL   │
 └───────────────┴──────┘
 ```
+
+List project's dependencies in a table:
 
 ```sh
 $ npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table
