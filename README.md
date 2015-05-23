@@ -1,7 +1,7 @@
 # ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli)
 
 ```sh
-$ cat people.json | R 'pluck \name' 'filter -> it.starts-with \Rob'
+cat people.json | R 'pluck \name' 'filter -> it.starts-with \Rob'
 ```
 
 A command-line tool for processing JSON with functional pipelines.
@@ -15,13 +15,13 @@ Utilizes [Ramda's][ramda] curried, data-last API and
 ## install
 
 ```sh
-$ npm install -g ramda-cli
+npm install -g ramda-cli
 ```
 
 ## usage
 
 ```sh
-$ cat data.json | ramda [function] ...
+cat data.json | ramda [function] ...
 ```
 
 The idea is to [compose][1] functions into a pipeline of operations that when
@@ -90,73 +90,62 @@ first object's keys as headers. See an example below.
 In the examples, `ramda` is aliased to `R`.
 
 ```sh
-$ echo [1,2,3] | R sum # 6
+# Sum a list of numbers in JSON
+echo [1,2,3] | R 'sum'
+6
+
+# Multiply each value by 2
+echo [1,2,3] | R 'map multiply 2'
+[2,4,6]
+
+# Parentheses can be used like in JavaScript, if so preferred
+echo [1,2,3] | R 'map(multiply(2))'
+[2,4,6]
 ```
 
-```sh
-# Multiply each value by 2 and sum them
-$ echo [1,2,3] | R 'map multiply 2' sum # 12
-```
+> Ramda functions used:
+> [`sum`](http://ramdajs.com/docs/#sum),
+> [`map`](http://ramdajs.com/docs/#map),
+> [`multiply`](http://ramdajs.com/docs/#multiply)
 
-Reformat and check validity of JSON with [`R.identity`](http://ramdajs.com/docs/#identity):
-
-```sh
-$ cat data.json | R identity
-```
-
-Get a list of people whose first name starts with "B":
+##### Get a list of people whose first name starts with "B"
 
 ```sh
-$ cat people.json | R 'pluck \name' 'filter (.0 is \B)' -o raw
+cat people.json | R 'pluck \name' 'filter (name) -> name.0 is \B)' -o raw
 Brando Jacobson
 Betsy Bayer
 Beverly Gleichner
 Beryl Lindgren
 ```
 
-Get Ramda's functions in some category:
+> Ramda functions used:
+> [`pluck`](http://ramdajs.com/docs/#pluck),
+> [`filter`](http://ramdajs.com/docs/#filter)
+
+##### List versions of npm module with dates formatted with [`timeago`](https://www.npmjs.com/package/timeago)
 
 ```sh
-$ curl -s http://raine.github.io/ramda-json-docs/latest.json | \
-  R 'filter where-eq category: \Logic' 'pluck \name'
-[
-  "and",
-  "both",
-  "complement",
-  "cond",
-  ...
-]
+npm view ramda --json | R \
+  'prop \time' 'to-pairs' \
+  'map -> version: it.0, time: require("timeago")(it.1)' \
+  -o tsv | column -t -s $'\t'
+...
+0.12.0    2 months ago
+0.13.0    2 months ago
+0.14.0    12 days ago
 ```
 
-```sh
-$ cat latest.json | R -r 'pluck \name' 'take 7' 'map to-upper >> (+ \!)' 'join " "'
-__! ADD! ADJUST! ALWAYS! APERTURE! APPLY! ARITY!
-```
-
-Parentheses can be used like in JavaScript, if preferred:
-
-```sh
-$ echo [1,2,3,4,5] | R 'map(multiply(2))'
-[2,4,6,8,10]
-```
-
-Get a list of people who tweeted about `#ramda` and pretty print [the
-result](https://raw.githubusercontent.com/raine/ramda-cli/media/twarc-ramda.png):
+##### Search twitter for people who tweeted about ramda and pretty print [the result](https://raw.githubusercontent.com/raine/ramda-cli/media/twarc-ramda.png)
 
 ``` sh
-$ twarc --search '#ramda' | R -s -p 'map path [\user, \screen_name]' uniq
+twarc.py --search '#ramda' | R -s -p 'map path [\user, \screen_name]' uniq
 ```
 
-Read *Line Delimited JSON* and filter by properties by returning `undefined`
-for some objects:
+> Ramda functions used:
+> [`map`](http://ramdajs.com/docs/#map),
+> [`path`](http://ramdajs.com/docs/#path)
 
-```sh
-# Filter WARN log level from bunyan log format
-$ cat bunyan-logfile | R 'if-else((where-eq level: 40), identity, always void)'
-```
-
-Use `--slurp` to read multiple JSON objects into a single list before any
-operations:
+##### Use `--slurp` to read multiple JSON objects into a single list before any operations
 
 ```sh
 $ cat text
@@ -165,41 +154,24 @@ $ cat text
 "hello world"
 $ cat text | R -c --slurp identity
 ["foo bar","test lol","hello world"]
-
-$ echo "1\n2\n3\n" | R -c --slurp 'map multiply 2'
-[2,4,6]
 ```
 
-Use `--unslurp` to output a list's items separately:
-
-```sh
-$ echo '["hello", "world"]' | R --unslurp identity
-"hello"
-"world"
-```
-
-Use `--output-type raw` to print strings without JSON formatting:
-
-```sh
-$ echo '"foo"\n"bar"' | R to-upper -o raw
-FOOBAR
-```
-
-Solution to the [credit card JSON to CSV
-challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using
-`--output-type csv`:
+##### Solution to the [credit card JSON to CSV challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using `--output-type csv`
 
 ```bash
 #!/usr/bin/env bash
 
 data_url=https://gist.githubusercontent.com/jorin-vogel/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
-curl $data_url | R 'filter where creditcard: (!= null)' 'project <[name creditcard]>' -o csv > `date "+%Y%m%d"`.csv
+curl $data_url | R \
+  'filter where creditcard: (!= null)' `# filter out those who don't have credit card` \
+  'project [\name, \creditcard]'       `# pick name and creditcard fields from all objects` \
+  -o csv > `date "+%Y%m%d"`.csv        `# print output as csv to a file named as the current date` 
 ```
 
-Print a table with `--output-type table`:
+##### Print a table with `--output-type table`
 
 ```sh
-$ cat countries.json | R 'take 3' -o table
+cat countries.json | R 'take 3' -o table
 ┌───────────────┬──────┐
 │ name          │ code │
 ├───────────────┼──────┤
@@ -211,10 +183,14 @@ $ cat countries.json | R 'take 3' -o table
 └───────────────┴──────┘
 ```
 
-List project's dependencies in a table:
+> Ramda functions used:
+> [`take`](http://ramdajs.com/docs/#take)  
+> Data: [countries.json](https://gist.github.com/raine/4756f6fc803a32663b3f)
+
+##### List a project's dependencies in a table
 
 ```sh
-$ npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table
+npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table
 ┌───────────────┬────────┐
 │ data.maybe    │ 1.2.0  │
 ├───────────────┼────────┤
@@ -224,7 +200,14 @@ $ npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table
 └───────────────┴────────┘
 ```
 
-Load function from a file with the `--file` option:
+> Ramda functions used:
+> [`filter`](http://ramdajs.com/docs/#filter),
+> [`where`](http://ramdajs.com/docs/#where),
+> [`project`](http://ramdajs.com/docs/#project),
+> [`mapObj`](http://ramdajs.com/docs/#mapObj),
+> [`prop`](http://ramdajs.com/docs/#prop)
+
+##### Load function from a file with the `--file` option
 
 ```sh
 $ cat shout.js
@@ -267,4 +250,4 @@ descendant of CoffeeScript, with which it has much compatibility.
 [livescript]: http://livescript.net
 [treis]: https://github.com/raine/treis
 [ramda]: http://ramdajs.com
-[tutorial]: https://gist.github.com/raine/d12d0ec3e72b2945510b
+[tutorial]: https://gistlog.co/raine/d12d0ec3e72b2945510b
