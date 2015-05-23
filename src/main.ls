@@ -3,11 +3,12 @@
 require! {livescript, vm, JSONStream, path, 'stream-reduce', split2}
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head}: R
 require! util: {inspect}
 require! './argv'
 debug = require 'debug' <| 'ramda-cli:main'
 
+lines = split '\n'
 remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
 
@@ -101,8 +102,10 @@ main = (process-argv, stdin, stdout, stderr) ->
 
     if opts.file
         try fun = require path.resolve opts.file
-        catch {stack}
-            return die stack
+        catch {stack, code}
+            return switch code
+            | \MODULE_NOT_FOUND  => die head lines stack
+            | otherwise          => die stack
 
         unless typeof fun is 'function'
             return die "error: #{opts.file} does not export a function"
