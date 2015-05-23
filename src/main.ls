@@ -108,7 +108,7 @@ main = (process-argv, stdin, stdout, stderr) ->
             | otherwise          => die stack
 
         unless typeof fun is 'function'
-            return die "error: #{opts.file} does not export a function"
+            return die "Error: #{opts.file} does not export a function"
     else
         code = join ' >> ', map wrap-in-parens, opts._
         debug (inspect code), 'input code'
@@ -116,11 +116,11 @@ main = (process-argv, stdin, stdout, stderr) ->
 
         try fun = compile-and-eval code
         catch {message}
-            return die "error: #{message}"
+            return die "Error: #{message}"
 
         debug (inspect fun), 'evaluated to'
         unless typeof fun is 'function'
-            return die "error: evaluated into type of #{type fun} instead of Function"
+            return die "Error: evaluated into type of #{type fun} instead of Function"
 
     if opts.input-type in <[ csv tsv ]>
         opts.slurp = true

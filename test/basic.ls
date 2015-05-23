@@ -60,7 +60,7 @@ describe 'errors' (,) ->
     describe 'with code that does not evaluate to a function' (,) ->
         it 'outputs an error' (done) ->
             output, errput <-! run-main '1', '[1,2,3]'
-            errput `eq` 'error: evaluated into type of Number instead of Function\n'
+            errput `eq` 'Error: evaluated into type of Number instead of Function\n'
             done!
 
         it 'exits with 1' (done) ->
@@ -454,7 +454,7 @@ describe '--file' (,) ->
     it 'produces an error if file does not export a function' (done) ->
         args = <[ -f test/data/dummy.ls ]>
         output, errput <-! run-main args, ''
-        errput `eq` 'error: test/data/dummy.ls does not export a function\n'
+        errput `eq` 'Error: test/data/dummy.ls does not export a function\n'
         done!
 
 describe '--help' (,) ->
