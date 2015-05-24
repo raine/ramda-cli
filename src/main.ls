@@ -8,6 +8,9 @@ require! util: {inspect}
 require! './argv'
 debug = require 'debug' <| 'ramda-cli:main'
 
+process.env.'NODE_PATH' = path.join process.env.HOME, 'node_modules'
+require 'module' .Module._init-paths!
+
 lines = split '\n'
 remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
