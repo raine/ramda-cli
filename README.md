@@ -124,6 +124,8 @@ Beryl Lindgren
 
 ##### List versions of npm module with dates formatted with [`timeago`](https://www.npmjs.com/package/timeago)
 
+It looks for `timeago` installed to `$HOME/node_modules`.
+
 ```sh
 npm view ramda --json | R \
   'prop \time' 'to-pairs' \
@@ -234,8 +236,11 @@ pipeline:
 
 ## why LiveScript?
 
-> [LiveScript][livescript] is a fork of Coco and an indirect
-descendant of CoffeeScript, with which it has much compatibility.
+> [LiveScript][livescript] is a language which compiles to JavaScript. It has
+a straightforward mapping to JavaScript and allows you to write expressive
+code devoid of repetitive boilerplate. While LiveScript adds many features to
+assist in functional style programming, it also has many improvements for
+object oriented and imperative programming.
 
 - Function composition operators `.`, `<<`, `>>`
 - Pipes for nested function calls `|>`
