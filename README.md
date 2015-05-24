@@ -139,7 +139,7 @@ npm view ramda --json | R \
 
 ##### Search twitter for people who tweeted about ramda and pretty print [the result](https://raw.githubusercontent.com/raine/ramda-cli/media/twarc-ramda.png)
 
-``` sh
+```sh
 twarc.py --search '#ramda' | R -s -p 'map path [\user, \screen_name]' uniq
 ```
 
@@ -148,38 +148,17 @@ twarc.py --search '#ramda' | R -s -p 'map path [\user, \screen_name]' uniq
 > [`path`](http://ramdajs.com/docs/#path)
 
 
-##### Pull response status data from Graphite and visualize it
+##### Pull response status data from Graphite and visualize
 
-Status codes per minute for last hour:
+HTTP status codes per minute for last hour:
 
-```
-graphite -t "summarize(stats_counts.status_codes.*, '1min', 'sum', false)" -s --from '-1h' -o json | \
+```sh
+graphite -t "summarize(stats_counts.status_codes.*, '1min', 'sum', false)" -f '-1h' -o json | \
   R 'map evolve datapoints: (map head) >> require \sparkline' \
-    'sort-by prop \target' \
-    -o table
-┌────────┬───────────────────────────────────────────────────────────────┐
-│ target │ datapoints                                                    │
-├────────┼───────────────────────────────────────────────────────────────┤
-│ 200    │ ▅▂▂▃▃▂▂▂▂▂▂▄▂▆▃▂▂▂▃▂▄▃▂▂▃▄▃▃█▃▅▂▃▇▅▄▂▄▃▃▇▂▂▂▂▂▃▂▂▄▃▂▂▂▂▃▃▁▁▁▁ │
-├────────┼───────────────────────────────────────────────────────────────┤
-│ 204    │ ▄▄▂▃▂▁▁▁▁▂▂▂▁▅▁▁▂▁▃▂▂▃▂▁▁▂▁▄█▃▃▁▂▄▃▁▁▃▁▃▆▄▁▂▃▂▁▁▁▅▁▂▂▂▁▁▁▁▁▁▁ │
-├────────┼───────────────────────────────────────────────────────────────┤
-│ 302    │ ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁██▁▁▁▁▁▁▁█▁▁▁▁▁▁█▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█▁▁▁ │
-├────────┼───────────────────────────────────────────────────────────────┤
-│ 304    │ ▄▁▂▃▂▁▂▁▁▂▁▂▁▄▃▁▂▁▂▂▃▃▁▂▂▃▂▄▆▂▄▂▂█▄▃▂▄▃▃▆▃▂▂▂▁▂▂▂▃▂▂▂▁▁▂▂▁▁▁▁ │
-├────────┼───────────────────────────────────────────────────────────────┤
-│ 400    │ ▁█▁▁▁▁▁▁▁▁▁▁▁▁▁█▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█▁▁▁▁▁▁▁▁▁▁▁▁▁ │
-├────────┼───────────────────────────────────────────────────────────────┤
-│ 401    │ ▅▃▃▄▃▂▃▂▃▂▂▃▂▆▃▂▂▂▂▂▄▃▂▂▃▃▂▂█▃▄▃▃▅▅▄▂▃▃▃▆▂▂▂▂▂▂▁▂▃▃▂▂▂▂▂▃▁▁▁▁ │
-├────────┼───────────────────────────────────────────────────────────────┤
-│ 404    │ ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█▂▂▁▁▂▁▁▁▅▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ │
-├────────┼───────────────────────────────────────────────────────────────┤
-│ 409    │ ▁▁▂▁▁▁▁▁▂▁▁▁▁▃▁▁▁▁▃▂▂▁▁▁▂▁▂▁▇▁▂▄▂█▃▁▁▂▁▂▁▁▂▁▁▁▁▁▁▁▁▁▂▁▁▁▂▁▁▁▁ │
-├────────┼───────────────────────────────────────────────────────────────┤
-│ 500    │ ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ │
-└────────┴───────────────────────────────────────────────────────────────┘
+    'sort-by prop \target' -o table
 ```
 
+[![graphite-http-codes](https://raw.githubusercontent.com/raine/ramda-cli/media/graphite-http-codes-thumb.png)](https://raw.githubusercontent.com/raine/ramda-cli/media/graphite-http-codes.png)
 
 ##### Use `--slurp` to read multiple JSON objects into a single list before any operations
 
