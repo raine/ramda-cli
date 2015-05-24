@@ -45,6 +45,12 @@ describe 'basic' (,) ->
         output `strip-eq` """{"foo":"bar"}{"foo":"bar"}"""
         done!
 
+describe 'eval-context' (,) ->
+    it 'has require()' (done) ->
+        output <-! run-main ['require("../test/data/shout")'] ++ <[ -i raw -o raw ]>, 'foo'
+        output `eq` 'FOO!'
+        done!
+
 describe 'multiple functions as arguments' (,) ->
     it 'composes multiple function arguments from left to right' (done) ->
         args     = ['replace "foo", "bar"', 'to-upper']
