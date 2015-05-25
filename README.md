@@ -11,6 +11,7 @@ Utilizes [Ramda's][ramda] curried, data-last API and
 
 - [Examples](#examples)
 - [Tutorial: Using ramda-cli to process and display data from GitHub API][tutorial]
+- [Essential LiveScript for ramda-cli][essential-livescript]
 
 ## install
 
@@ -260,6 +261,8 @@ object oriented and imperative programming.
 - Partial application with `_`
 - Implicit access `(.length)`
 
+See also: [Essential LiveScript for ramda-cli][essential-livescript]
+
 --
 
 [![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
@@ -269,3 +272,4 @@ object oriented and imperative programming.
 [treis]: https://github.com/raine/treis
 [ramda]: http://ramdajs.com
 [tutorial]: https://gistlog.co/raine/d12d0ec3e72b2945510b
+[essential-livescript]: https://gistlog.co/raine/6486b985c767954781b1
