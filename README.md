@@ -1,7 +1,8 @@
 # ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli)
 
 ```sh
-cat people.json | R 'pluck \name' 'filter -> it.starts-with \Rob'
+cat people.json | R 'filter (p) -> p.name is /bob/i' 'pluck \name'
+[ "Bobbie Huel" , "Bobby Ryan", "Dr. Bobby Schiller" ]
 ```
 
 A command-line tool for processing JSON with functional pipelines.
@@ -160,6 +161,10 @@ graphite -t "summarize(stats_counts.status_codes.*, '1min', 'sum', false)" -f '-
 ```
 
 [![graphite-http-codes](https://raw.githubusercontent.com/raine/ramda-cli/media/graphite-http-codes-thumb.png)](https://raw.githubusercontent.com/raine/ramda-cli/media/graphite-http-codes.png)
+
+> Ramda functions used:
+> [`evolve`](http://ramdajs.com/docs/#evolve),
+> [`sortBy`](http://ramdajs.com/docs/#sortBy)
 
 ##### Use `--slurp` to read multiple JSON objects into a single list before any operations
 
