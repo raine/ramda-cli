@@ -14,13 +14,13 @@ Utilizes [Ramda's][ramda] curried, data-last API and
 - [Tutorial: Using ramda-cli to process and display data from GitHub API][tutorial]
 - [Essential LiveScript for ramda-cli][essential-livescript]
 
-## install
+## Install
 
 ```sh
 npm install -g ramda-cli
 ```
 
-## usage
+## Usage
 
 ```sh
 cat data.json | ramda [function] ...
@@ -43,7 +43,7 @@ pipeline in  order from left to right, as with
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
 
-## options
+## Options
 
 ```
 Usage: ramda [options] [function] ...
@@ -63,7 +63,7 @@ Usage: ramda [options] [function] ...
   -h, --help         displays help
 ```
 
-## output types
+## Output types
 
 Aside from JSON, few other types of output are supported:
 
@@ -87,7 +87,7 @@ objects. First object's keys will determine the headers.
 Print ~any shape of data as a table. If used with a list of objects, uses the
 first object's keys as headers. See an example below.
 
-## examples
+## Examples
 
 In the examples, `ramda` is aliased to `R`.
 
@@ -239,7 +239,7 @@ $ echo -n 'hello world' | R -i raw --file shout.js
 "HELLO WORLD!"
 ```
 
-## debugging
+## Debugging
 
 You can turn on the debug output with `-v, --verbose` flag.
 
@@ -254,7 +254,7 @@ pipeline:
 
 <img width="370" height="99" src="https://raw.githubusercontent.com/raine/ramda-cli/media/treis-face.png" />
 
-## why LiveScript?
+## Why LiveScript?
 
 > [LiveScript][livescript] is a language which compiles to JavaScript. It has
 a straightforward mapping to JavaScript and allows you to write expressive
