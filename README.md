@@ -142,7 +142,7 @@ npm view ramda --json | R \
 ##### Search twitter for people who tweeted about ramda and pretty print [the result](https://raw.githubusercontent.com/raine/ramda-cli/media/twarc-ramda.png)
 
 ```sh
-twarc.py --search '#ramda' | R -s -p 'map path [\user, \screen_name]' uniq
+twarc.py --search '#ramda' | R --slurp -p 'map path [\user, \screen_name]' uniq
 ```
 
 > Ramda functions used:
@@ -173,7 +173,7 @@ $ cat text
 "foo bar"
 "test lol"
 "hello world"
-$ cat text | R -c --slurp identity
+$ cat text | R --compact --slurp identity
 ["foo bar","test lol","hello world"]
 ```
 
