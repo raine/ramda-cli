@@ -21,7 +21,3 @@ describe 'argv.parse' (,) ->
         it 'should throw an error with bad value' ->
             assert.throws (-> parse '-i lol'),
                 'Input type should be one of: raw'
-
-    it 'wraps function expressions in parentheses' ->
-         args = argv.parse [,, 'identity', '-> it']
-         assert.include args._, '(-> it)'
