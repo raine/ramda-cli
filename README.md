@@ -67,22 +67,22 @@ Usage: ramda [options] [function] ...
 
 Aside from JSON, few other types of output are supported:
 
-##### `--output-type pretty`
+##### `pretty`
 
 Print pretty output.
 
-##### `--output-type raw`
+##### `raw`
 
 With raw output type when a string value is produced, the result will be
 written to stdout as is without any formatting.
 
-##### `--output-type {csv,tsv}`
+##### `csv` and `tsv`
 
 CSV or TSV output type can be used when pipeline evaluates to an array of
 objects, an array of arrays or when stdin consists of a stream of bare
 objects. First object's keys will determine the headers.
 
-##### `--output-type table`
+##### `table`
 
 Print ~any shape of data as a table. If used with a list of objects, uses the
 first object's keys as headers. See an example below.
@@ -122,7 +122,8 @@ Beryl Lindgren
 
 > Ramda functions used:
 > [`pluck`](http://ramdajs.com/docs/#pluck),
-> [`filter`](http://ramdajs.com/docs/#filter)
+> [`filter`](http://ramdajs.com/docs/#filter)  
+> Data: [people.json](https://gist.githubusercontent.com/raine/cd11686e0b8a4a43bbf6/raw/people.json)
 
 ##### List versions of npm module with dates formatted with [`timeago`](https://www.npmjs.com/package/timeago)
 
@@ -257,14 +258,11 @@ pipeline:
 
 > [LiveScript][livescript] is a language which compiles to JavaScript. It has
 a straightforward mapping to JavaScript and allows you to write expressive
-code devoid of repetitive boilerplate. While LiveScript adds many features to
-assist in functional style programming, it also has many improvements for
-object oriented and imperative programming.
+code devoid of repetitive boilerplate.
 
 - Function composition operators `.`, `<<`, `>>`
-- Pipes for nested function calls `|>`
-- Partial application with `_`
 - Implicit access `(.length)`
+- Operators as functions `(+ 1)`
 
 See also: [Essential LiveScript for ramda-cli][essential-livescript]
 
