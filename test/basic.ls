@@ -417,13 +417,14 @@ describe '--output-type tsv' (,) ->
         done!
 
 describe '--output-type table' (,) ->
+    input = """
+    [ { "name": "Afghanistan", "code": "AF" },
+      { "name": "Åland Islands", "code": "AX" },
+      { "name": "Albania", "code": "AL" } ]
+    """
+
     it 'prints a table' (done) ->
         args  = <[ identity -o table ]>
-        input = """
-        [ { "name": "Afghanistan", "code": "AF" },
-          { "name": "Åland Islands", "code": "AX" },
-          { "name": "Albania", "code": "AL" } ]
-        """
         expected = """
         ┌───────────────┬──────┐
         │ name          │ code │
@@ -432,6 +433,21 @@ describe '--output-type table' (,) ->
         ├───────────────┼──────┤
         │ Åland Islands │ AX   │
         ├───────────────┼──────┤
+        │ Albania       │ AL   │
+        └───────────────┴──────┘\n
+        """
+        output <-! run-main args, input
+        (strip-ansi output) `eq` expected
+        done!
+
+    it 'prints a compact table with -c' (done) ->
+        args  = <[ identity -c -o table ]>
+        expected = """
+        ┌───────────────┬──────┐
+        │ name          │ code │
+        ├───────────────┼──────┤
+        │ Afghanistan   │ AF   │
+        │ Åland Islands │ AX   │
         │ Albania       │ AL   │
         └───────────────┴──────┘\n
         """

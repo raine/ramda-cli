@@ -12,7 +12,7 @@ HELP =
 
       -f, --file         read a function from a js/ls file instead of args; useful for
                          larger scripts
-      -c, --compact      compact JSON output
+      -c, --compact      compact output for JSON and tables
       -s, --slurp        read JSON objects from stdin as one big list
       -S, --unslurp      unwraps a list before output so that each item is formatted and
                          printed separately

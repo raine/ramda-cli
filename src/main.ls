@@ -65,10 +65,11 @@ map-stream = (func) -> through.obj (chunk,, next) ->
     this.push val unless is-nil val
     next!
 
-table-output-stream = ->
+table-output-stream = (compact) ->
     require! './format-table'
+    opts = {compact}
     through.obj (chunk,, next) ->
-        this.push "#{format-table chunk}\n"
+        this.push "#{format-table chunk, opts}\n"
         next!
 
 csv-opts-by-type = (type) ->
@@ -77,13 +78,13 @@ csv-opts-by-type = (type) ->
     | \csv => opts
     | \tsv => opts <<< delimiter: '\t'
 
-output-type-to-stream = (type, compact-json) ->
+output-type-to-stream = (type, compact) ->
     switch type
     | \pretty       => inspect-stream!
     | \raw          => raw-output-stream!
     | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts-by-type type
-    | \table        => table-output-stream!
-    | otherwise     => json-stringify-stream compact-json
+    | \table        => table-output-stream compact
+    | otherwise     => json-stringify-stream compact
 
 input-type-to-stream = (type) ->
     switch type

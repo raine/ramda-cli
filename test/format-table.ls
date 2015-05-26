@@ -3,6 +3,24 @@ require! 'strip-ansi'
 format = strip-ansi << format-table
 
 describe 'format-table' (,) ->
+    describe 'options' (,) ->
+        it 'foo' ->
+            objs =
+                * name: 'Afghanistan', code: 'AF'
+                * name: 'Åland Islands', code: 'AX'
+                * name: 'Albania', code: 'AL'
+
+            (format objs, compact: true) `eq` do
+                """
+                ┌───────────────┬──────┐
+                │ name          │ code │
+                ├───────────────┼──────┤
+                │ Afghanistan   │ AF   │
+                │ Åland Islands │ AX   │
+                │ Albania       │ AL   │
+                └───────────────┴──────┘
+                """
+
     it 'formats a list of objects with first object\'s keys as header' ->
         objs =
             * name: 'Afghanistan', code: 'AF'
