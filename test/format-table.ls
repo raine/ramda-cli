@@ -4,7 +4,7 @@ format = strip-ansi << format-table
 
 describe 'format-table' (,) ->
     describe 'options' (,) ->
-        it 'foo' ->
+        it 'accepts {compact: Boolean}' ->
             objs =
                 * name: 'Afghanistan', code: 'AF'
                 * name: 'Åland Islands', code: 'AX'
