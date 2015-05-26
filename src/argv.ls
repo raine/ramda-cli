@@ -1,6 +1,6 @@
 require! minimist
 require! camelize
-require! ramda: {map, split, match: match-str, pipe, replace, from-pairs}
+require! ramda: {map, split, match: match-str, pipe, replace, from-pairs, if-else, identity}
 
 OUTPUT_TYPES     = <[ pretty raw csv tsv table ]>
 INPUT_TYPES      = <[ raw csv tsv ]>
@@ -37,8 +37,15 @@ parse-aliases = pipe do
     map replace(/\B-/g, '') >> split ', '
     from-pairs
 
+wrap-in-parens = (str) -> "(#str)"
+starts-with    = (str) -> (?index-of(str) is 0)
+wrap-functions = map if-else (starts-with '->'), wrap-in-parens, identity
+
 export parse = (argv) ->
-    args = camelize minimist (argv.slice 2),
+    # need to wrap args like '-> it' with parens, otherwise minimist reads
+    # them as options
+    argv = wrap-functions argv.slice 2
+    args = camelize minimist argv,
         string: <[ file input-type output-type ]>
         boolean: <[ compact slurp unslurp pretty raw-output verbose version ]>
         alias: parse-aliases HELP

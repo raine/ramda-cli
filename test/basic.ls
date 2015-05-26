@@ -45,6 +45,11 @@ describe 'basic' (,) ->
         output `strip-eq` """{"foo":"bar"}{"foo":"bar"}"""
         done!
 
+    it 'parses function expressions without parens' (done) ->
+        output <-! run-main ['-> it'], '1\n'
+        output `strip-eq` '1'
+        done!
+
 describe 'eval-context' (,) ->
     it 'has require()' (done) ->
         output <-! run-main ['require("../test/data/shout")'] ++ <[ -i raw -o raw ]>, 'foo'
