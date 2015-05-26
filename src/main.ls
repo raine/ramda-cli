@@ -35,7 +35,7 @@ unconcat-stream = -> through.obj (chunk,, next) ->
 raw-output-stream = -> through.obj (chunk,, next) ->
     switch type chunk
     | \Array    => for-each (~> this.push "#it\n"), chunk
-    | otherwise => this.push remove-extra-newlines chunk.to-string!
+    | otherwise => this.push remove-extra-newlines "#chunk\n"
     next!
 
 inspect-stream = -> through.obj (chunk,, next) ->

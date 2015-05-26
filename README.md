@@ -57,7 +57,7 @@ Usage: ramda [options] [function] ...
   -i, --input-type   read input from stdin as (one of: raw, csv, tsv)
   -o, --output-type  format output sent to stdout (one of: pretty, raw, csv, tsv, table)
   -p, --pretty       pretty-printed output with colors, alias to -o pretty
-  -r, --raw-output   raw output, alias to -o raw
+  -r, --raw          use raw input and output
   -v, --verbose      print debugging information
       --version      print version
   -h, --help         displays help

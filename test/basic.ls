@@ -52,8 +52,8 @@ describe 'basic' (,) ->
 
 describe 'eval-context' (,) ->
     it 'has require()' (done) ->
-        output <-! run-main ['require("../test/data/shout")'] ++ <[ -i raw -o raw ]>, 'foo'
-        output `eq` 'FOO!'
+        output <-! run-main ['require("../test/data/shout")'] ++ [\-r], 'foo'
+        output `eq` 'FOO!\n'
         done!
 
 describe 'multiple functions as arguments' (,) ->
@@ -214,7 +214,9 @@ describe '--input-type raw' (,) ->
         xyz
         """
         expected = """
-        foobarxyz
+        foo
+        bar
+        xyz\n
         """
         output <-! run-main args, input
         output `eq` expected
@@ -273,26 +275,26 @@ describe '--input-type tsv' (,) ->
         done!
 
 describe '--output-type raw' (,) ->
-    it 'prints a string without quotes and without newline in the end' (done) ->
+    it 'prints a string without quotes' (done) ->
         args     = <[ identity -o raw ]>
         input    = '"foo"'
-        expected = 'foo'
+        expected = 'foo\n'
         output <-! run-main args, input
         output `eq` expected
         done!
 
-    it 'prints a stream of strings concatenated' (done) ->
+    it 'prints a stream of strings separated by line breaks' (done) ->
         args     = <[ identity -o raw ]>
         input    = '"foo"\n"bar"'
-        expected = 'foobar'
+        expected = 'foo\nbar\n'
         output <-! run-main args, input
         output `eq` expected
         done!
 
-    it 'prints a stream of numbers concatenated' (done) ->
+    it 'prints a stream of numbers separated by line breaks' (done) ->
         args     = <[ identity -o raw ]>
         input    = '1\n2\n3\n'
-        expected = '123'
+        expected = '1\n2\n3\n'
         output <-! run-main args, input
         output `eq` expected
         done!
@@ -443,7 +445,7 @@ describe '--file' (,) ->
     it 'reads function from a LiveScript file' (done) ->
         args     = <[ -i raw -o raw -f test/data/shout.ls ]>
         input    = 'foo'
-        expected = 'FOO!'
+        expected = 'FOO!\n'
         output <-! run-main args, input
         output `eq` expected
         done!
@@ -451,7 +453,7 @@ describe '--file' (,) ->
     it 'reads function from a JavaScript file' (done) ->
         args     = <[ -i raw -o raw -f test/data/capitalize.js ]>
         input    = 'hello'
-        expected = 'Hello'
+        expected = 'Hello\n'
         output <-! run-main args, input
         output `eq` expected
         done!

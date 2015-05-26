@@ -19,7 +19,7 @@ HELP =
       -i, --input-type   read input from stdin as (#{format-enum-list INPUT_TYPES})
       -o, --output-type  format output sent to stdout (#{format-enum-list OUTPUT_TYPES})
       -p, --pretty       pretty-printed output with colors, alias to -o pretty
-      -r, --raw-output   raw output, alias to -o raw
+      -r, --raw          use raw input and output
       -v, --verbose      print debugging information
           --version      print version
       -h, --help         displays help
@@ -47,12 +47,12 @@ export parse = (argv) ->
     argv = wrap-functions argv.slice 2
     args = camelize minimist argv,
         string: <[ file input-type output-type ]>
-        boolean: <[ compact slurp unslurp pretty raw-output verbose version ]>
+        boolean: <[ compact slurp unslurp pretty verbose version raw ]>
         alias: parse-aliases HELP
 
     args._ = args.''; delete args.''
-    if args.pretty     then args.output-type = \pretty
-    if args.raw-output then args.output-type = \raw
+    if args.pretty then args.output-type = \pretty
+    if args.raw    then args.output-type = args.input-type = \raw
 
     if args.output-type? and args.output-type not in OUTPUT_TYPES
         throw new Error "Output type should be #{format-enum-list OUTPUT_TYPES}"

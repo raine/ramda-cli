@@ -8,9 +8,11 @@ describe 'argv.parse' (,) ->
         it 'is an alias for --output-type pretty' ->
             parse '-p' .output-type `eq` \pretty
 
-    describe '-r, --raw-output' (,) ->
-        it 'is an alias for --output-type raw' ->
-            parse '-r' .output-type `eq` \raw
+    describe '-r, --raw' (,) ->
+        it 'is an alias for --input-type raw and --output-type raw' ->
+            args = parse '-r'
+            args.input-type  `eq` \raw
+            args.output-type `eq` \raw
 
     describe '-o, --output-type' (,) ->
         it 'should throw an error with bad value' ->
