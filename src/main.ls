@@ -93,6 +93,9 @@ input-type-to-stream = (type) ->
     | otherwise     => JSONStream.parse!
 
 main = (process-argv, stdin, stdout, stderr) ->
+    stdout.on \error ->
+        if it.code is 'EPIPE' then process.exit 0
+
     debug {argv: process-argv}
     log-error = (+ '\n') >> stderr~write
     die       = log-error >> -> process.exit 1
