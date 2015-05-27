@@ -212,13 +212,13 @@ cat countries.json | R 'take 3' -o table
 ##### List a project's dependencies in a table
 
 ```sh
-npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table
+npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table --compact
 ┌───────────────┬────────┐
-│ data.maybe    │ 1.2.0  │
-├───────────────┼────────┤
-│ data.task     │ 3.0.0  │
-├───────────────┼────────┤
-│ es5-ext       │ 0.10.7 │
+│ JSONStream    │ 1.0.4  │
+│ treis         │ 2.3.9  │
+│ ramda         │ 0.14.0 │
+│ livescript    │ 1.4.0  │
+│ cli-table     │ 0.3.1  │
 └───────────────┴────────┘
 ```
 
