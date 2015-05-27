@@ -13,6 +13,7 @@ Utilizes [Ramda's][ramda] curried, data-last API and
 - [Examples](#examples)
 - [Tutorial: Using ramda-cli to process and display data from GitHub API][tutorial]
 - [Essential LiveScript for ramda-cli][essential-livescript]
+- [Cookbook][cookbook]
 
 ## Install
 
@@ -276,3 +277,4 @@ See also: [Essential LiveScript for ramda-cli][essential-livescript]
 [ramda]: http://ramdajs.com
 [tutorial]: https://gistlog.co/raine/d12d0ec3e72b2945510b
 [essential-livescript]: https://gistlog.co/raine/6486b985c767954781b1
+[cookbook]: https://github.com/raine/ramda-cli/wiki/Cookbook
