@@ -240,6 +240,15 @@ $ echo -n 'hello world' | R -i raw --file shout.js
 "HELLO WORLD!"
 ```
 
+## Using packages from npm
+
+Packages installed to `$HOME/node_modules` used with `require()`.
+
+```sh
+$ date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
+less than a minute ago
+```
+
 ## Debugging
 
 You can turn on the debug output with `-v, --verbose` flag.
