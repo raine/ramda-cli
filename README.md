@@ -68,22 +68,22 @@ Usage: ramda [options] [function] ...
 
 Aside from JSON, few other types of output are supported:
 
-##### `pretty`
+##### `-o pretty`
 
 Print pretty output.
 
-##### `raw`
+##### `-o raw`
 
 With raw output type when a string value is produced, the result will be
 written to stdout as is without any formatting.
 
-##### `csv` and `tsv`
+##### `-o csv` and `-o tsv`
 
 CSV or TSV output type can be used when pipeline evaluates to an array of
 objects, an array of arrays or when stdin consists of a stream of bare
 objects. First object's keys will determine the headers.
 
-##### `table`
+##### `-o table`
 
 Print ~any shape of data as a table. If used with a list of objects, uses the
 first object's keys as headers. See an example below.
@@ -248,6 +248,20 @@ Packages installed to `$HOME/node_modules` used with `require()`.
 $ date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
 less than a minute ago
 ```
+
+## Available functions
+
+All of Ramda's functions are available, and also:
+
+| function         | signature            | description                                 |
+| ---------------- | -------------------- | ------------------------------------------- |
+| `id`             | `a → a`              | Alias to `R.identity`                       |
+| [`treis`][treis] | `treis(name?, fn)`   | Observe functions' input and output values  |
+| `readFile`       | `filePath → String`  | Read a file as string                       |
+| `lines`          | `String → [String]`  | Split a string into lines                   |
+| `words`          | `String → [String]`  | Split a string into words                   |
+| `unlines`        | `[String] → String`  | Join a list of lines into a string          |
+| `unwords`        | `[String] → String`  | Join a list of words into a string          |
 
 ## Debugging
 
