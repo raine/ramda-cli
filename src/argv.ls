@@ -51,8 +51,8 @@ export parse = (argv) ->
         alias: parse-aliases HELP
 
     args._ = args.''; delete args.''
-    if args.pretty then args.output-type = \pretty
     if args.raw    then args.output-type = args.input-type = \raw
+    if args.pretty then args.output-type = \pretty
 
     if args.output-type? and args.output-type not in OUTPUT_TYPES
         throw new Error "Output type should be #{format-enum-list OUTPUT_TYPES}"
