@@ -1,6 +1,6 @@
 #!/usr/bin/env lsc
 
-require! {livescript, vm, JSONStream, path, 'stream-reduce', split2}
+require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs}
 require! through2: through
 require! stream: {PassThrough}
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head}: R
@@ -16,13 +16,22 @@ remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
 
 wrap-in-parens = (str) -> "(#str)"
+path-with-cwd = path.join process.cwd!, _
+
+make-sandbox = ->
+    {R, require} <<< R <<<
+        treis     : -> apply (require 'treis'), &
+        read-file : path-with-cwd >> fs.read-file-sync _, 'utf8'
+        id        : R.identity
+        lines     : split '\n'
+        words     : split ' '
+        unlines   : join '\n'
+        unwords   : join ' '
 
 compile-and-eval = (code) ->
     compiled = livescript.compile code, {+bare, -header}
-    debug (inspect compiled), 'compiled code'
-    sandbox = {R, require} <<< R
-    sandbox.treis = -> apply (require 'treis'), &
-    ctx = vm.create-context sandbox
+    debug "\n#compiled", 'compiled code'
+    ctx = vm.create-context make-sandbox!
     vm.run-in-context compiled, ctx
 
 concat-stream   = -> stream-reduce flip(append), []

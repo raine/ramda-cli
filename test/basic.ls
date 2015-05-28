@@ -3,7 +3,7 @@ require! stream
 require! sinon
 require! 'concat-stream'
 require! 'strip-ansi'
-require! ramda: {repeat, join, flip, split, head}
+require! ramda: {repeat, join, flip, split, head, for-each}
 {called-with} = sinon.assert
 
 stringify = JSON.stringify _, null, 2
@@ -47,14 +47,33 @@ describe 'basic' (,) ->
 
     it 'parses function expressions without parens' (done) ->
         output <-! run-main ['-> it'], '1\n'
-        output `strip-eq` '1'
+        output `eq` '1\n'
+        done!
+
+    it 'allows implicit lookup without parens', (done) ->
+        output <-! run-main ['.foo'], '{"foo":"bar"}'
+        output `eq` '"bar"\n'
         done!
 
 describe 'eval-context' (,) ->
-    it 'has require()' (done) ->
+    it 'has require' (done) ->
         output <-! run-main ['require("../test/data/shout")'] ++ [\-r], 'foo'
         output `eq` 'FOO!\n'
         done!
+
+    it 'has read-file' (done) ->
+        output <-! run-main <[ read-file -r ]>, 'test/data/hello'
+        output `eq` 'hello\n'
+        done!
+
+    functions = <[ treis lines unlines words unwords ]>
+    functions |> for-each (fn) ->
+        it "has #fn" (done) ->
+            args     = <[ eval type -r ]>
+            expected = 'Function\n'
+            output <-! run-main args, fn
+            output `eq` expected
+            done!
 
 describe 'multiple functions as arguments' (,) ->
     it 'composes multiple function arguments from left to right' (done) ->
