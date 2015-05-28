@@ -24,7 +24,7 @@ npm install -g ramda-cli
 ## usage
 
 ```sh
-cat data.json | ramda [function] ...
+cat data.json | R [function] ...
 ```
 
 The idea is to [compose][1] functions into a pipeline of operations that when
