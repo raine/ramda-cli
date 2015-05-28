@@ -254,7 +254,7 @@ All of Ramda's functions are available, and also:
 
 ## using packages from npm
 
-Packages installed to `$HOME/node_modules` used with `require()`.
+Packages installed to `$HOME/node_modules` can used with `require()`.
 
 ```sh
 $ date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
