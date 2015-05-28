@@ -12,7 +12,8 @@
     "test": "make test"
   },
   "bin": {
-    "ramda": "./bin/ramda"
+    "ramda": "./bin/ramda",
+    "R": "./bin/ramda"
   },
   "author": "Raine Virta <raine.virta@gmail.com>",
   "license": "ISC",

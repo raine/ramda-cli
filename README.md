@@ -47,7 +47,7 @@ http://ramdajs.com/docs/ for a full list.
 ## options
 
 ```
-Usage: ramda [options] [function] ...
+Usage: R [options] [function] ...
 
   -f, --file         read a function from a js/ls file instead of args; useful for
                      larger scripts
@@ -89,8 +89,6 @@ Print ~any shape of data as a table. If used with a list of objects, uses the
 first object's keys as headers. See an example below.
 
 ## examples
-
-In the examples, `ramda` is aliased to `R`.
 
 ```sh
 # Sum a list of numbers in JSON

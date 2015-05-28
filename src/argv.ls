@@ -8,7 +8,7 @@ format-enum-list = (.join ', ') >> ('one of: ' +)
 
 HELP =
     """
-    Usage: ramda [options] [function] ...
+    Usage: R [options] [function] ...
 
       -f, --file         read a function from a js/ls file instead of args; useful for
                          larger scripts
@@ -27,7 +27,7 @@ HELP =
     If multiple functions are given as strings, they are composed into a
     pipeline in order from left to right, similarly to R.pipe.
 
-    Example: cat data.json | ramda 'pluck \\name' 'take 5'
+    Example: cat data.json | R 'pluck \\name' 'take 5'
 
     README: https://github.com/raine/ramda-cli
     """
