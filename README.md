@@ -240,16 +240,7 @@ $ echo -n 'hello world' | R -i raw --file shout.js
 "HELLO WORLD!"
 ```
 
-## Using packages from npm
-
-Packages installed to `$HOME/node_modules` used with `require()`.
-
-```sh
-$ date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
-less than a minute ago
-```
-
-## Available functions
+## Functions
 
 All of Ramda's functions are available, and also:
 
@@ -262,6 +253,15 @@ All of Ramda's functions are available, and also:
 | `words`          | `String → [String]`  | Split a string into words                   |
 | `unlines`        | `[String] → String`  | Join a list of lines into a string          |
 | `unwords`        | `[String] → String`  | Join a list of words into a string          |
+
+## Using packages from npm
+
+Packages installed to `$HOME/node_modules` used with `require()`.
+
+```sh
+$ date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
+less than a minute ago
+```
 
 ## Debugging
 
