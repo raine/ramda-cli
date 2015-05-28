@@ -522,7 +522,7 @@ describe '--help' (,) ->
 
     it 'shows help' (done) ->
         output, errput <-! run-main <[ identity -h ]>, '[1,2,3]'
-        'Usage: ramda [options] [function] ...' `eq` head lines errput
+        'Usage: R [options] [function] ...' `eq` head lines errput
         done!
 
 describe '--version' (,) ->
