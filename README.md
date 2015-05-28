@@ -242,15 +242,15 @@ $ echo -n 'hello world' | R -i raw --file shout.js
 
 All of Ramda's functions are available, and also:
 
-| function         | signature            | description                                 |
-| ---------------- | -------------------- | ------------------------------------------- |
-| `id`             | `a → a`              | Alias to `R.identity`                       |
-| [`treis`][treis] | `treis(name?, fn)`   | Observe functions' input and output values  |
-| `readFile`       | `filePath → String`  | Read a file as string                       |
-| `lines`          | `String → [String]`  | Split a string into lines                   |
-| `words`          | `String → [String]`  | Split a string into words                   |
-| `unlines`        | `[String] → String`  | Join a list of lines into a string          |
-| `unwords`        | `[String] → String`  | Join a list of words into a string          |
+| function         | signature            | description                                |
+| ---------------- | -------------------- | ------------------------------------------ |
+| `id`             | `a → a`              | Alias to `R.identity`                      |
+| [`treis`][treis] | `treis(name?, fn)`   | Observe functions' input and output values |
+| `readFile`       | `filePath → String`  | Read a file as string                      |
+| `lines`          | `String → [String]`  | Split a string into lines                  |
+| `words`          | `String → [String]`  | Split a string into words                  |
+| `unlines`        | `[String] → String`  | Join a list of lines into a string         |
+| `unwords`        | `[String] → String`  | Join a list of words into a string         |
 
 ## using packages from npm
 
