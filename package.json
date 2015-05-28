@@ -19,7 +19,7 @@
   "dependencies": {
     "JSONStream": "^1.0.4",
     "camelize": "^1.0.0",
-    "cli-table": "^0.3.1",
+    "cli-table": "Automattic/cli-table",
     "debug": "^2.2.0",
     "fast-csv": "^0.6.0",
     "livescript": "^1.4.0",
