@@ -15,13 +15,13 @@ Utilizes [Ramda's][ramda] curried, data-last API and
 - [Essential LiveScript for ramda-cli][essential-livescript]
 - [Cookbook][cookbook]
 
-## Install
+## install
 
 ```sh
 npm install -g ramda-cli
 ```
 
-## Usage
+## usage
 
 ```sh
 cat data.json | ramda [function] ...
@@ -44,7 +44,7 @@ pipeline in  order from left to right, as with
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
 
-## Options
+## options
 
 ```
 Usage: ramda [options] [function] ...
@@ -64,7 +64,7 @@ Usage: ramda [options] [function] ...
   -h, --help         displays help
 ```
 
-## Output types
+## output types
 
 Aside from JSON, few other types of output are supported:
 
@@ -88,7 +88,7 @@ objects. First object's keys will determine the headers.
 Print ~any shape of data as a table. If used with a list of objects, uses the
 first object's keys as headers. See an example below.
 
-## Examples
+## examples
 
 In the examples, `ramda` is aliased to `R`.
 
@@ -240,7 +240,7 @@ $ echo -n 'hello world' | R -i raw --file shout.js
 "HELLO WORLD!"
 ```
 
-## Functions
+## functions
 
 All of Ramda's functions are available, and also:
 
@@ -254,7 +254,7 @@ All of Ramda's functions are available, and also:
 | `unlines`        | `[String] → String`  | Join a list of lines into a string          |
 | `unwords`        | `[String] → String`  | Join a list of words into a string          |
 
-## Using packages from npm
+## using packages from npm
 
 Packages installed to `$HOME/node_modules` used with `require()`.
 
@@ -263,7 +263,7 @@ $ date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
 less than a minute ago
 ```
 
-## Debugging
+## debugging
 
 You can turn on the debug output with `-v, --verbose` flag.
 
@@ -278,7 +278,7 @@ pipeline:
 
 <img width="370" height="99" src="https://raw.githubusercontent.com/raine/ramda-cli/media/treis-face.png" />
 
-## Why LiveScript?
+## why livescript?
 
 > [LiveScript][livescript] is a language which compiles to JavaScript. It has
 a straightforward mapping to JavaScript and allows you to write expressive
