@@ -150,6 +150,7 @@ main = (process-argv, stdin, stdout, stderr) ->
     stdin
         .pipe debug-stream debug, \stdin
         .pipe input-parser
+            .on \error -> die it
         .pipe pass-through-unless opts.slurp, concat-stream!
         .pipe map-stream fun
         .pipe pass-through-unless opts.unslurp, unconcat-stream!

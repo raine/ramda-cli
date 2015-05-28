@@ -99,6 +99,12 @@ describe 'errors' (,) ->
             called-with process.exit, 1
             done!
 
+    describe 'with bad json' (,) ->
+        it 'shows terse error' (done) ->
+            output, errput <-! run-main 'identity', 'b'
+            errput `eq` 'Error: Invalid JSON (Unexpected "b" at position 0 in state START)\n'
+            done!
+
 describe '--compact' (,) ->
     it 'prints compact json output' (done) ->
         args     = <[ identity -c ]>
