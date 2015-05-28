@@ -55,6 +55,12 @@ describe 'basic' (,) ->
         output `eq` '"bar"\n'
         done!
 
+describe 'match keyword' (,) ->
+    it 'works' (done) ->
+        output <-! run-main ['match /foo/', \head, 'match(/foo/)', \head, '(match)(/foo/)'], '"foo"'
+        output `strip-eq` '["foo"]'
+        done!
+
 describe 'eval-context' (,) ->
     it 'has require' (done) ->
         output <-! run-main ['require("../test/data/shout")'] ++ [\-r], 'foo'

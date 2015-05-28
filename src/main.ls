@@ -11,6 +11,7 @@ debug = require 'debug' <| 'ramda-cli:main'
 process.env.'NODE_PATH' = path.join process.env.HOME, 'node_modules'
 require 'module' .Module._init-paths!
 
+fix-match = replace /\bmatch\b/g, 'R.match'
 lines = split '\n'
 remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
@@ -126,7 +127,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         unless typeof fun is 'function'
             return die "Error: #{opts.file} does not export a function"
     else
-        code = join ' >> ', map wrap-in-parens, opts._
+        code = join ' >> ', map (wrap-in-parens >> fix-match), opts._
         debug (inspect code), 'input code'
         if not code then return die argv.help!
 
