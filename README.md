@@ -238,6 +238,8 @@ $ echo -n 'hello world' | R -i raw --file shout.js
 "HELLO WORLD!"
 ```
 
+For more examples, see the [Cookbook][cookbook].
+
 ## functions
 
 All of Ramda's functions are available, and also:
