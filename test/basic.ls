@@ -63,19 +63,19 @@ describe 'match keyword' (,) ->
 
 describe 'eval-context' (,) ->
     it 'has require' (done) ->
-        output <-! run-main ['require("../test/data/shout")'] ++ [\-r], 'foo'
+        output <-! run-main ['require("../test/data/shout")'] ++ [\-rR], 'foo'
         output `eq` 'FOO!\n'
         done!
 
     it 'has read-file' (done) ->
-        output <-! run-main <[ read-file -r ]>, 'test/data/hello'
+        output <-! run-main <[ read-file -rR ]>, 'test/data/hello'
         output `eq` 'hello\n'
         done!
 
     functions = <[ treis lines unlines words unwords ]>
     functions |> for-each (fn) ->
         it "has #fn" (done) ->
-            args     = <[ eval type -r ]>
+            args     = <[ eval type -rR ]>
             expected = 'Function\n'
             output <-! run-main args, fn
             output `eq` expected

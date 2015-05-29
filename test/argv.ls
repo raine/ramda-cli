@@ -11,10 +11,14 @@ describe 'argv.parse' (,) ->
         it 'overrides -r' ->
             parse '-p -r' .output-type `eq` \pretty
 
-    describe '-r, --raw' (,) ->
-        it 'is an alias for --input-type raw and --output-type raw' ->
+    describe '-r, --raw-input' (,) ->
+        it 'is an alias for --input-type raw' ->
             args = parse '-r'
             args.input-type  `eq` \raw
+
+    describe '-R, --raw-output' (,) ->
+        it 'is an alias for --output-type raw' ->
+            args = parse '-R'
             args.output-type `eq` \raw
 
     describe '-o, --output-type' (,) ->
