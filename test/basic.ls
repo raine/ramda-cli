@@ -3,6 +3,7 @@ require! stream
 require! sinon
 require! 'concat-stream'
 require! 'strip-ansi'
+require! './utils': {run-main, stub-process-exit}
 require! ramda: {repeat, join, flip, split, head, for-each, intersperse}
 {called-with} = sinon.assert
 
@@ -12,17 +13,6 @@ lines     = split '\n'
 repeat-n  = flip repeat
 repeat-obj-as-str = (obj, times) ->
     unwords repeat-n times, stringify obj
-
-run-main = (args, input, cb) ->
-    stdin  = new stream.PassThrough!
-    stdout = new stream.PassThrough {+object-mode}
-        ..pipe concat-stream encoding: \string, -> cb it, null
-    stderr = new stream.PassThrough!
-        .on \data, (data) -> cb null, data.to-string!
-
-    main ([,,] ++ args), stdin, stdout, stderr
-    stdin.write input if input
-    stdin.end!
 
 describe 'basic' (,) ->
     it 'outputs an incremented number' (done) ->
@@ -539,15 +529,3 @@ describe '--version' (,) ->
         output, errput <-! run-main <[ --version ]>, null
         (require '../package.json' .version) `eq` head lines errput
         done!
-
-function stub-process-exit
-    sandbox = null
-
-    before-each ->
-        sandbox := sinon.sandbox.create!
-        sandbox.stub process, \exit
-
-    after-each ->
-        sandbox.restore!
-
-    return sandbox

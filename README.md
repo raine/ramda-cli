@@ -58,7 +58,9 @@ Usage: R [options] [function] ...
   -i, --input-type   read input from stdin as (one of: raw, csv, tsv)
   -o, --output-type  format output sent to stdout (one of: pretty, raw, csv, tsv, table)
   -p, --pretty       pretty-printed output with colors, alias to -o pretty
-  -r, --raw          use raw input and output
+  -r, --raw-input    alias for --input-type raw
+  -R, --raw-output   alias for --output-type raw
+  -C, --configure    edit config in $EDITOR
   -v, --verbose      print debugging information
       --version      print version
   -h, --help         displays help
@@ -253,6 +255,14 @@ All of Ramda's functions are available, and also:
 | `words`          | `String → [String]`  | Split a string into words                  |
 | `unlines`        | `[String] → String`  | Join a list of lines into a string         |
 | `unwords`        | `[String] → String`  | Join a list of words into a string         |
+
+## config file
+
+Path: `$HOME/.config/ramda-cli.{js,ls}`
+
+The purpose of a global config file is to carry functions you might find
+useful to have around. The functions it exports as an object are made
+available.
 
 ## using packages from npm
 

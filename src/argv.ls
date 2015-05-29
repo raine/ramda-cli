@@ -21,6 +21,7 @@ HELP =
       -p, --pretty       pretty-printed output with colors, alias to -o pretty
       -r, --raw-input    alias for --input-type raw
       -R, --raw-output   alias for --output-type raw
+      -C, --configure    edit config in $EDITOR
       -v, --verbose      print debugging information
           --version      print version
       -h, --help         displays help
@@ -50,7 +51,7 @@ export parse = (argv) ->
     argv = map (wrap-number-lookup << wrap-function), argv.slice 2
     args = camelize minimist argv,
         string: <[ file input-type output-type ]>
-        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output ]>
+        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure ]>
         alias: parse-aliases HELP
 
     args._ = args.''; delete args.''

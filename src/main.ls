@@ -1,14 +1,15 @@
 #!/usr/bin/env lsc
 
 require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs}
+require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head}: R
 require! util: {inspect}
-require! './argv'
+require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
 
-process.env.'NODE_PATH' = path.join process.env.HOME, 'node_modules'
+process.env.'NODE_PATH' = path.join HOME, 'node_modules'
 require 'module' .Module._init-paths!
 
 # naive fix to get `match` work despite being a keyword in LS
@@ -24,7 +25,9 @@ wrap-in-parens = (str) -> "(#str)"
 path-with-cwd = path.join process.cwd!, _
 
 make-sandbox = ->
-    {R, require} <<< R <<<
+    try user-config = require config.BASE_PATH
+
+    {R, require} <<< R <<< user-config <<<
         treis     : -> apply (require 'treis'), &
         read-file : path-with-cwd >> fs.read-file-sync _, 'utf8'
         id        : R.identity
@@ -106,6 +109,7 @@ input-type-to-stream = (type) ->
     | <[ csv tsv ]> => (require 'fast-csv') csv-opts-by-type type
     | otherwise     => JSONStream.parse!
 
+
 main = (process-argv, stdin, stdout, stderr) ->
     stdout.on \error ->
         if it.code is 'EPIPE' then process.exit 0
@@ -120,6 +124,10 @@ main = (process-argv, stdin, stdout, stderr) ->
 
     if opts.help    then return die argv.help!
     if opts.version then return die <| require '../package.json' .version
+    if opts.configure
+        return config.edit (err) ->
+            if err != 0 or err then die err
+            else process.exit 0
 
     if opts.file
         try fun = require path.resolve opts.file
@@ -143,11 +151,8 @@ main = (process-argv, stdin, stdout, stderr) ->
         unless typeof fun is 'function'
             return die "Error: evaluated into type of #{type fun} instead of Function"
 
-    if opts.input-type in <[ csv tsv ]>
-        opts.slurp = true
-
-    if opts.output-type in <[ csv tsv ]>
-        opts.unslurp = true
+    if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
+    if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
 
     input-parser     = input-type-to-stream opts.input-type
     output-formatter = output-type-to-stream opts.output-type, opts.compact
