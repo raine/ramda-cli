@@ -38,14 +38,16 @@ parse-aliases = pipe do
     map replace(/\B-/g, '') >> split ', '
     from-pairs
 
-wrap-in-parens = (str) -> "(#str)"
-starts-with    = (str) -> (?index-of(str) is 0)
-wrap-functions = map if-else (starts-with '->'), wrap-in-parens, identity
+wrap-in-parens     = (str) -> "(#str)"
+starts-with        = (str) -> (?index-of(str) is 0)
+wrap-function      = if-else (starts-with '->'), wrap-in-parens, identity
+wrap-number-lookup = if-else (.match /^.\d+$/), wrap-in-parens, identity
 
 export parse = (argv) ->
-    # need to wrap args like '-> it' with parens, otherwise minimist reads
-    # them as options
-    argv = wrap-functions argv.slice 2
+    # HACKS:
+    # - wrap '-> it' style lambdas in parens, minimist thinks they're options
+    # - wrap implicit number lookups '.0' in parens, minimist thinks they're numbers
+    argv = map (wrap-number-lookup << wrap-function), argv.slice 2
     args = camelize minimist argv,
         string: <[ file input-type output-type ]>
         boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output ]>

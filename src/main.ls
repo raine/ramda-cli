@@ -11,7 +11,11 @@ debug = require 'debug' <| 'ramda-cli:main'
 process.env.'NODE_PATH' = path.join process.env.HOME, 'node_modules'
 require 'module' .Module._init-paths!
 
-fix-match = replace /\bmatch\b/g, 'R.match'
+# naive fix to get `match` work despite being a keyword in LS
+fix-match = ->
+    it.replace /\bmatch\b/g, (m, i, str) ->
+        if str[i-1] is not \. then \R.match else m
+
 lines = split '\n'
 remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str

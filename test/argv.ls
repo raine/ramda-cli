@@ -30,3 +30,11 @@ describe 'argv.parse' (,) ->
         it 'should throw an error with bad value' ->
             assert.throws (-> parse '-i lol'),
                 'Input type should be one of: raw'
+
+    it 'wraps function expressions in parentheses' ->
+         args = argv.parse [,, 'identity', '-> it']
+         args._.1 `eq` '(-> it)'
+
+    it 'reads ".0" as string' ->
+         args = argv.parse [,, '.0', '.foo']
+         args._.0 `eq` '(.0)'

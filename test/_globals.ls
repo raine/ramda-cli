@@ -1,5 +1,6 @@
-strip-ws = (.replace /\s/g, '')
-require! ramda: {use-with, identity}
+require! ramda: {use-with, identity, if-else}
+rm-ws = (.replace /\s/g, '')
+strip-ws = if-else (~= null), identity, rm-ws
 
 global.assert = require \chai .assert
 global.deep-eq = (a, b) --> a `assert.deepEqual` b
