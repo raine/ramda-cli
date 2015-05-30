@@ -514,6 +514,15 @@ describe '--file' (,) ->
         errput `eq` 'Error: test/data/dummy.ls does not export a function\n'
         done!
 
+describe '--no-stdin' (,) ->
+    it 'emits an object regardless of stdin' (done) ->
+        args     = <[ -n identity ]>
+        input    = '"foo"\n'
+        expected = '{}\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--help' (,) ->
     stub-process-exit!
 

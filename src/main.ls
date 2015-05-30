@@ -109,6 +109,9 @@ input-type-to-stream = (type) ->
     | <[ csv tsv ]> => (require 'fast-csv') csv-opts-by-type type
     | otherwise     => JSONStream.parse!
 
+blank-obj-stream = ->
+    PassThrough {+object-mode}
+        ..end {}
 
 main = (process-argv, stdin, stdout, stderr) ->
     stdout.on \error ->
@@ -154,14 +157,15 @@ main = (process-argv, stdin, stdout, stderr) ->
     if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
     if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
 
-    input-parser     = input-type-to-stream opts.input-type
+    input-parser = input-type-to-stream opts.input-type
     output-formatter = output-type-to-stream opts.output-type, opts.compact
-
-    stdin
+    stdin-parser = ->
+        stdin
         .pipe debug-stream debug, \stdin
-        .pipe input-parser
-            .on \error -> die it
+        .pipe input-parser .on \error -> die it
         .pipe pass-through-unless opts.slurp, concat-stream!
+
+    (if opts.no-stdin then blank-obj-stream! else stdin-parser!)
         .pipe map-stream fun
         .pipe pass-through-unless opts.unslurp, unconcat-stream!
         .pipe output-formatter

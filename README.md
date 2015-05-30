@@ -61,6 +61,7 @@ Usage: R [options] [function] ...
   -r, --raw-input    alias for --input-type raw
   -R, --raw-output   alias for --output-type raw
   -C, --configure    edit config in $EDITOR
+  -n, --no-stdin     don't read input from stdin
   -v, --verbose      print debugging information
       --version      print version
   -h, --help         displays help
