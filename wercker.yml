@@ -2,4 +2,6 @@ box: wercker/nodejs
 build:
     steps:
         - npm-install
-        - npm-test
+        - script:
+            name: run tests
+            code: npm run test-ci

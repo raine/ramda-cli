@@ -5,10 +5,12 @@ LIB = $(patsubst src/%.ls, lib/%.js, $(SRC))
 
 MOCHA = ./node_modules/.bin/mocha
 LSC = ./node_modules/.bin/lsc
+DOCKER = docker run -v ${PWD}:/usr/src/app -w /usr/src/app -it --rm iojs
 NAME = $(shell node -e "console.log(require('./package.json').name)")
 REPORTER ?= spec
 GREP ?= ".*"
 MOCHA_ARGS = --grep $(GREP)
+MOCHA_WATCH = $(MOCHA) $(MOCHA_ARGS) --reporter min --watch
 
 default: all
 
@@ -46,4 +48,16 @@ test:
 	@$(MOCHA) $(MOCHA_ARGS) --reporter $(REPORTER)
 
 test-w:
-	@$(MOCHA) $(MOCHA_ARGS) --reporter min --watch
+	@$(MOCHA_WATCH)
+
+test-func: compile
+	@$(MOCHA) $(MOCHA_ARGS) --reporter $(REPORTER) functional --timeout 10000
+
+test-func-w: compile
+	@$(MOCHA_WATCH) functional --timeout 10000
+
+docker-test-func:
+	@$(DOCKER) make test-func
+
+docker-test-func-w:
+	@$(DOCKER) make test-func-w
