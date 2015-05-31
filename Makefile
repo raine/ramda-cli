@@ -51,7 +51,7 @@ test-w:
 	@$(MOCHA_WATCH) test/unit
 
 test-func: compile
-	@$(MOCHA) $(MOCHA_ARGS) --reporter $(REPORTER) test/functional --timeout 10000
+	@$(MOCHA) $(MOCHA_ARGS) --reporter $(REPORTER) test/functional --timeout 30000
 
 test-func-w: compile
 	@$(MOCHA_WATCH) test/functional --timeout 10000
