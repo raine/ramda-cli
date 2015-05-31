@@ -26,6 +26,9 @@ path-with-cwd = path.join process.cwd!, _
 
 make-sandbox = ->
     try user-config = require config.BASE_PATH
+    catch e
+        unless (e.code is 'MODULE_NOT_FOUND' and e.message is /\.config\/ramda-cli/)
+            throw e
 
     {R, require} <<< R <<< user-config <<<
         treis     : -> apply (require 'treis'), &
