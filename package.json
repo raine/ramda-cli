@@ -10,8 +10,8 @@
   ],
   "scripts": {
     "test": "make test",
-    "test-ci": "make test && make test-functional",
-    "test-local": "make test && make docker-test-functional"
+    "test-ci": "make test && make test-func",
+    "test-local": "make test && make docker-test-func"
   },
   "bin": {
     "ramda": "./bin/ramda",
