@@ -1,6 +1,6 @@
 require! path
 require! shelljs: {rm, exec, mkdir}: shelljs
-shelljs.config.silent = true
+# shelljs.config.silent = true
 
 HOME = process.env.HOME
 

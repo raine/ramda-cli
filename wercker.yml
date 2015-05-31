@@ -1,7 +1,10 @@
-box: wercker/nodejs
+box: iojs
 build:
     steps:
         - npm-install
+        - script:
+            name: env
+            code: env
         - script:
             name: run tests
             code: npm run test-ci
