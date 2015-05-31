@@ -1,4 +1,4 @@
-require! '../src/format-table'
+require! '../../src/format-table'
 require! 'strip-ansi'
 format = strip-ansi << format-table
 

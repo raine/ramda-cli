@@ -1,4 +1,4 @@
-argv = require '../src/argv'
+argv = require '../../src/argv'
 
 make-argv = -> [,,] ++ it.split(' ')
 parse = make-argv >> argv.parse

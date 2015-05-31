@@ -1,9 +1,8 @@
-require! '../src/main'
 require! stream
 require! sinon
 require! 'concat-stream'
 require! 'strip-ansi'
-require! './utils': {run-main, stub-process-exit}
+require! '../helpers': {run-main, stub-process-exit}
 require! ramda: {repeat, join, flip, split, head, for-each, intersperse}
 {called-with} = sinon.assert
 
@@ -536,5 +535,5 @@ describe '--version' (,) ->
 
     it 'shows version' (done) ->
         output, errput <-! run-main <[ --version ]>, null
-        (require '../package.json' .version) `eq` head lines errput
+        (require '../../package.json' .version) `eq` head lines errput
         done!

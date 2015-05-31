@@ -1,5 +1,5 @@
-require! './utils': {run, MAIN, stub-process-exit}
-main = require \rewire <| '../src/main'
+require! '../helpers': {run, MAIN, stub-process-exit}
+main = require \rewire <| '../../src/main'
 {called-with} = sinon.assert
 
 describe '--configure' (,) ->
