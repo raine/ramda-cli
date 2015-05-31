@@ -28,8 +28,8 @@ describe '--configure' (,) ->
 
 describe 'global config' (,) ->
     it 'uses a function from from config file' (done) ->
-        <- exec 'npm install ramda --prefix $HOME'
+        <- exec 'npm install test/data/hello-world --prefix $HOME'
         <- exec 'cat test/data/config-with-require.ls > $HOME/.config/ramda-cli.ls'
-        code, output <- exec 'echo foo | ./bin/ramda -rR shout'
-        output `eq` 'FOO!\n'
+        code, output <- exec 'echo foo | ./bin/ramda -rR hello-world'
+        output `eq` 'HELLO WORLD!\n'
         done!

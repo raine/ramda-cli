@@ -1,3 +1,1 @@
-require! 'ramda': {to-upper}
-
-export shout = to-upper >> (+ '!')
+exports.hello-world = require 'hello-world'
