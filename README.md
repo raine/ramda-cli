@@ -11,9 +11,9 @@ Utilizes [Ramda's][ramda] curried, data-last API and
 [LiveScript's][livescript] terse and powerful syntax.
 
 - [Examples](#examples)
+- [Cookbook][cookbook]
 - [Tutorial: Using ramda-cli to process and display data from GitHub API][tutorial]
 - [Essential LiveScript for ramda-cli][essential-livescript]
-- [Cookbook][cookbook]
 
 ## install
 
