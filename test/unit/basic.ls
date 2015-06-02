@@ -513,6 +513,14 @@ describe '--file' (,) ->
         errput `eq` 'Error: test/data/dummy.ls does not export a function\n'
         done!
 
+    it.only 'allows exporting options' (done) ->
+        args = <[ -f test/data/slurp-sum.ls ]>
+        input    = '1\n1\n1\n'
+        expected = '3\n'
+        output, errput <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--no-stdin' (,) ->
     it 'emits an object regardless of stdin' (done) ->
         args     = <[ -n identity ]>

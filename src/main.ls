@@ -17,7 +17,11 @@ fix-match = ->
     it.replace /\bmatch\b/g, (m, i, str) ->
         if str[i-1] is not \. then \R.match else m
 
-lines = split '\n'
+lines   = split '\n'
+words   = split ' '
+unlines = join '\n'
+unwords = join ' '
+
 remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
 
@@ -34,10 +38,10 @@ make-sandbox = ->
         treis     : -> apply (require 'treis'), &
         read-file : path-with-cwd >> fs.read-file-sync _, 'utf8'
         id        : R.identity
-        lines     : split '\n'
-        words     : split ' '
-        unlines   : join '\n'
-        unwords   : join ' '
+        lines     : lines
+        words     : words
+        unlines   : unlines
+        unwords   : unwords
 
 compile-and-eval = (code) ->
     compiled = livescript.compile code, {+bare, -header}
@@ -144,6 +148,8 @@ main = (process-argv, stdin, stdout, stderr) ->
 
         unless typeof fun is 'function'
             return die "Error: #{opts.file} does not export a function"
+
+        if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
         code = join ' >> ', map (wrap-in-parens >> fix-match), opts._
         debug (inspect code), 'input code'
