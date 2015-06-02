@@ -172,10 +172,11 @@ graphite -t "summarize(stats_counts.status_codes.*, '1min', 'sum', false)" -f '-
 ##### Use `--slurp` to read multiple JSON objects into a single list before any operations
 
 ```sh
-$ cat text
+$ cat <<EOF > text
 "foo bar"
 "test lol"
 "hello world"
+EOF
 $ cat text | R --compact --slurp identity
 ["foo bar","test lol","hello world"]
 ```
@@ -241,10 +242,11 @@ exports.h = require('hyperscript')
 ```
 
 ```sh
-$ cat shopping.txt
+$ cat <<EOF > shopping.txt
 milk
 cheese
 peanuts
+EOF
 $ cat shopping.txt | R \
   -rR --slurp           `# read raw input into a list` \
   'map (h \li.item, _)' `# apply <li class="item"> into each item` \
