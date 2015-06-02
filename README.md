@@ -295,7 +295,7 @@ All of Ramda's functions are available, and also:
 Path: `$HOME/.config/ramda-cli.{js,ls}`
 
 The purpose of a global config file is to carry functions you might find
-useful to have around. The functions it exports as an object are made
+useful to have around. The functions it exports in an object are made
 available.
 
 ## using packages from npm
