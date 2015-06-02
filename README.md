@@ -231,6 +231,39 @@ npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table --compac
 > [`mapObj`](http://ramdajs.com/docs/#mapObj),
 > [`prop`](http://ramdajs.com/docs/#prop)
 
+##### Generate HTML markup with hyperscript
+
+With [`hyperscript`][hyperscript] installed to `$HOME/node_modules` and
+[config](#config-file) that exports it as `h`.
+
+```js
+exports.h = require('hyperscript')
+```
+
+```sh
+$ cat shopping.txt
+milk
+cheese
+peanuts
+$ cat shopping.txt | R \
+  -rR --slurp           `# read raw input into a list` \
+  'map (h \li.item, _)' `# apply <li class="item"> into each item` \
+  'h \ul#list, _'       `# wrap list inside <ul id="list">` \
+  '.outer-HTML'         `# finally, take the HTML`
+```
+
+```html
+<ul id="list">
+  <li class="item">milk</li>
+  <li class="item">cheese</li>
+  <li class="item">peanuts</li>
+</ul>
+```
+
+Reason for underscores (e.g. `h \ul, _`) is that hyperscript API is not
+curried (and can't be because it's variadic). We need to explicitly state
+that this function is waiting for one more argument.
+
 ##### Load function from a file with the `--file` option
 
 ```sh
@@ -308,6 +341,7 @@ See also: [Essential LiveScript for ramda-cli][essential-livescript]
 [1]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
 [livescript]: http://livescript.net
 [treis]: https://github.com/raine/treis
+[hyperscript]: https://github.com/dominictarr/hyperscript
 [ramda]: http://ramdajs.com
 [tutorial]: https://gistlog.co/raine/d12d0ec3e72b2945510b
 [essential-livescript]: https://gistlog.co/raine/6486b985c767954781b1
