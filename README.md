@@ -1,14 +1,27 @@
 # ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli)
 
+A command-line tool for processing data with functional pipelines.
+
 ```sh
-cat people.json | R 'filter (p) -> p.name is /bob/i' 'pluck \name'
-[ "Bobbie Huel" , "Bobby Ryan", "Dr. Bobby Schiller" ]
+nsa> cat people.json | R \
+  'filter (p) -> p.city is /Port/ or p.name is /^Dr\./' \
+  'project <[ name city creditcard ]>' \
+  -o table --compact
+┌──────────────────┬─────────────────┬───────────────────┐
+│ name             │ city            │ mac               │
+├──────────────────┼─────────────────┼───────────────────┤
+│ Dr. Araceli Lang │ Yvettemouth     │ 9e:ea:28:41:2a:50 │
+│ Terrell Boyle    │ Port Reaganfort │ c5:32:09:5a:f7:15 │
+│ Libby Renner     │ Port Reneeside  │ 9c:63:13:31:c4:ac │
+└──────────────────┴─────────────────┴───────────────────┘
 ```
 
-A command-line tool for processing JSON with functional pipelines.
-
-Utilizes [Ramda's][ramda] curried, data-last API and
+Brings together [Ramda's][ramda] curried, data-last API and
 [LiveScript's][livescript] terse and powerful syntax.
+
+With a variety of supported input/output types and the ability [pull any
+module from npm](#using-packages-from-npm), ramda-cli is a potent tool for
+many kinds of data manipulation in command-line environment.
 
 - [Examples](#examples)
 - [Cookbook][cookbook]
@@ -21,7 +34,7 @@ Utilizes [Ramda's][ramda] curried, data-last API and
 npm install -g ramda-cli
 ```
 
-## usage
+## synopsis
 
 ```sh
 cat data.json | R [function] ...
@@ -232,7 +245,7 @@ npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table --compac
 > [`mapObj`](http://ramdajs.com/docs/#mapObj),
 > [`prop`](http://ramdajs.com/docs/#prop)
 
-##### Generate HTML markup with hyperscript
+##### Generate HTML with hyperscript
 
 With [`hyperscript`][hyperscript] installed to `$HOME/node_modules` and
 [config](#config-file) that exports it as `h`.
@@ -251,7 +264,7 @@ $ cat shopping.txt | R \
   -rR --slurp           `# read raw input into a list` \
   'map (h \li.item, _)' `# apply <li class="item"> into each item` \
   'h \ul#list, _'       `# wrap list inside <ul id="list">` \
-  '.outer-HTML'         `# finally, take the HTML`
+  '.outer-HTML'         `# finally, grab the HTML`
 ```
 
 ```html
@@ -280,7 +293,7 @@ For more examples, see the [Cookbook][cookbook].
 
 ## functions
 
-All of Ramda's functions are available, and also:
+All of [Ramda's functions][ramda-docs] are available, and also:
 
 | function         | signature            | description                                |
 | ---------------- | -------------------- | ------------------------------------------ |
@@ -345,6 +358,7 @@ See also: [Essential LiveScript for ramda-cli][essential-livescript]
 [treis]: https://github.com/raine/treis
 [hyperscript]: https://github.com/dominictarr/hyperscript
 [ramda]: http://ramdajs.com
+[ramda-docs]: http://ramdajs.com/docs/
 [tutorial]: https://gistlog.co/raine/d12d0ec3e72b2945510b
 [essential-livescript]: https://gistlog.co/raine/6486b985c767954781b1
 [cookbook]: https://github.com/raine/ramda-cli/wiki/Cookbook
