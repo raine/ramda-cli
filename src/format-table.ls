@@ -1,5 +1,6 @@
 require! ramda: {keys, props, map, to-pairs, apply, create-map-entry, type, merge}
 require! 'cli-table': Table
+require! flat
 
 obj-to-objs = to-pairs >> map apply create-map-entry
 STYLE = head: <[ cyan bold ]>
@@ -17,9 +18,10 @@ format-list = (list, opts) ->
         table.to-string!
 
 format-list-of-objs = (objs, opts) ->
-    head  = keys objs.0
+    flat-objs = map flat, objs
+    head  = keys flat-objs.0
     table = new Table merge opts, head: head
-    rows  = map (props head), objs
+    rows  = map (props head), flat-objs
     rows.for-each -> table.push it
     table.to-string!
 

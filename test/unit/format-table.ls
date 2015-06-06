@@ -40,6 +40,22 @@ describe 'format-table' (,) ->
             └───────────────┴──────┘
             """
 
+    it 'flattens a list of objects' ->
+        objs =
+            * a: {b: \foo}, c: [1,2,3]
+            * a: {b: \bar}, c: [3,2,1]
+
+        (format objs) `eq` do
+            """
+            ┌─────┬─────┬─────┬─────┐
+            │ a.b │ c.0 │ c.1 │ c.2 │
+            ├─────┼─────┼─────┼─────┤
+            │ foo │ 1   │ 2   │ 3   │
+            ├─────┼─────┼─────┼─────┤
+            │ bar │ 3   │ 2   │ 1   │
+            └─────┴─────┴─────┴─────┘
+            """
+
     it 'formats a list of strings' ->
         list = <[ foo bar xyz ]>
         (format list) `eq` do
