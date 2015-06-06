@@ -68,7 +68,7 @@ describe 'eval-context' (,) ->
         output `eq` 'hello\n'
         done!
 
-    functions = <[ treis flatten lines unlines words unwords ]>
+    functions = <[ treis flat lines unlines words unwords ]>
     functions |> for-each (fn) ->
         it "has #fn" (done) ->
             args     = <[ eval type -rR ]>
