@@ -1,4 +1,4 @@
-require! ramda: {keys, props, map, to-pairs, apply, create-map-entry, type, merge}
+require! ramda: {keys, props, map, to-pairs, apply, create-map-entry, type, merge, uniq, chain}
 require! 'cli-table': Table
 require! flat
 
@@ -19,7 +19,7 @@ format-list = (list, opts) ->
 
 format-list-of-objs = (objs, opts) ->
     flat-objs = map flat, objs
-    head  = keys flat-objs.0
+    head = chain keys, flat-objs |> uniq
     table = new Table merge opts, head: head
     rows  = map (props head), flat-objs
     rows.for-each -> table.push it
