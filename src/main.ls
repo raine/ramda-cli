@@ -4,7 +4,7 @@ require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
@@ -130,7 +130,7 @@ main = (process-argv, stdin, stdout, stderr) ->
 
     try opts = argv.parse process-argv
     catch e then return die [argv.help!, e.message] * '\n\n'
-    debug opts
+    debug pick-by (is not false), opts
 
     if opts.help    then return die argv.help!
     if opts.version then return die <| require '../package.json' .version
