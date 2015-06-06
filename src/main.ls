@@ -66,8 +66,10 @@ inspect-stream = -> through.obj (chunk,, next) ->
     this.push (inspect chunk, colors: true) + '\n'
     next!
 
-debug-stream = (debug, str) ->
-    unless debug.enabled then return PassThrough {+object-mode}
+debug-stream = (debug, opts, str) ->
+    unless debug.enabled and opts.very-verbose
+        return PassThrough {+object-mode}
+
     through.obj (chunk,, next) ->
         debug {"#str": chunk.to-string!}
         this.push chunk
@@ -170,7 +172,7 @@ main = (process-argv, stdin, stdout, stderr) ->
     output-formatter = output-type-to-stream opts.output-type, opts.compact
     stdin-parser = ->
         stdin
-        .pipe debug-stream debug, \stdin
+        .pipe debug-stream debug, opts, \stdin
         .pipe input-parser .on \error -> die it
         .pipe pass-through-unless opts.slurp, concat-stream!
 
@@ -178,7 +180,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         .pipe map-stream fun
         .pipe pass-through-unless opts.unslurp, unconcat-stream!
         .pipe output-formatter
-        .pipe debug-stream debug, \stdout
+        .pipe debug-stream debug, opts, \stdout
         .pipe stdout
 
 module.exports = main

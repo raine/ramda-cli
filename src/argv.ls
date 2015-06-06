@@ -23,7 +23,7 @@ HELP =
       -R, --raw-output   alias for --output-type raw
       -C, --configure    edit config in $EDITOR
       -n, --no-stdin     don't read input from stdin
-      -v, --verbose      print debugging information
+      -v, --verbose      print debugging information (use -vv for even more)
           --version      print version
       -h, --help         displays help
 
@@ -65,6 +65,8 @@ export parse = (argv) ->
 
     if args.input-type? and args.input-type not in INPUT_TYPES
         throw new Error "Input type should be #{format-enum-list INPUT_TYPES}"
+
+    if '-vv' in argv then args.very-verbose = true
 
     args
 

@@ -22,14 +22,19 @@ describe 'argv.parse' (,) ->
             args.output-type `eq` \raw
 
     describe '-o, --output-type' (,) ->
-        it 'should throw an error with bad value' ->
+        it 'throws an error with bad value' ->
             assert.throws (-> parse '-o lol'),
                 'Output type should be one of: pretty, raw, csv, tsv'
 
     describe '-i, --input-type' (,) ->
-        it 'should throw an error with bad value' ->
+        it 'throws an error with bad value' ->
             assert.throws (-> parse '-i lol'),
                 'Input type should be one of: raw'
+
+    describe '-vv' (,) ->
+        it 'is parsed as very-verbose' ->
+            args = parse '-vv'
+            args.very-verbose `eq` true
 
     it 'wraps function expressions in parentheses' ->
          args = argv.parse [,, 'identity', '-> it']
