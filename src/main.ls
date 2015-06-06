@@ -36,6 +36,7 @@ make-sandbox = ->
 
     {R, require} <<< R <<< user-config <<<
         treis     : -> apply (require 'treis'), &
+        flatten   : -> apply (require 'flat'), &
         read-file : path-with-cwd >> fs.read-file-sync _, 'utf8'
         id        : R.identity
         lines     : lines

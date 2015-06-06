@@ -295,15 +295,16 @@ For more examples, see the [Cookbook][cookbook].
 
 All of [Ramda's functions][ramda-docs] are available, and also:
 
-| function         | signature            | description                                |
-| ---------------- | -------------------- | ------------------------------------------ |
-| `id`             | `a → a`              | Alias to `R.identity`                      |
-| [`treis`][treis] | `treis(name?, fn)`   | Observe functions' input and output values |
-| `readFile`       | `filePath → String`  | Read a file as string                      |
-| `lines`          | `String → [String]`  | Split a string into lines                  |
-| `words`          | `String → [String]`  | Split a string into words                  |
-| `unlines`        | `[String] → String`  | Join a list of lines into a string         |
-| `unwords`        | `[String] → String`  | Join a list of words into a string         |
+| function          | signature           | description                                    |
+| ----------------- | ------------------- | ---------------------------------------------- |
+| `id`              | `a → a`             | Alias to `R.identity`                          |
+| [`treis`][treis]  | `treis(name?, fn)`  | Observe functions' input and output values     |
+| [`flatten`][flat] | `* → Object`        | Flatten a deep structure into a shallow object |
+| `readFile`        | `filePath → String` | Read a file as string                          |
+| `lines`           | `String → [String]` | Split a string into lines                      |
+| `words`           | `String → [String]` | Split a string into words                      |
+| `unlines`         | `[String] → String` | Join a list of lines into a string             |
+| `unwords`         | `[String] → String` | Join a list of words into a string             |
 
 ## config file
 
@@ -353,6 +354,7 @@ See also: [Essential LiveScript for ramda-cli][essential-livescript]
 
 [![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
 
+[flat]: https://github.com/hughsk/flat
 [1]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
 [livescript]: http://livescript.net
 [treis]: https://github.com/raine/treis
