@@ -56,6 +56,22 @@ describe 'format-table' (,) ->
             └─────┴─────┴─────┴─────┘
             """
 
+    it 'gets all objects\' fields as headers' ->
+        objs =
+            * a: 1
+            * a: 1, b: 1
+
+        (format objs) `eq` do
+            """
+            ┌───┬───┐
+            │ a │ b │
+            ├───┼───┤
+            │ 1 │   │
+            ├───┼───┤
+            │ 1 │ 1 │
+            └───┴───┘
+            """
+
     it 'formats a list of strings' ->
         list = <[ foo bar xyz ]>
         (format list) `eq` do
