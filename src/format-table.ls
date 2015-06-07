@@ -23,6 +23,7 @@ format-list-of-objs = (objs, opts) ->
     head = chain keys, flat-objs |> uniq
     table = new Table merge opts, head: head
     rows  = map (props head), flat-objs
+    # TODO: https://github.com/Automattic/cli-table/issues/70
     rows.for-each -> table.push map blank-if-nil, it
     table.to-string!
 
