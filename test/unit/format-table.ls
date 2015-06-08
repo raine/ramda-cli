@@ -96,15 +96,17 @@ describe 'format-table' (,) ->
             └───────┴───────┘
             """
 
-    it 'formats a vertical table' ->
-        obj = name: 'Afghanistan', code: 'AF'
+    it 'formats a flat vertical table' ->
+        obj = name: 'Afghanistan', code: 'AF', foo: bar: 123
         (format obj) `eq` do
             """
-            ┌──────┬─────────────┐
-            │ name │ Afghanistan │
-            ├──────┼─────────────┤
-            │ code │ AF          │
-            └──────┴─────────────┘
+            ┌─────────┬─────────────┐
+            │ name    │ Afghanistan │
+            ├─────────┼─────────────┤
+            │ code    │ AF          │
+            ├─────────┼─────────────┤
+            │ foo.bar │ 123         │
+            └─────────┴─────────────┘
             """
 
     it 'formats a string' ->

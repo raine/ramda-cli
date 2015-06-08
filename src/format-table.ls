@@ -29,7 +29,7 @@ format-list-of-objs = (objs, opts) ->
 
 format-obj = (obj, opts) ->
     table = new Table opts
-    obj-to-objs obj
+    obj-to-objs flat obj
       .for-each -> table.push it
     table.to-string!
 
