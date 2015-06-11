@@ -4,7 +4,7 @@ require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, take}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
@@ -27,6 +27,9 @@ remove-extra-newlines = (str) ->
 
 wrap-in-parens = (str) -> "(#str)"
 path-with-cwd = path.join process.cwd!, _
+
+take-lines = (n, str) -->
+    lines str |> take n |> unlines
 
 make-sandbox = ->
     try user-config = require config.BASE_PATH
@@ -87,8 +90,9 @@ pass-through-unless = (val, stream) ->
     switch | val       => stream
            | otherwise => PassThrough object-mode: true
 
-map-stream = (func) -> through.obj (chunk,, next) ->
-    val = func chunk
+map-stream = (func, on-error) -> through.obj (chunk,, next) ->
+    val = try func chunk
+    catch then on-error e
     this.push val unless is-nil val
     next!
 
@@ -178,7 +182,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         .pipe pass-through-unless opts.slurp, concat-stream!
 
     (if opts.no-stdin then blank-obj-stream! else stdin-parser!)
-        .pipe map-stream fun
+        .pipe map-stream fun, -> die (take-lines 3, it.stack)
         .pipe pass-through-unless opts.unslurp, unconcat-stream!
         .pipe output-formatter
         .pipe debug-stream debug, opts, \stdout
