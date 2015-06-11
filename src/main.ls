@@ -12,6 +12,11 @@ debug = require 'debug' <| 'ramda-cli:main'
 process.env.'NODE_PATH' = path.join HOME, 'node_modules'
 require 'module' .Module._init-paths!
 
+require-babel = ->
+    try require \babel-core
+    catch {message}
+        throw new Error "#message\nRun `npm install babel-core` in home directory"
+
 # naive fix to get `match` work despite being a keyword in LS
 fix-match = ->
     "#it".replace /\bmatch\b/g, (m, i, str) ->
@@ -54,7 +59,7 @@ make-sandbox = ->
         unwords   : unwords
 
 compile-es6 = (code) ->
-    require 'babel-core'
+    require-babel!
         .transform code, {-ast} .code
 
 compile-livescript = (code) ->
@@ -170,7 +175,7 @@ main = (process-argv, stdin, stdout, stderr) ->
             else process.exit 0
 
     if opts.file
-        if opts.es6 then require 'babel-core/register'
+        if opts.es6 then require-babel!
         try fun = require path.resolve opts.file
         catch {stack, code}
             return switch code
