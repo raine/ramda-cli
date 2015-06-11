@@ -92,7 +92,7 @@ describe 'errors' (,) ->
     describe 'with code that does not evaluate to a function' (,) ->
         it 'outputs an error' (done) ->
             output, errput <-! run-main '1', '[1,2,3]'
-            errput `eq` 'Error: evaluated into type of Number instead of Function\n'
+            errput `eq` 'Error: First argument to arity must be a non-negative integer no greater than ten\n'
             done!
 
         it 'exits with 1' (done) ->

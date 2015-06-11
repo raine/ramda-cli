@@ -23,6 +23,7 @@ HELP =
       -R, --raw-output   alias for --output-type raw
       -C, --configure    edit config in $EDITOR
       -n, --no-stdin     don't read input from stdin
+      -e, --es6          use es6 instead of livescript
       -v, --verbose      print debugging information (use -vv for even more)
           --version      print version
       -h, --help         displays help
@@ -52,7 +53,7 @@ export parse = (argv) ->
     argv = map (wrap-number-lookup << wrap-function), argv.slice 2
     args = camelize minimist argv,
         string: <[ file input-type output-type ]>
-        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin ]>
+        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin es6 ]>
         alias: parse-aliases HELP
 
     args._ = args.''; delete args.''

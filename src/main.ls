@@ -4,7 +4,7 @@ require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, take}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
@@ -14,7 +14,7 @@ require 'module' .Module._init-paths!
 
 # naive fix to get `match` work despite being a keyword in LS
 fix-match = ->
-    it.replace /\bmatch\b/g, (m, i, str) ->
+    "#it".replace /\bmatch\b/g, (m, i, str) ->
         if str[i-1] is not \. then \R.match else m
 
 lines   = split '\n'
@@ -25,8 +25,14 @@ unwords = join ' '
 remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
 
-wrap-in-parens = (str) -> "(#str)"
+wrap-in = (a, b, str) --> "#a#str#b"
+wrap-in-parens = wrap-in \(, \)
+wrap-in-pipe = wrap-in \pipe(, \)
 path-with-cwd = path.join process.cwd!, _
+construct-pipe = pipe do
+    map wrap-in-parens
+    join ','
+    wrap-in-pipe
 
 take-lines = (n, str) -->
     lines str |> take n |> unlines
@@ -47,11 +53,28 @@ make-sandbox = ->
         unlines   : unlines
         unwords   : unwords
 
-compile-and-eval = (code) ->
-    compiled = livescript.compile code, {+bare, -header}
-    debug "\n#compiled", 'compiled code'
+compile-es6 = (code) ->
+    require 'babel-core'
+        .transform code, {-ast} .code
+
+compile-livescript = (code) ->
+    livescript.compile code, {+bare, -header}
+
+evaluate = (code) ->
     ctx = vm.create-context make-sandbox!
-    vm.run-in-context compiled, ctx
+    vm.run-in-context code, ctx
+
+select-compiler = (opts) ->
+    | opts.es6  => compile-es6
+    | otherwise => compile-livescript
+
+compile-with-opts = (code, opts) ->
+    code |> select-compiler opts
+
+compile-and-eval = pipe do
+    compile-with-opts
+    tap -> debug "\n#it", 'compiled code'
+    evaluate
 
 concat-stream   = -> stream-reduce flip(append), []
 unconcat-stream = -> through.obj (chunk,, next) ->
@@ -147,6 +170,7 @@ main = (process-argv, stdin, stdout, stderr) ->
             else process.exit 0
 
     if opts.file
+        # TODO: register babel
         try fun = require path.resolve opts.file
         catch {stack, code}
             return switch code
@@ -158,17 +182,14 @@ main = (process-argv, stdin, stdout, stderr) ->
 
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
-        code = join ' >> ', map (wrap-in-parens >> fix-match), opts._
-        debug (inspect code), 'input code'
-        if not code then return die argv.help!
+        piped-inline-functions = construct-pipe switch
+            | opts.es6  => opts._
+            | otherwise => map fix-match, opts._
 
-        try fun = compile-and-eval code
-        catch {message}
-            return die "Error: #{message}"
+        debug (inspect piped-inline-functions), 'input code'
 
-        debug (inspect fun), 'evaluated to'
-        unless typeof fun is 'function'
-            return die "Error: evaluated into type of #{type fun} instead of Function"
+        try fun = compile-and-eval piped-inline-functions, opts
+        catch {message} then return die "Error: #{message}"
 
     if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
     if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
