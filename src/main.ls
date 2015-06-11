@@ -170,7 +170,7 @@ main = (process-argv, stdin, stdout, stderr) ->
             else process.exit 0
 
     if opts.file
-        # TODO: register babel
+        if opts.es6 then require 'babel-core/register'
         try fun = require path.resolve opts.file
         catch {stack, code}
             return switch code
