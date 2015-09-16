@@ -1,4 +1,4 @@
-box: iojs
+box: node
 build:
     steps:
         - npm-install
