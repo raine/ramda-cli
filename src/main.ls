@@ -1,10 +1,9 @@
 #!/usr/bin/env lsc
-
 require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
@@ -14,7 +13,7 @@ require 'module' .Module._init-paths!
 
 # naive fix to get `match` work despite being a keyword in LS
 fix-match = ->
-    it.replace /\bmatch\b/g, (m, i, str) ->
+    "#it".replace /\bmatch\b/g, (m, i, str) ->
         if str[i-1] is not \. then \R.match else m
 
 lines   = split '\n'
@@ -25,8 +24,17 @@ unwords = join ' '
 remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
 
-wrap-in-parens = (str) -> "(#str)"
+wrap-in = (a, b, str) --> "#a#str#b"
+wrap-in-parens = wrap-in \(, \)
+wrap-in-pipe = wrap-in \pipe(, \)
 path-with-cwd = path.join process.cwd!, _
+construct-pipe = pipe do
+    map wrap-in-parens
+    join ','
+    wrap-in-pipe
+
+take-lines = (n, str) -->
+    lines str |> take n |> unlines
 
 make-sandbox = ->
     try user-config = require config.BASE_PATH
@@ -44,11 +52,24 @@ make-sandbox = ->
         unlines   : unlines
         unwords   : unwords
 
-compile-and-eval = (code) ->
-    compiled = livescript.compile code, {+bare, -header}
-    debug "\n#compiled", 'compiled code'
+compile-livescript = (code) ->
+    livescript.compile code, {+bare, -header}
+
+evaluate = (code) ->
     ctx = vm.create-context make-sandbox!
-    vm.run-in-context compiled, ctx
+    vm.run-in-context code, ctx
+
+select-compiler = (opts) ->
+    | opts.js   => identity
+    | otherwise => compile-livescript
+
+compile-with-opts = (code, opts) ->
+    code |> select-compiler opts
+
+compile-and-eval = pipe do
+    compile-with-opts
+    tap -> debug "\n#it", 'compiled code'
+    evaluate
 
 concat-stream   = -> stream-reduce flip(append), []
 unconcat-stream = -> through.obj (chunk,, next) ->
@@ -87,8 +108,9 @@ pass-through-unless = (val, stream) ->
     switch | val       => stream
            | otherwise => PassThrough object-mode: true
 
-map-stream = (func) -> through.obj (chunk,, next) ->
-    val = func chunk
+map-stream = (func, on-error) -> through.obj (chunk,, next) ->
+    val = try func chunk
+    catch then on-error e
     this.push val unless is-nil val
     next!
 
@@ -154,17 +176,16 @@ main = (process-argv, stdin, stdout, stderr) ->
 
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
-        code = join ' >> ', map (wrap-in-parens >> fix-match), opts._
-        debug (inspect code), 'input code'
-        if not code then return die argv.help!
+        if is-empty opts._ then return die argv.help!
 
-        try fun = compile-and-eval code
-        catch {message}
-            return die "Error: #{message}"
+        piped-inline-functions = construct-pipe switch
+            | opts.js   => opts._
+            | otherwise => map fix-match, opts._
 
-        debug (inspect fun), 'evaluated to'
-        unless typeof fun is 'function'
-            return die "Error: evaluated into type of #{type fun} instead of Function"
+        debug (inspect piped-inline-functions), 'input code'
+
+        try fun = compile-and-eval piped-inline-functions, opts
+        catch {message} then return die "Error: #{message}"
 
     if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
     if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
@@ -178,7 +199,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         .pipe pass-through-unless opts.slurp, concat-stream!
 
     (if opts.no-stdin then blank-obj-stream! else stdin-parser!)
-        .pipe map-stream fun
+        .pipe map-stream fun, -> die (take-lines 3, it.stack)
         .pipe pass-through-unless opts.unslurp, unconcat-stream!
         .pipe output-formatter
         .pipe debug-stream debug, opts, \stdout

@@ -92,7 +92,7 @@ describe 'errors' (,) ->
     describe 'with code that does not evaluate to a function' (,) ->
         it 'outputs an error' (done) ->
             output, errput <-! run-main '1', '[1,2,3]'
-            errput `eq` 'Error: evaluated into type of Number instead of Function\n'
+            errput `eq` 'Error: First argument to _arity must be a non-negative integer no greater than ten\n'
             done!
 
         it 'exits with 1' (done) ->
@@ -105,6 +105,12 @@ describe 'errors' (,) ->
         it 'shows terse error' (done) ->
             output, errput <-! run-main 'identity', 'b'
             errput `eq` 'Error: Invalid JSON (Unexpected "b" at position 0 in state START)\n'
+            done!
+
+    describe 'without arguments' (,) ->
+        it 'shows help' (done) ->
+            output, errput <-! run-main [], ''
+            (head lines errput) `eq` 'Usage: R [options] [function] ...'
             done!
 
 describe '--compact' (,) ->
@@ -544,4 +550,10 @@ describe '--version' (,) ->
     it 'shows version' (done) ->
         output, errput <-! run-main <[ --version ]>, null
         (require '../../package.json' .version) `eq` head lines errput
+        done!
+
+describe '--js' (,) ->
+    it 'compiles input as javascript' (done) ->
+        output, errput <-! run-main ['--js', 'map(x => x + 1)'], '[1,2,3]'
+        output `strip-eq` '[2,3,4]'
         done!
