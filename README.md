@@ -24,6 +24,7 @@ module from npm](#using-packages-from-npm), ramda-cli is a potent tool for
 many kinds of data manipulation in command-line environment.
 
 - [Examples](#examples)
+- [JavaScript support](#javascript-support)
 - [Cookbook][cookbook]
 - [Tutorial: Using ramda-cli to process and display data from GitHub API][tutorial]
 - [Essential LiveScript for ramda-cli][essential-livescript]
@@ -46,9 +47,9 @@ applied to given data, produces the desired output.
 By default, the function is applied to a stream of JSON data read from stdin,
 and the output data is sent to standard out as stringified JSON.
 
-Technically, `function` should be a snippet of LiveScript that evaluates into
-a function. However, JavaScript function call syntax is valid LS, so if more
-suitable, JavaScript can be used when writing functions.
+Technically, `function` should be a snippet of LiveScript (or JavaScript)
+that evaluates into a function. However, JavaScript function call syntax is
+valid LS, so if more suitable, JavaScript can be used when writing functions.
 
 If multiple `function` arguments are supplied, they are composed into a
 pipeline in  order from left to right, as with
@@ -350,6 +351,21 @@ code devoid of repetitive boilerplate.
 - Operators as functions `(+ 1)`
 
 See also: [Essential LiveScript for ramda-cli][essential-livescript]
+
+## javascript support
+
+With the release of node v4 came the ES6 arrow function syntax without a
+compilation penalty. This makes JS more attractive choice for ramda-cli, so
+now there is `--js` flag.
+
+```sh
+echo '[1,2,3]' | R --js 'map(x => x + 1)'
+[
+  2,
+  3,
+  4
+]
+```
 
 --
 
