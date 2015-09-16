@@ -1,10 +1,9 @@
 #!/usr/bin/env lsc
-
 require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, is-empty}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
@@ -187,6 +186,8 @@ main = (process-argv, stdin, stdout, stderr) ->
 
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
+        if is-empty opts._ then return die argv.help!
+
         piped-inline-functions = construct-pipe switch
             | opts.es6  => opts._
             | otherwise => map fix-match, opts._

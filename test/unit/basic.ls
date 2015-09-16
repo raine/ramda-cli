@@ -107,6 +107,12 @@ describe 'errors' (,) ->
             errput `eq` 'Error: Invalid JSON (Unexpected "b" at position 0 in state START)\n'
             done!
 
+    describe 'without arguments' (,) ->
+        it 'shows help' (done) ->
+            output, errput <-! run-main [], ''
+            (head lines errput) `eq` 'Usage: R [options] [function] ...'
+            done!
+
 describe '--compact' (,) ->
     it 'prints compact json output' (done) ->
         args     = <[ identity -c ]>
