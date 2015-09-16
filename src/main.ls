@@ -3,18 +3,13 @@ require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, is-empty}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
 
 process.env.'NODE_PATH' = path.join HOME, 'node_modules'
 require 'module' .Module._init-paths!
-
-require-babel = ->
-    try require \babel-core
-    catch {message}
-        throw new Error "#message\nRun `npm install babel-core` in home directory"
 
 # naive fix to get `match` work despite being a keyword in LS
 fix-match = ->
@@ -57,10 +52,6 @@ make-sandbox = ->
         unlines   : unlines
         unwords   : unwords
 
-compile-es6 = (code) ->
-    require-babel!
-        .transform code, {-ast} .code
-
 compile-livescript = (code) ->
     livescript.compile code, {+bare, -header}
 
@@ -69,7 +60,7 @@ evaluate = (code) ->
     vm.run-in-context code, ctx
 
 select-compiler = (opts) ->
-    | opts.es6  => compile-es6
+    | opts.js   => identity
     | otherwise => compile-livescript
 
 compile-with-opts = (code, opts) ->
@@ -174,7 +165,6 @@ main = (process-argv, stdin, stdout, stderr) ->
             else process.exit 0
 
     if opts.file
-        if opts.es6 then require-babel!
         try fun = require path.resolve opts.file
         catch {stack, code}
             return switch code
@@ -189,7 +179,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         if is-empty opts._ then return die argv.help!
 
         piped-inline-functions = construct-pipe switch
-            | opts.es6  => opts._
+            | opts.js   => opts._
             | otherwise => map fix-match, opts._
 
         debug (inspect piped-inline-functions), 'input code'
