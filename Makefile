@@ -5,7 +5,7 @@ LIB = $(patsubst src/%.ls, lib/%.js, $(SRC))
 
 MOCHA = ./node_modules/.bin/mocha
 LSC = ./node_modules/.bin/lsc
-DOCKER = docker run -v ${PWD}:/usr/src/app -w /usr/src/app -it --rm iojs
+DOCKER = docker run -v ${PWD}:/usr/src/app -w /usr/src/app -it --rm node:4.0.0
 NAME = $(shell node -e "console.log(require('./package.json').name)")
 REPORTER ?= spec
 GREP ?= ".*"
