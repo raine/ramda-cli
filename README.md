@@ -368,7 +368,7 @@ echo '[1,2,3]' | R --js 'map(x => x + 1)'
 
 --
 
-[![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
+[![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s/master "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
 
 [flat]: https://github.com/hughsk/flat
 [1]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
