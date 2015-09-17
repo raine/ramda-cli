@@ -5,7 +5,7 @@ A command-line tool for processing data with functional pipelines.
 ```sh
 nsa> cat people.json | R \
   'filter (p) -> p.city is /Port/ or p.name is /^Dr\./' \
-  'project <[ name city creditcard ]>' \
+  'project <[ name city mac ]>' \
   -o table --compact
 ┌──────────────────┬─────────────────┬───────────────────┐
 │ name             │ city            │ mac               │
