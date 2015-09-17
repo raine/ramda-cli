@@ -51,7 +51,7 @@ Technically, `function` should be a snippet of LiveScript (or JavaScript with
 `--js`) that evaluates into a function.
 
 If multiple `function` arguments are supplied, they are composed into a
-pipeline in  order from left to right, as with
+pipeline in order from left to right, as with
 [`R.pipe`](http://ramdajs.com/docs/#pipe).
 
 All Ramda's functions are available directly in the scope. See
