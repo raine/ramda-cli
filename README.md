@@ -141,9 +141,9 @@ Beryl Lindgren
 > [`filter`](http://ramdajs.com/docs/#filter)  
 > Data: [people.json](https://gist.githubusercontent.com/raine/cd11686e0b8a4a43bbf6/raw/people.json)
 
-##### List versions of npm module with dates formatted with [`timeago`](https://www.npmjs.com/package/timeago)
+##### List versions of npm module with dates formatted with [`node-timeago`](https://github.com/ecto/node-timeago)
 
-It looks for `timeago` installed to `$HOME/node_modules`.
+It looks for `ecto/node-timeago` installed to `$HOME/node_modules`.
 
 ```sh
 npm view ramda --json | R \
