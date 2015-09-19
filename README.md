@@ -306,13 +306,31 @@ All of [Ramda's functions][ramda-docs] are available, and also:
 | `unlines`        | `[String] → String` | Join a list of lines into a string             |
 | `unwords`        | `[String] → String` | Join a list of words into a string             |
 
-## config file
+## configuration
+
+### config file
 
 Path: `$HOME/.config/ramda-cli.{js,ls}`
 
 The purpose of a global config file is to carry functions you might find
 useful to have around. The functions it exports in an object are made
 available.
+
+For example,
+
+```
+$ cat <<EOF > ~/.config/ramda-cli.js
+> exports.date = (val) => new Date(val);
+> exports.timeago = require('timeago');
+> exports.debug = (val) => {
+>   console.log('debug:', val);
+>   return val;
+> };
+> EOF
+$ echo 1442667243000 | R date debug timeago
+debug: Sat Sep 19 2015 12:54:03 GMT+0000 (UTC)
+"12 minutes ago"
+```
 
 ## using packages from npm
 
@@ -334,7 +352,8 @@ ramda-cli [Function: f1] +4ms evaluated to
 ```
 
 [`treis`][treis] is available for debugging individual functions in the
-pipeline:
+pipeline. Wrap a function with `treis` to decorate it with debugging
+capabilities. It will make the function print its input and output values.
 
 <img width="370" height="99" src="https://raw.githubusercontent.com/raine/ramda-cli/media/treis-face.png" />
 
