@@ -24,6 +24,7 @@ module from npm](#using-packages-from-npm), ramda-cli is a potent tool for
 many kinds of data manipulation in command-line environment.
 
 - [Examples](#examples)
+- [Configuration](#configuration)
 - [JavaScript support](#javascript-support)
 - [Cookbook][cookbook]
 - [Tutorial: Using ramda-cli to process and display data from GitHub API][tutorial]
