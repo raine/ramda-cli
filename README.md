@@ -108,23 +108,22 @@ first object's keys as headers. See an example below.
 ## examples
 
 ```sh
-# Sum a list of numbers in JSON
-echo [1,2,3] | R 'sum'
-6
+# Add 1 to each value in a list
+echo [1,2,3] | R 'map add 1'
+[
+  2,
+  3,
+  4
+]
 
-# Multiply each value by 2
-echo [1,2,3] | R 'map multiply 2'
-[2,4,6]
-
-# Parentheses can be used like in JavaScript, if so preferred
-echo [1,2,3] | R 'map(multiply(2))'
-[2,4,6]
+# Add 1 to each value with inline ES6 lambda and take product of all
+echo [1,2,3] | R --js 'map(x => x + 1)' product
+24
 ```
 
 > Ramda functions used:
-> [`sum`](http://ramdajs.com/docs/#sum),
 > [`map`](http://ramdajs.com/docs/#map),
-> [`multiply`](http://ramdajs.com/docs/#multiply)
+> [`product`](http://ramdajs.com/docs/#product)
 
 ##### Get a list of people whose first name starts with "B"
 
