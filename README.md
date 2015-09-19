@@ -318,7 +318,7 @@ available.
 
 For example,
 
-```
+```sh
 $ cat <<EOF > ~/.config/ramda-cli.js
 > exports.date = (val) => new Date(val);
 > exports.timeago = require('timeago');
@@ -330,6 +330,17 @@ $ cat <<EOF > ~/.config/ramda-cli.js
 $ echo 1442667243000 | R date debug timeago
 debug: Sat Sep 19 2015 12:54:03 GMT+0000 (UTC)
 "12 minutes ago"
+```
+
+### default options
+
+To make some options be passed by default, it is best to use a shell alias.
+For example, to always interpret functions as JavaScript:
+
+```sh
+$ alias R="ramda --js"
+$ echo 1 | R '(x) => x + 1'
+2
 ```
 
 ## using packages from npm
