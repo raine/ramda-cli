@@ -36,6 +36,20 @@ describe 'argv.parse' (,) ->
             args = parse '-vv'
             args.very-verbose `eq` true
 
+    describe '-n, --no-stdin' (,) ->
+        it 'sets stdin to false with -n' ->
+            parse '-n' .stdin `eq` false
+
+        it 'sets stdin to false with --no-stdin' ->
+            parse '--no-stdin' .stdin `eq` false
+
+        it 'sets stdin to true with --stdin' ->
+            parse '--stdin' .stdin `eq` true
+
+        it 'is boolean' ->
+            parse '-n identity' .stdin `eq` false
+            parse '--no-stdin identity' .stdin `eq` false
+
     it 'wraps function expressions in parentheses' ->
          args = argv.parse [,, 'identity', '-> it']
          args._.1 `eq` '(-> it)'

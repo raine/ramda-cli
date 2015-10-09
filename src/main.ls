@@ -198,7 +198,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         .pipe input-parser .on \error -> die it
         .pipe pass-through-unless opts.slurp, concat-stream!
 
-    (if opts.no-stdin then blank-obj-stream! else stdin-parser!)
+    (if opts.stdin then stdin-parser! else blank-obj-stream!)
         .pipe map-stream fun, -> die (take-lines 3, it.stack)
         .pipe pass-through-unless opts.unslurp, unconcat-stream!
         .pipe output-formatter

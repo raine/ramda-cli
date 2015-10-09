@@ -55,9 +55,11 @@ export parse = (argv) ->
         string: <[ file input-type output-type ]>
         boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js ]>
         alias: parse-aliases HELP
+        default: {+stdin}
 
     args._ = args.''; delete args.''
-    if args.raw-input  then args.input-type = \raw
+
+    if args.raw-input  then args.input-type  = \raw
     if args.raw-output then args.output-type = \raw
     if args.pretty     then args.output-type = \pretty
 
@@ -68,6 +70,7 @@ export parse = (argv) ->
         throw new Error "Input type should be #{format-enum-list INPUT_TYPES}"
 
     if '-vv' in argv then args.very-verbose = true
+    if '-n'  in argv then args.stdin = false
 
     args
 
