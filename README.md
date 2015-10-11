@@ -123,6 +123,7 @@ echo [1,2,3] | R --js 'map(x => x + 1)' product
 ```
 
 > Ramda functions used:
+> [`add`](http://ramdajs.com/docs/#add),
 > [`map`](http://ramdajs.com/docs/#map),
 > [`product`](http://ramdajs.com/docs/#product)
 
