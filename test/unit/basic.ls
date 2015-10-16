@@ -536,6 +536,23 @@ describe '--no-stdin' (,) ->
         output `eq` expected
         done!
 
+describe '--transduce' (,) ->
+    it 'transduces input stream' (done) ->
+        args     = <[ -t drop-repeats ]>
+        input    = '1 2 2 3 4 4 5\n'
+        expected = '1\n2\n3\n4\n5\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'reverses functions before composing' (done) ->
+        args     = ['-t', 'map add 1', 'filter (> 3)']
+        input    = '2 3 4\n'
+        expected = '4\n5\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--help' (,) ->
     stub-process-exit!
 
