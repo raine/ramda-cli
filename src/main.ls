@@ -1,9 +1,9 @@
 #!/usr/bin/env lsc
-require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs}
+require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs, 'transduce-stream'}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
@@ -177,13 +177,12 @@ main = (process-argv, stdin, stdout, stderr) ->
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
         if is-empty opts._ then return die argv.help!
-
+        fns = (if opts.transduce then reverse else identity) opts._
         piped-inline-functions = construct-pipe switch
-            | opts.js   => opts._
-            | otherwise => map fix-match, opts._
+            | opts.js   => fns
+            | otherwise => map fix-match, fns
 
         debug (inspect piped-inline-functions), 'input code'
-
         try fun = compile-and-eval piped-inline-functions, opts
         catch {message} then return die "Error: #{message}"
 
@@ -198,8 +197,12 @@ main = (process-argv, stdin, stdout, stderr) ->
         .pipe input-parser .on \error -> die it
         .pipe pass-through-unless opts.slurp, concat-stream!
 
+    mapper =
+        if opts.transduce then transduce-stream fun, {+object-mode}
+        else map-stream fun, -> die (take-lines 3, it.stack)
+
     (if opts.stdin then stdin-parser! else blank-obj-stream!)
-        .pipe map-stream fun, -> die (take-lines 3, it.stack)
+        .pipe mapper
         .pipe pass-through-unless opts.unslurp, unconcat-stream!
         .pipe output-formatter
         .pipe debug-stream debug, opts, \stdout

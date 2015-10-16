@@ -16,6 +16,7 @@ HELP =
       -s, --slurp        read JSON objects from stdin as one big list
       -S, --unslurp      unwraps a list before output so that each item is formatted and
                          printed separately
+      -t, --transduce    use pipeline as a transducer to transform stdin
       -i, --input-type   read input from stdin as (#{format-enum-list INPUT_TYPES})
       -o, --output-type  format output sent to stdout (#{format-enum-list OUTPUT_TYPES})
       -p, --pretty       pretty-printed output with colors, alias to -o pretty
@@ -53,7 +54,7 @@ export parse = (argv) ->
     argv = map (wrap-number-lookup << wrap-function), argv.slice 2
     args = camelize minimist argv,
         string: <[ file input-type output-type ]>
-        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js ]>
+        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce ]>
         alias: parse-aliases HELP
         default: {+stdin}
 

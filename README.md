@@ -58,7 +58,7 @@ pipeline in order from left to right, as with
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
 
-## options
+## help
 
 ```
 Usage: R [options] [function] ...
@@ -69,6 +69,7 @@ Usage: R [options] [function] ...
   -s, --slurp        read JSON objects from stdin as one big list
   -S, --unslurp      unwraps a list before output so that each item is formatted and
                      printed separately
+  -t, --transduce    use pipeline as a transducer to transform stdin
   -i, --input-type   read input from stdin as (one of: raw, csv, tsv)
   -o, --output-type  format output sent to stdout (one of: pretty, raw, csv, tsv, table)
   -p, --pretty       pretty-printed output with colors, alias to -o pretty
@@ -105,6 +106,29 @@ objects. First object's keys will determine the headers.
 
 Print ~any shape of data as a table. If used with a list of objects, uses the
 first object's keys as headers. See an example below.
+
+## options
+
+#### `-t, --transduce`
+
+Transform the input stream using the pipeline as a
+[transducer][transducers-explained]. Requires all functions in the pipeline
+to be able to act as transducers.
+
+This option essentially allows performing operations like
+[`R.map`](http://ramdajs.com/docs/#map) or
+[`R.filter`](http://ramdajs.com/docs/#filter) on items as they come without
+waiting for the stream to complete.
+
+__Example__
+
+```sh
+echo '1 2 2 3 3 4' | R --transduce drop-repeats
+1
+2
+3
+4
+```
 
 ## examples
 
@@ -205,7 +229,7 @@ data_url=https://gist.githubusercontent.com/jorin-vogel/7f19ce95a9a842956358/raw
 curl $data_url | R \
   'filter where creditcard: (!= null)' `# filter out those who don't have credit card` \
   'project [\name, \creditcard]'       `# pick name and creditcard fields from all objects` \
-  -o csv > `date "+%Y%m%d"`.csv        `# print output as csv to a file named as the current date` 
+  -o csv > `date "+%Y%m%d"`.csv        `# print output as csv to a file named as the current date`
 ```
 
 ##### Print a table with `--output-type table`
@@ -224,7 +248,7 @@ cat countries.json | R 'take 3' -o table
 ```
 
 > Ramda functions used:
-> [`take`](http://ramdajs.com/docs/#take)  
+> [`take`](http://ramdajs.com/docs/#take)
 > Data: [countries.json](https://gist.github.com/raine/4756f6fc803a32663b3f)
 
 ##### List a project's dependencies in a table
@@ -411,3 +435,4 @@ echo '[1,2,3]' | R --js 'map(x => x + 1)'
 [tutorial]: https://gistlog.co/raine/d12d0ec3e72b2945510b
 [essential-livescript]: https://gistlog.co/raine/6486b985c767954781b1
 [cookbook]: https://github.com/raine/ramda-cli/wiki/Cookbook
+[transducers-explained]: http://simplectic.com/blog/2014/transducers-explained-1/
