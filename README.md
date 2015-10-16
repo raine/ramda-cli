@@ -23,6 +23,7 @@ With a variety of supported input/output types and the ability [pull any
 module from npm](#using-packages-from-npm), ramda-cli is a potent tool for
 many kinds of data manipulation in command-line environment.
 
+- [Options](#options)
 - [Examples](#examples)
 - [Configuration](#configuration)
 - [JavaScript support](#javascript-support)
@@ -83,31 +84,60 @@ Usage: R [options] [function] ...
   -h, --help         displays help
 ```
 
-## output types
-
-Aside from JSON, few other types of output are supported:
-
-##### `-o pretty`
-
-Print pretty output.
-
-##### `-o raw`
-
-With raw output type when a string value is produced, the result will be
-written to stdout as is without any formatting.
-
-##### `-o csv` and `-o tsv`
-
-CSV or TSV output type can be used when pipeline evaluates to an array of
-objects, an array of arrays or when stdin consists of a stream of bare
-objects. First object's keys will determine the headers.
-
-##### `-o table`
-
-Print ~any shape of data as a table. If used with a list of objects, uses the
-first object's keys as headers. See an example below.
-
 ## options
+
+#### `-f, --file`
+
+Load a function pipeline from a file. Useful for scripts difficult to express
+in command-line.
+
+```js
+// shout.js
+var R = require('ramda');
+module.exports = R.pipe(R.toUpper, R.add(R.__, '!'));
+```
+
+```sh
+echo -n '"hello world"' | R --file shout.js
+"HELLO WORLD!"
+```
+
+#### `-c, --compact`
+
+Print compact tables and JSON output without whitespace.
+
+#### `-s, --slurp`
+
+Read all input from `stdin` and wrap the data in a list before operations.
+
+__Example__
+
+```sh
+cat <<EOF | R --slurp 'map to-upper'
+"foo"
+"bar"
+"xyz"
+EOF
+[
+  "FOO",
+  "BAR",
+  "XYZ"
+]
+```
+
+#### `-S, --unslurp`
+
+After the pipeline is applied to an item and if the result is an array, its
+items are printed separately.
+
+__Example__
+
+```sh
+echo '[1,2,3]' | R --unslurp 'map inc'
+2
+3
+4
+```
 
 #### `-t, --transduce`
 
@@ -130,6 +160,93 @@ echo '1 2 2 3 3 4' | R --transduce drop-repeats
 4
 ```
 
+#### `-i, --input-type`
+
+Parse `stdin` as one of these formats: `raw`, `csv`, `tsv`.
+
+__Examples__
+
+```sh
+echo foo | R --input-type raw to-upper
+"FOO"
+```
+
+```sh
+$ cat <<EOF | R --input-type csv identity
+id,name
+1,Bob
+2,Alice
+EOF
+[
+  { "id": "1", "name": "Bob" },
+  { "id": "2", "name": "Alice" }
+]
+```
+
+#### `-o, --output-type`
+
+Instead of JSON, format output as one of: `pretty`, `raw`, `csv`, `tsv`, `table`.
+
+##### `-o pretty`
+
+Print pretty output.
+
+##### `-o raw`
+
+With raw output type when a string value is produced, the result will be
+written to stdout as is without any formatting.
+
+##### `-o csv` and `-o tsv`
+
+CSV or TSV output type can be used when pipeline evaluates to an array of
+objects, an array of arrays or when stdin consists of a stream of bare
+objects. First object's keys will determine the headers.
+
+##### `-o table`
+
+Print nearly any type of data as a table. If used with a list of objects,
+uses the first object's keys as headers.
+
+__Example__
+
+```sh
+cat countries.json | R 'take 3' -o table --compact
+┌───────────────┬──────┐
+│ name          │ code │
+├───────────────┼──────┤
+│ Afghanistan   │ AF   │
+│ Åland Islands │ AX   │
+│ Albania       │ AL   │
+└───────────────┴──────┘
+```
+
+#### `-n, --no-stdin`
+
+Don't read `stdin` for input. Useful when starting a pipeline with a constant
+function.
+
+__Example__
+
+```sh
+R --no-stdin 'always "hello world"' 'add __, \!'
+"hello world!"
+```
+
+#### `--js`
+
+Interpret positional arguments as JavaScript instead of LiveScript.
+
+__Example__
+
+```sh
+echo '[1,2,3]' | R --js 'map(x => Math.pow(x, 2))'
+[
+  1,
+  4,
+  9
+]
+```
+
 ## examples
 
 ```sh
@@ -140,7 +257,9 @@ echo [1,2,3] | R 'map add 1'
   3,
   4
 ]
+```
 
+```sh
 # Add 1 to each value with inline ES6 lambda and take product of all
 echo [1,2,3] | R --js 'map(x => x + 1)' product
 24
@@ -211,13 +330,16 @@ graphite -t "summarize(stats_counts.status_codes.*, '1min', 'sum', false)" -f '-
 ##### Use `--slurp` to read multiple JSON objects into a single list before any operations
 
 ```sh
-$ cat <<EOF > text
+cat <<EOF | R --slurp identity
 "foo bar"
 "test lol"
 "hello world"
 EOF
-$ cat text | R --compact --slurp identity
-["foo bar","test lol","hello world"]
+[
+  "foo bar",
+  "test lol",
+  "hello world"
+]
 ```
 
 ##### Solution to the [credit card JSON to CSV challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using `--output-type csv`
@@ -231,25 +353,6 @@ curl $data_url | R \
   'project [\name, \creditcard]'       `# pick name and creditcard fields from all objects` \
   -o csv > `date "+%Y%m%d"`.csv        `# print output as csv to a file named as the current date`
 ```
-
-##### Print a table with `--output-type table`
-
-```sh
-cat countries.json | R 'take 3' -o table
-┌───────────────┬──────┐
-│ name          │ code │
-├───────────────┼──────┤
-│ Afghanistan   │ AF   │
-├───────────────┼──────┤
-│ Åland Islands │ AX   │
-├───────────────┼──────┤
-│ Albania       │ AL   │
-└───────────────┴──────┘
-```
-
-> Ramda functions used:
-> [`take`](http://ramdajs.com/docs/#take)
-> Data: [countries.json](https://gist.github.com/raine/4756f6fc803a32663b3f)
 
 ##### List a project's dependencies in a table
 
@@ -281,12 +384,15 @@ exports.h = require('hyperscript')
 ```
 
 ```sh
-$ cat <<EOF > shopping.txt
+cat <<EOF > shopping.txt
 milk
 cheese
 peanuts
 EOF
-$ cat shopping.txt | R \
+```
+
+```sh
+cat shopping.txt | R \
   -rR --slurp           `# read raw input into a list` \
   'map (h \li.item, _)' `# apply <li class="item"> into each item` \
   'h \ul#list, _'       `# wrap list inside <ul id="list">` \
@@ -304,16 +410,6 @@ $ cat shopping.txt | R \
 Reason for underscores (e.g. `h \ul, _`) is that hyperscript API is not
 curried (and can't be because it's variadic). We need to explicitly state
 that this function is waiting for one more argument.
-
-##### Load function from a file with the `--file` option
-
-```sh
-$ cat shout.js
-var R = require('ramda');
-module.exports = R.pipe(R.toUpper, R.add(R.__, '!'));
-$ echo -n 'hello world' | R -i raw --file shout.js
-"HELLO WORLD!"
-```
 
 For more examples, see the [Cookbook][cookbook].
 
@@ -344,16 +440,18 @@ available.
 
 For example,
 
+```js
+// ~/.config/ramda-cli.js
+exports.date = (val) => new Date(val);
+exports.timeago = require('timeago');
+exports.debug = (val) => {
+  console.log('debug:', val);
+  return val;
+};
+```
+
 ```sh
-$ cat <<EOF > ~/.config/ramda-cli.js
-> exports.date = (val) => new Date(val);
-> exports.timeago = require('timeago');
-> exports.debug = (val) => {
->   console.log('debug:', val);
->   return val;
-> };
-> EOF
-$ echo 1442667243000 | R date debug timeago
+echo 1442667243000 | R date debug timeago
 debug: Sat Sep 19 2015 12:54:03 GMT+0000 (UTC)
 "12 minutes ago"
 ```
@@ -364,8 +462,8 @@ To make some options be passed by default, it is best to use a shell alias.
 For example, to always interpret functions as JavaScript:
 
 ```sh
-$ alias R="ramda --js"
-$ echo 1 | R '(x) => x + 1'
+alias R="ramda --js"
+echo 1 | R '(x) => x + 1'
 2
 ```
 
@@ -374,19 +472,14 @@ $ echo 1 | R '(x) => x + 1'
 Packages installed to `$HOME/node_modules` can used with `require()`.
 
 ```sh
-$ date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
+date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
 less than a minute ago
 ```
 
 ## debugging
 
-You can turn on the debug output with `-v, --verbose` flag.
-
-```sh
-ramda-cli 'R.sum' +0ms input code
-ramda-cli 'R.sum;' +14ms compiled code
-ramda-cli [Function: f1] +4ms evaluated to
-```
+You can turn on the debug output with `-v, --verbose` flag. Use `-vv` for
+even more verbose output.
 
 [`treis`][treis] is available for debugging individual functions in the
 pipeline. Wrap a function with `treis` to decorate it with debugging
