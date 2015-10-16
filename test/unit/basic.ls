@@ -104,7 +104,7 @@ describe 'errors' (,) ->
     describe 'with bad json' (,) ->
         it 'shows terse error' (done) ->
             output, errput <-! run-main 'identity', 'b'
-            errput `eq` 'Error: Invalid JSON (Unexpected "b" at position 0 in state START)\n'
+            errput `eq` 'Error: Invalid JSON (Unexpected "b" at position 0 in state STOP)\n'
             done!
 
     describe 'without arguments' (,) ->

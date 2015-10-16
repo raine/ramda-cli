@@ -20,7 +20,7 @@
   "author": "Raine Virta <raine.virta@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "JSONStream": "^1.0.4",
+    "JSONStream": "^1.0.6",
     "camelize": "^1.0.0",
     "cli-table": "Automattic/cli-table",
     "debug": "^2.2.0",
