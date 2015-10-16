@@ -59,7 +59,7 @@ pipeline in order from left to right, as with
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
 
-## help
+## options
 
 ```
 Usage: R [options] [function] ...
@@ -84,7 +84,7 @@ Usage: R [options] [function] ...
   -h, --help         displays help
 ```
 
-## options
+--
 
 #### `-f, --file`
 
@@ -102,9 +102,13 @@ echo -n '"hello world"' | R --file shout.js
 "HELLO WORLD!"
 ```
 
+--
+
 #### `-c, --compact`
 
 Print compact tables and JSON output without whitespace.
+
+--
 
 #### `-s, --slurp`
 
@@ -125,6 +129,8 @@ EOF
 ]
 ```
 
+--
+
 #### `-S, --unslurp`
 
 After the pipeline is applied to an item and if the result is an array, its
@@ -138,6 +144,8 @@ echo '[1,2,3]' | R --unslurp 'map inc'
 3
 4
 ```
+
+--
 
 #### `-t, --transduce`
 
@@ -159,6 +167,8 @@ echo '1 2 2 3 3 4' | R --transduce drop-repeats
 3
 4
 ```
+
+--
 
 #### `-i, --input-type`
 
@@ -182,6 +192,8 @@ EOF
   { "id": "2", "name": "Alice" }
 ]
 ```
+
+--
 
 #### `-o, --output-type`
 
@@ -220,6 +232,8 @@ cat countries.json | R 'take 3' -o table --compact
 └───────────────┴──────┘
 ```
 
+--
+
 #### `-n, --no-stdin`
 
 Don't read `stdin` for input. Useful when starting a pipeline with a constant
@@ -231,6 +245,8 @@ __Example__
 R --no-stdin 'always "hello world"' 'add __, \!'
 "hello world!"
 ```
+
+--
 
 #### `--js`
 
@@ -246,6 +262,14 @@ echo '[1,2,3]' | R --js 'map(x => Math.pow(x, 2))'
   9
 ]
 ```
+
+--
+
+#### `-C, --configure`
+
+Edit ramda-cli config file in `$EDITOR`.
+
+See [Configuration](#configuration).
 
 ## examples
 
