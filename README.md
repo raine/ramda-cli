@@ -1,4 +1,4 @@
-# ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli)
+# ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/raine/ramda-cli)
 
 A command-line tool for processing data with functional pipelines.
 
