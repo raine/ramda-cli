@@ -483,12 +483,20 @@ debug: Sat Sep 19 2015 12:54:03 GMT+0000 (UTC)
 ### default options
 
 To make some options be passed by default, it is best to use a shell alias.
-For example, to always interpret functions as JavaScript:
+For example:
 
 ```sh
+# always interpret as javascript
 alias R="ramda --js"
 echo 1 | R '(x) => x + 1'
 2
+```
+
+```sh
+# always use identity function, instead of showing help without args
+alias R="ramda identity"
+echo 1 | R
+1
 ```
 
 ## using packages from npm
