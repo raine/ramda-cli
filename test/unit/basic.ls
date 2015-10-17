@@ -110,7 +110,7 @@ describe 'errors' (,) ->
     describe 'without arguments' (,) ->
         it 'shows help' (done) ->
             output, errput <-! run-main [], ''
-            (head lines errput) `eq` 'Usage: R [options] [function] ...'
+            (head lines errput) `eq` 'Usage: ramda [options] [function] ...'
             done!
 
 describe '--compact' (,) ->
@@ -558,7 +558,7 @@ describe '--help' (,) ->
 
     it 'shows help' (done) ->
         output, errput <-! run-main <[ identity -h ]>, '[1,2,3]'
-        'Usage: R [options] [function] ...' `eq` head lines errput
+        'Usage: ramda [options] [function] ...' `eq` head lines errput
         done!
 
 describe '--version' (,) ->
