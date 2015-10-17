@@ -14,8 +14,7 @@
     "test-local": "make test && make docker-test-func"
   },
   "bin": {
-    "ramda": "./bin/ramda",
-    "R": "./bin/ramda"
+    "ramda": "./bin/ramda"
   },
   "author": "Raine Virta <raine.virta@gmail.com>",
   "license": "ISC",

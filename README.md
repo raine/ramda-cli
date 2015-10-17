@@ -35,15 +35,16 @@ many kinds of data manipulation in command-line environment.
 
 ```sh
 npm install -g ramda-cli
+alias R='ramda'
 ```
 
 ## synopsis
 
 ```sh
-cat data.json | R [function] ...
+cat data.json | ramda [function] ...
 ```
 
-The idea is to [compose][1] functions into a pipeline of operations that when
+The idea is to [compose][composition] functions into a pipeline of operations that when
 applied to given data, produces the desired output.
 
 By default, the function is applied to a stream of JSON data read from stdin,
@@ -62,7 +63,7 @@ http://ramdajs.com/docs/ for a full list.
 ## options
 
 ```
-Usage: R [options] [function] ...
+Usage: ramda [options] [function] ...
 
   -f, --file         read a function from a js/ls file instead of args; useful for
                      larger scripts
@@ -551,7 +552,7 @@ echo '[1,2,3]' | R --js 'map(x => x + 1)'
 [![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s/master "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
 
 [flat]: https://github.com/hughsk/flat
-[1]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
+[composition]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
 [livescript]: http://livescript.net
 [treis]: https://github.com/raine/treis
 [hyperscript]: https://github.com/dominictarr/hyperscript

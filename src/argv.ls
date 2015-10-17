@@ -8,7 +8,7 @@ format-enum-list = (.join ', ') >> ('one of: ' +)
 
 HELP =
     """
-    Usage: R [options] [function] ...
+    Usage: ramda [options] [function] ...
 
       -f, --file         read a function from a js/ls file instead of args; useful for
                          larger scripts
