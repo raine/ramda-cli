@@ -51,11 +51,19 @@ By default, the function is applied to a stream of JSON data read from stdin,
 and the output data is sent to standard out as stringified JSON.
 
 Technically, `function` should be a snippet of LiveScript (or JavaScript with
-`--js`) that evaluates into a function.
+`--js`) that evaluates into a function. If multiple `function` arguments are
+supplied as positional arguments, they are composed into a pipeline in order
+from left to right (see [`R.pipe`](http://ramdajs.com/docs/#pipe)).
 
-If multiple `function` arguments are supplied, they are composed into a
-pipeline in order from left to right, as with
-[`R.pipe`](http://ramdajs.com/docs/#pipe).
+As a simple example, in `echo 1 | R inc 'multiply 2'`, which prints 4, the
+computation would look roughly as follows:
+
+```js
+input = 1
+fn = pipe(inc, multiply(2))
+result = fn(input) // multiply(2, inc(1))
+result             // => 4
+```
 
 All Ramda's functions are available directly in the scope. See
 http://ramdajs.com/docs/ for a full list.
