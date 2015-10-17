@@ -310,6 +310,30 @@ Beryl Lindgren
 > [`filter`](http://ramdajs.com/docs/#filter)  
 > Data: [people.json](https://gist.githubusercontent.com/raine/cd11686e0b8a4a43bbf6/raw/people.json)
 
+##### Create a markdown TODO list
+
+```sh
+curl -s http://jsonplaceholder.typicode.com/todos |\
+  R --raw-output \
+    'filter where-eq user-id: 10' \
+    'map (t) -> "- [#{t.completed && "x" || " "}] #{t.title}"' \
+    'take 5' \
+    'unlines'
+```
+
+__Output__
+
+- [ ] ut cupiditate sequi aliquam fuga maiores
+- [x] inventore saepe cumque et aut illum enim
+- [x] omnis nulla eum aliquam distinctio
+- [ ] molestias modi perferendis perspiciatis
+- [ ] voluptates dignissimos sed doloribus animi quaerat aut
+
+> Ramda functions used:
+> [`filter`](http://ramdajs.com/docs/#filter),
+> [`where-eq`](http://ramdajs.com/docs/#whereEq),
+> [`map`](http://ramdajs.com/docs/#map)
+
 ##### List versions of npm module with dates formatted with [`node-timeago`](https://github.com/ecto/node-timeago)
 
 It looks for `ecto/node-timeago` installed to `$HOME/node_modules`.
