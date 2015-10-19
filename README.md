@@ -552,15 +552,33 @@ capabilities. It will make the function print its input and output values.
 
 <img width="370" height="99" src="https://raw.githubusercontent.com/raine/ramda-cli/media/treis-face.png" />
 
-## why livescript?
+## livescript?
 
 > [LiveScript][livescript] is a language which compiles to JavaScript. It has
 a straightforward mapping to JavaScript and allows you to write expressive
 code devoid of repetitive boilerplate.
 
-- Function composition operators `.`, `<<`, `>>`
-- Implicit access `(.length)`
-- Operators as functions `(+ 1)`
+### comparison table
+
+All values in the table evaluate to a function.
+
+| Ramda                     | LiveScript              | JavaScript                |
+|---------------------------|-------------------------|---------------------------|
+| `not`                     | `(not)`                 | `x => !x`                 |
+| `nth(0)`                  | `(.0)`                  | `x => x[0]`               |
+| `prop('name')`            | `(.name)`               | `x => x.name`             |
+| `add(1)`                  | `(+ 1)`                 | `x => x + 1`              |
+| `add(__, '!')`            | `(+ '!')`               | `x => x + '!'`            |
+| `gt(__, 2)`               | `(> 2)`                 | `x => x > 2`              |
+| `contains(__, xs)`        | `(in xs)`               | `x => xs.includes(x)`     |
+| `pipe(length, gt(__, 2))` | `(.length > 2)`         | `x => x.length > 2 `      |
+| `isNil`                   | `(~= null)`             | `x => x == null`          |
+| `complement(isNil)`       | `(!~= null)`            | `x => x != null`          |
+| `match(/foo/)`            | `(is /foo/)`            | `x => x.match(/foo/)`     |
+| `replace('a', '')`        | `(- 'a')`               | `x => x.replace('a', '')` |
+| `join(',')`               | `(* ',')`               | `x => x.join(',')`        |
+| `split(',')`              | `(/ ',')`               | `x => x.split(',')`       |
+| `toUpper`                 | `(.to-upper-case!)`     | `x => x.toUpperCase()`    |
 
 See also: [Essential LiveScript for ramda-cli][essential-livescript]
 
