@@ -1,5 +1,5 @@
 #!/usr/bin/env lsc
-require! {livescript, vm, JSONStream, path, 'stream-reduce', split2, fs, 'transduce-stream'}
+require! {livescript, vm, JSONStream, path, split2, fs, 'transduce-stream'}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
@@ -71,7 +71,15 @@ compile-and-eval = pipe do
     tap -> debug "\n#it", 'compiled code'
     evaluate
 
-concat-stream   = -> stream-reduce flip(append), []
+reduce-stream = (fn, acc) -> through.obj do
+    (chunk,, next) ->
+        acc := fn acc, chunk
+        next!
+    (next) ->
+        this.push acc
+        next!
+
+concat-stream   = -> reduce-stream flip(append), []
 unconcat-stream = -> through.obj (chunk,, next) ->
     switch type chunk
     | \Array    => for-each this~push, chunk
