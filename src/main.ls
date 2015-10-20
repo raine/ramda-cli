@@ -27,7 +27,7 @@ remove-extra-newlines = (str) ->
 wrap-in = (a, b, str) --> "#a#str#b"
 wrap-in-parens = wrap-in \(, \)
 wrap-in-pipe = wrap-in \pipe(, \)
-path-with-cwd = path.join process.cwd!, _
+relative-to-cwd = path.join process.cwd!, _
 construct-pipe = pipe do
     map wrap-in-parens
     join ','
@@ -45,7 +45,7 @@ make-sandbox = ->
     {R, require} <<< R <<< user-config <<<
         treis     : -> apply (require 'treis'), &
         flat      : -> apply (require 'flat'), &
-        read-file : path-with-cwd >> fs.read-file-sync _, 'utf8'
+        read-file : relative-to-cwd >> fs.read-file-sync _, 'utf8'
         id        : R.identity
         lines     : lines
         words     : words
