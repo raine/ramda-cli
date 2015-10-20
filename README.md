@@ -23,10 +23,16 @@ With a variety of supported input/output types and the ability [pull any
 module from npm](#using-packages-from-npm), ramda-cli is a potent tool for
 many kinds of data manipulation in command-line environment.
 
+##### Table of Contents
+
 - [Examples](#examples)
 - [Options](#options)
 - [Configuration](#configuration)
+- [LiveScript?](#livescript)
 - [JavaScript support](#javascript-support)
+
+##### Resources
+
 - [Cookbook][cookbook]
 - [Tutorial: Using ramda-cli to process and display data from GitHub API][tutorial]
 - [Essential LiveScript for ramda-cli][essential-livescript]
@@ -421,7 +427,7 @@ uses the first object's keys as headers.
 __Example__
 
 ```sh
-cat countries.json | R 'take 3' -o table --compact
+curl -Ls http://bit.do/countries-json | R 'take 3' -o table --compact
 ┌───────────────┬──────┐
 │ name          │ code │
 ├───────────────┼──────┤
@@ -560,25 +566,26 @@ code devoid of repetitive boilerplate.
 
 ### comparison table
 
-All values in the table evaluate to a function.
+All expressions in the table evaluate to a function, and are valid in
+ramda-cli.
 
-| Ramda                     | LiveScript              | JavaScript                |
-|---------------------------|-------------------------|---------------------------|
-| `not`                     | `(not)`                 | `x => !x`                 |
-| `nth(0)`                  | `(.0)`                  | `x => x[0]`               |
-| `prop('name')`            | `(.name)`               | `x => x.name`             |
-| `add(1)`                  | `(+ 1)`                 | `x => x + 1`              |
-| `add(__, '!')`            | `(+ '!')`               | `x => x + '!'`            |
-| `gt(__, 2)`               | `(> 2)`                 | `x => x > 2`              |
-| `contains(__, xs)`        | `(in xs)`               | `x => xs.includes(x)`     |
-| `pipe(length, gt(__, 2))` | `(.length > 2)`         | `x => x.length > 2 `      |
-| `isNil`                   | `(~= null)`             | `x => x == null`          |
-| `complement(isNil)`       | `(!~= null)`            | `x => x != null`          |
-| `match(/foo/)`            | `(is /foo/)`            | `x => x.match(/foo/)`     |
-| `replace('a', '')`        | `(- 'a')`               | `x => x.replace('a', '')` |
-| `join(',')`               | `(* ',')`               | `x => x.join(',')`        |
-| `split(',')`              | `(/ ',')`               | `x => x.split(',')`       |
-| `toUpper`                 | `(.to-upper-case!)`     | `x => x.toUpperCase()`    |
+| Ramda                     | LiveScript          | JavaScript                |
+|---------------------------|---------------------|---------------------------|
+| `not`                     | `(not)`             | `x => !x`                 |
+| `nth(0)`                  | `(.0)`              | `x => x[0]`               |
+| `prop('name')`            | `(.name)`           | `x => x.name`             |
+| `add(1)`                  | `(+ 1)`             | `x => x + 1`              |
+| `add(__, '!')`            | `(+ '!')`           | `x => x + '!'`            |
+| `gt(__, 2)`               | `(> 2)`             | `x => x > 2`              |
+| `contains(__, xs)`        | `(in xs)`           | `x => xs.includes(x)`     |
+| `pipe(length, gt(__, 2))` | `(.length > 2)`     | `x => x.length > 2 `      |
+| `isNil`                   | `(~= null)`         | `x => x == null`          |
+| `complement(isNil)`       | `(!~= null)`        | `x => x != null`          |
+| `match(/foo/)`            | `(is /foo/)`        | `x => x.match(/foo/)`     |
+| `replace('a', '')`        | `(- 'a')`           | `x => x.replace('a', '')` |
+| `join(',')`               | `(* ',')`           | `x => x.join(',')`        |
+| `split(',')`              | `(/ ',')`           | `x => x.split(',')`       |
+| `toUpper`                 | `(.to-upper-case!)` | `x => x.toUpperCase()`    |
 
 See also: [Essential LiveScript for ramda-cli][essential-livescript]
 
