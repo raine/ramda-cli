@@ -361,7 +361,8 @@ to be able to act as transducers.
 This option essentially allows performing operations like
 [`R.map`](http://ramdajs.com/docs/#map) or
 [`R.filter`](http://ramdajs.com/docs/#filter) on items as they come without
-waiting for the stream to complete.
+waiting for the stream to complete or wrapping the input stream in a
+collection with [`--slurp`](#-s---slurp).
 
 __Example__
 
