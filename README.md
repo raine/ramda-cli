@@ -1,4 +1,4 @@
-# ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/raine/ramda-cli)
+# ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][gitter]
 
 A command-line tool for processing data with functional pipelines.
 
@@ -30,6 +30,7 @@ many kinds of data manipulation in command-line environment.
 - [Configuration](#configuration)
 - [LiveScript?](#livescript)
 - [JavaScript support](#javascript-support)
+- [Questions or comments?](#questions-or-comments)
 
 ##### Resources
 
@@ -605,6 +606,12 @@ echo '[1,2,3]' | R --js 'map(x => x + 1)'
 ]
 ```
 
+## questions or comments?
+
+- [Ask on Gitter][gitter]
+- [Open an issue](https://github.com/raine/ramda-cli/issues/new)
+- [Tweet at `@rane`](https://twitter.com/rane)
+
 --
 
 [![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s/master "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
@@ -620,3 +627,4 @@ echo '[1,2,3]' | R --js 'map(x => x + 1)'
 [essential-livescript]: https://gistlog.co/raine/6486b985c767954781b1
 [cookbook]: https://github.com/raine/ramda-cli/wiki/Cookbook
 [transducers-explained]: http://simplectic.com/blog/2014/transducers-explained-1/
+[gitter]: https://gitter.im/raine/ramda-cli
