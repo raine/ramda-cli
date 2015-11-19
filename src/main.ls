@@ -24,6 +24,7 @@ unwords = join ' '
 remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
 
+str-contains = (x, xs) ~> (xs.index-of x) >= 0
 wrap-in = (a, b, str) --> "#a#str#b"
 wrap-in-parens = wrap-in \(, \)
 wrap-in-pipe = wrap-in \pipe(, \)
@@ -39,7 +40,7 @@ take-lines = (n, str) -->
 make-sandbox = ->
     try user-config = require config.BASE_PATH
     catch e
-        unless (e.code is 'MODULE_NOT_FOUND' and e.message is /\.config\/ramda-cli/)
+        unless (e.code is 'MODULE_NOT_FOUND' and str-contains (path.join '.config', 'ramda-cli'), e.message)
             throw e
 
     {R, require} <<< R <<< user-config <<<
