@@ -297,6 +297,8 @@ Usage: ramda [options] [function] ...
 Load a function pipeline from a file. Useful for scripts difficult to express
 in command-line.
 
+__Example__
+
 ```js
 // shout.js
 var R = require('ramda');
@@ -306,6 +308,14 @@ module.exports = R.pipe(R.toUpper, R.add(R.__, '!'));
 ```sh
 echo -n '"hello world"' | R --file shout.js
 "HELLO WORLD!"
+```
+
+You can overwrite command-line arguments through the script by exporting a
+string in property `opts`.
+
+```js
+module.exports = function() { /* ... */ }
+module.exports.opts = '--slurp -o table'
 ```
 
 --
