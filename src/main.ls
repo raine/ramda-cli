@@ -144,11 +144,11 @@ opts-to-output-stream = (opts) ->
     | \table        => table-output-stream opts.compact
     | otherwise     => json-stringify-stream opts.compact
 
-input-type-to-stream = (type) ->
-    switch type
+opts-to-input-stream = (opts) ->
+    switch opts.input-type
     | \raw          => split2!
-    | <[ csv tsv ]> => (require 'fast-csv') csv-opts-by-type type
-    | otherwise     => JSONStream.parse!
+    | <[ csv tsv ]> => (require 'fast-csv') csv-opts-by-type opts.input-type
+    | otherwise     => JSONStream.parse opts.json-path
 
 blank-obj-stream = ->
     PassThrough {+object-mode}
@@ -198,8 +198,9 @@ main = (process-argv, stdin, stdout, stderr) ->
     if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
     if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
 
-    input-parser = input-type-to-stream opts.input-type
+    input-parser = opts-to-input-stream opts
     output-formatter = opts-to-output-stream opts
+
     stdin-parser = ->
         stdin
         .pipe debug-stream debug, opts, \stdin

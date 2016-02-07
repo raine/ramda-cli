@@ -277,6 +277,7 @@ Usage: ramda [options] [function] ...
   -S, --unslurp       unwraps a list before output so that each item is formatted and
                       printed separately
   -t, --transduce     use pipeline as a transducer to transform stdin
+  -P, --json-path     parse stream with JSONPath expression
   -i, --input-type    read input from stdin as (one of: raw, csv, tsv)
   -o, --output-type   format output sent to stdout (one of: pretty, raw, csv, tsv, table)
   -p, --pretty        pretty-printed output with colors, alias to -o pretty
@@ -384,6 +385,27 @@ echo '1 2 2 3 3 4' | R --transduce drop-repeats
 2
 3
 4
+```
+
+--
+
+
+#### `-P, --json-path`
+
+Parse the input stream with given [JSONPath](http://goessner.net/articles/JsonPath/) expression.
+
+See also: [JSONStream documentation](https://github.com/dominictarr/JSONStream#jsonstreamparsepath)
+
+__Examples__
+
+Process a huge JSON array one by one without reading the whole thing first.
+
+```sh
+curl -Ls http://bit.do/countries-json | R --json-path '*' --compact identity
+{"name":"Afghanistan","code":"AF"}
+{"name":"Åland Islands","code":"AX"}
+{"name":"Albania","code":"AL"}
+...
 ```
 
 --

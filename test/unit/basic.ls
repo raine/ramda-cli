@@ -574,6 +574,15 @@ describe '--transduce' (,) ->
         output `eq` expected
         done!
 
+describe '--json-path' (,) ->
+    it 'unwraps a json array with *' (done) ->
+        args     = <[ identity --json-path * ]>
+        input    = '[1,2,3]'
+        expected = '1\n2\n3\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--help' (,) ->
     stub-process-exit!
 
