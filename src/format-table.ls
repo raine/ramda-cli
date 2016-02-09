@@ -1,9 +1,9 @@
-require! ramda: {keys, props, map, to-pairs, apply, create-map-entry, type, merge, uniq, chain, if-else, is-nil, always, identity}
+require! ramda: {keys, props, map, to-pairs, apply, obj-of, type, merge, uniq, chain, if-else, is-nil, always, identity}
 require! 'cli-table': Table
 require! flat
 
 blank-if-nil = if-else is-nil, (always ''), identity
-obj-to-objs = to-pairs >> map apply create-map-entry
+obj-to-objs = to-pairs >> map apply obj-of
 STYLE = head: <[ cyan bold ]>
 
 format-list = (list, opts) ->
