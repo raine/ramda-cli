@@ -93,8 +93,8 @@ raw-output-stream = -> through.obj (chunk,, next) ->
     | otherwise => this.push remove-extra-newlines "#chunk\n"
     next!
 
-inspect-stream = -> through.obj (chunk,, next) ->
-    this.push (inspect chunk, colors: true) + '\n'
+inspect-stream = (depth) -> through.obj (chunk,, next) ->
+    this.push (inspect chunk, colors: true, depth: depth) + '\n'
     next!
 
 debug-stream = (debug, opts, str) ->
@@ -136,13 +136,13 @@ csv-opts-by-type = (type) ->
     | \csv => opts
     | \tsv => opts <<< delimiter: '\t'
 
-output-type-to-stream = (type, compact) ->
-    switch type
-    | \pretty       => inspect-stream!
+opts-to-output-stream = (opts) ->
+    switch opts.output-type
+    | \pretty       => inspect-stream opts.pretty-depth
     | \raw          => raw-output-stream!
-    | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts-by-type type
-    | \table        => table-output-stream compact
-    | otherwise     => json-stringify-stream compact
+    | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts-by-type opts.output-type
+    | \table        => table-output-stream opts.compact
+    | otherwise     => json-stringify-stream opts.compact
 
 input-type-to-stream = (type) ->
     switch type
@@ -199,7 +199,7 @@ main = (process-argv, stdin, stdout, stderr) ->
     if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
 
     input-parser = input-type-to-stream opts.input-type
-    output-formatter = output-type-to-stream opts.output-type, opts.compact
+    output-formatter = opts-to-output-stream opts
     stdin-parser = ->
         stdin
         .pipe debug-stream debug, opts, \stdin
