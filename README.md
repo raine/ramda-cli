@@ -452,6 +452,24 @@ curl -Ls http://bit.do/countries-json | R 'take 3' -o table --compact
 
 --
 
+#### `-p, --pretty`
+
+Alias of `--output-type pretty`.
+
+--
+
+#### `-D, --pretty-depth`
+
+When using pretty-printed output, set how deep structures are verbosely
+printed.
+
+Useful when output is huge and you want to see the general structure of an
+object or list.
+
+See documentation of [`util.inspect(object[, options])`](https://nodejs.org/api/util.html#util_util_inspect_object_options)
+
+--
+
 #### `-n, --no-stdin`
 
 Don't read `stdin` for input. Useful when starting a pipeline with a constant
