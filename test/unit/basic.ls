@@ -372,6 +372,27 @@ describe '--output-type pretty' (,) ->
         output `eq` expected
         done!
 
+describe '--pretty-depth' (,) ->
+    it 'configures pretty printing of objects up to specific depth' (done) ->
+        args     = <[ identity -o pretty --pretty-depth 1 ]>
+        input    = '{"a":{"b":{"c":[1,2,3]}}}'
+        expected = """
+        { a: { b: [Object] } }\n
+        """
+        output <-! run-main args, input
+        (strip-ansi output) `eq` expected
+        done!
+
+    it 'parses null as infinite' (done) ->
+        args     = <[ identity -o pretty --pretty-depth null ]>
+        input    = '{"a":{"b":{"c":[1,2,3]}}}'
+        expected = """
+        { a: { b: { c: [ 1, 2, 3 ] } } }\n
+        """
+        output <-! run-main args, input
+        (strip-ansi output) `eq` expected
+        done!
+
 describe '--output-type csv' (,) ->
     it 'prints a list of objects as CSV with headers' (done) ->
         args  = <[ identity -o csv ]>
