@@ -17,6 +17,7 @@ HELP =
       -S, --unslurp       unwraps a list before output so that each item is formatted and
                           printed separately
       -t, --transduce     use pipeline as a transducer to transform stdin
+      -P, --json-path     parse stream with JSONPath expression
       -i, --input-type    read input from stdin as (#{format-enum-list INPUT_TYPES})
       -o, --output-type   format output sent to stdout (#{format-enum-list OUTPUT_TYPES})
       -p, --pretty        pretty-printed output with colors, alias to -o pretty
@@ -54,7 +55,7 @@ export parse = (argv) ->
     # - wrap implicit number lookups '.0' in parens, minimist thinks they're numbers
     argv = map (wrap-number-lookup << wrap-function), argv.slice 2
     args = camelize minimist argv,
-        string: <[ file input-type output-type ]>
+        string: <[ file input-type output-type json-path ]>
         boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce ]>
         alias: parse-aliases HELP
         default: {+stdin}
