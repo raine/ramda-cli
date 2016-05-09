@@ -87,10 +87,11 @@ unconcat-stream = -> through.obj (chunk,, next) ->
     | otherwise => this.push chunk
     next!
 
-raw-output-stream = -> through.obj (chunk,, next) ->
+raw-output-stream = (compact) -> through.obj (chunk,, next) ->
+    end = unless compact then "\n" else ''
     switch type chunk
-    | \Array    => for-each (~> this.push "#it\n"), chunk
-    | otherwise => this.push remove-extra-newlines "#chunk\n"
+    | \Array    => for-each (~> this.push "#it#end"), chunk
+    | otherwise => this.push remove-extra-newlines "#chunk#end"
     next!
 
 inspect-stream = (depth) -> through.obj (chunk,, next) ->
@@ -139,7 +140,7 @@ csv-opts-by-type = (type) ->
 opts-to-output-stream = (opts) ->
     switch opts.output-type
     | \pretty       => inspect-stream opts.pretty-depth
-    | \raw          => raw-output-stream!
+    | \raw          => raw-output-stream opts.compact
     | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts-by-type opts.output-type
     | \table        => table-output-stream opts.compact
     | otherwise     => json-stringify-stream opts.compact

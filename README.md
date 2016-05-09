@@ -326,6 +326,15 @@ module.exports.opts = '--slurp -o table'
 
 Print compact tables and JSON output without whitespace.
 
+When used with `--output-type raw`, no line breaks are added to output.
+
+__Example__
+
+```sh
+seq 10 | R --input-type raw --output-type raw --compact identity # or -rRc
+12345678910%
+```
+
 --
 
 #### `-s, --slurp`

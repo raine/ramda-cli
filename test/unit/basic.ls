@@ -348,6 +348,14 @@ describe '--output-type raw' (,) ->
         output `eq` expected
         done!
 
+    it 'prints strings without newline if --compact as supplied' (done) ->
+        args     = <[ identity -o raw --compact ]>
+        input    = '"foo"\n"bar"\n"xyz"\n'
+        expected = 'foobarxyz'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--output-type pretty' (,) ->
     it 'pretty prints objects' (done) ->
         args     = <[ identity -o pretty ]>
