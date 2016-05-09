@@ -332,6 +332,14 @@ describe '--output-type raw' (,) ->
         output `eq` expected
         done!
 
+    it 'prints an array of strings one by one' (done) ->
+        args     = <[ identity -o raw ]>
+        input    = '["foo","bar","xyz"]'
+        expected = 'foo\nbar\nxyz\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
     it 'removes extra newlines from end' (done) ->
         args     = ['(+ "\\n\\n")', '-o', 'raw']
         input    = '"foo"'
