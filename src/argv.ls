@@ -34,7 +34,12 @@ HELP =
     If multiple functions are given as strings, they are composed into a
     pipeline in order from left to right, similarly to R.pipe.
 
-    Example: cat data.json | R 'pluck \\name' 'take 5'
+    Examples:
+
+      curl -Ls http://bit.do/countries-json | ramda 'take 5' 'pluck \\name' --pretty
+      curl -Ls http://bit.do/countries-json | ramda 'find where-eq code: \\FI'
+      curl -Ls http://bit.do/countries-json | ramda --js 'filter(c => test(/land$/, c.name))'
+      seq 10 | ramda --raw-input --slurp 'map parse-int' sum
 
     README: https://github.com/raine/ramda-cli
     """
