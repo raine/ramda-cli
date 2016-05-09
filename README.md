@@ -110,7 +110,7 @@ Beryl Lindgren
 
 > Ramda functions used:
 > [`pluck`](http://ramdajs.com/docs/#pluck),
-> [`filter`](http://ramdajs.com/docs/#filter)  
+> [`filter`](http://ramdajs.com/docs/#filter)
 > Data: [people.json](https://gist.githubusercontent.com/raine/cd11686e0b8a4a43bbf6/raw/people.json)
 
 ##### Create a markdown TODO list
@@ -399,6 +399,8 @@ See also: [JSONStream documentation](https://github.com/dominictarr/JSONStream#j
 __Examples__
 
 Process a huge JSON array one by one without reading the whole thing first.
+
+`*` as JSON path unwraps the array and objects are passed to `identity` one by one.
 
 ```sh
 curl -Ls http://bit.do/countries-json | R --json-path '*' --compact identity
