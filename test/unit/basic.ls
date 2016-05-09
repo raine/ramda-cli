@@ -318,8 +318,8 @@ describe '--output-type raw' (,) ->
 
     it 'prints a stream of strings separated by line breaks' (done) ->
         args     = <[ identity -o raw ]>
-        input    = '"foo"\n"bar"'
-        expected = 'foo\nbar\n'
+        input    = '"foo"\n"bar"\n"xyz"\n'
+        expected = 'foo\nbar\nxyz\n'
         output <-! run-main args, input
         output `eq` expected
         done!
@@ -336,18 +336,6 @@ describe '--output-type raw' (,) ->
         args     = ['(+ "\\n\\n")', '-o', 'raw']
         input    = '"foo"'
         expected = 'foo\n'
-        output <-! run-main args, input
-        output `eq` expected
-        done!
-
-    it 'prints a list\'s items separately' (done) ->
-        args     = <[ identity -o raw ]>
-        input    = '["foo", "bar", "xyz"]'
-        expected = """
-        foo
-        bar
-        xyz\n
-        """
         output <-! run-main args, input
         output `eq` expected
         done!
