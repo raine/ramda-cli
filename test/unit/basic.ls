@@ -340,14 +340,6 @@ describe '--output-type raw' (,) ->
         output `eq` expected
         done!
 
-    it 'requires actual newlines in the data if those are needed in output' (done) ->
-        args     = ['(+ "\\n")', '-o', 'raw']
-        input    = '"foo"\n"bar"'
-        expected = 'foo\nbar\n'
-        output <-! run-main args, input
-        output `eq` expected
-        done!
-
     it 'prints a list\'s items separately' (done) ->
         args     = <[ identity -o raw ]>
         input    = '["foo", "bar", "xyz"]'
