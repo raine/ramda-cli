@@ -3,7 +3,7 @@ require! {livescript, vm, JSONStream, path, split2, fs, 'transduce-stream'}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
@@ -53,6 +53,7 @@ make-sandbox = ->
         words     : words
         unlines   : unlines
         unwords   : unwords
+        then      : (fn, promise) --> promise.then(fn)
 
 compile-livescript = (code) ->
     livescript.compile code, {+bare, -header}
