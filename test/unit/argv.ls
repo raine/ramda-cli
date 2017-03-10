@@ -50,6 +50,11 @@ describe 'argv.parse' (,) ->
             parse '-n identity' .stdin `eq` false
             parse '--no-stdin identity' .stdin `eq` false
 
+    describe '-I, --import', (,) ->
+        it 'is always an array' ->
+            parse '--import foo' .import `deep-eq` ['foo']
+            parse '--import foo --import bar' .import `deep-eq` ['foo', 'bar']
+
     it 'wraps function expressions in parentheses' ->
          args = argv.parse [,, 'identity', '-> it']
          args._.1 `eq` '(-> it)'

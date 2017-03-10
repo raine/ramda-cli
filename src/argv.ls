@@ -26,6 +26,7 @@ HELP =
       -R, --raw-output    alias for --output-type raw
       -n, --no-stdin      don't read input from stdin
           --js            use javascript instead of livescript
+      -I, --import        require module as a variable
       -C, --configure     edit config in $EDITOR
       -v, --verbose       print debugging information (use -vv for even more)
           --version       print version
