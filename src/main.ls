@@ -1,5 +1,5 @@
 #!/usr/bin/env lsc
-require! {livescript, vm, JSONStream, path, split2, fs, 'transduce-stream'}
+require! {livescript, vm, JSONStream, path, split2, fs, 'transduce-stream', camelize}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
@@ -48,7 +48,7 @@ make-sandbox = (opts) ->
         |> map split('=')
         |> map ([alias, pkg]) ->
             pkg = pkg or alias
-            [alias, require pkg]
+            [camelize(alias), require pkg]
         |> from-pairs
 
     helpers =
