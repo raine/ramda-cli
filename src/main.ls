@@ -40,7 +40,13 @@ take-lines = (n, str) -->
     lines str |> take n |> unlines
 
 make-sandbox = (opts) ->
-    imports = opts.import and from-pairs map ((pkg) -> [pkg, require pkg]), opts.import or []
+    imports = opts.import or []
+        |> map split('=')
+        |> map ([alias, pkg]) ->
+            pkg = pkg or alias
+            [alias, require pkg]
+        |> from-pairs
+
     helpers =
         treis     : -> apply (require 'treis'), &
         flat      : -> apply (require 'flat'), &
