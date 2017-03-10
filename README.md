@@ -536,6 +536,26 @@ echo '[1,2,3]' | R --js 'map(x => Math.pow(x, 2))'
 
 --
 
+#### `-I, --import`
+
+Make modules installed with `npm install` accessible in positional code
+arguments.
+
+Modules are looked for in `$HOME/node_modules` and current directory's
+`node_modules`.
+
+Symbol `=` can be used to declare the variable module should appear as.
+Otherwise, module's name is used as the variable name.
+
+__Example__
+
+```sh
+echo test | R -rR --import c=chalk 'c.bold'
+**test**
+```
+
+--
+
 #### `-C, --configure`
 
 Edit ramda-cli config file in `$EDITOR`.
