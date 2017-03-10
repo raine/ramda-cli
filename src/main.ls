@@ -9,7 +9,11 @@ require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
 Module = require 'module' .Module
 
-process.env.'NODE_PATH' = path.join HOME, 'node_modules'
+# caveat: require will still prioritize ramda-cli's own node_modules
+process.env.'NODE_PATH' = join ':', [
+    path.join(process.cwd(), 'node_modules')
+    path.join(HOME, 'node_modules') ]
+
 Module._init-paths!
 
 # naive fix to get `match` work despite being a keyword in LS
