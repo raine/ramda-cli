@@ -28,6 +28,8 @@ many kinds of data manipulation in command-line environment.
 - [Examples](#examples)
 - [Options](#options)
 - [Configuration](#configuration)
+- [Using packages from NPM](#using-packages-from-npm)
+- [Promises](#promises)
 - [LiveScript?](#livescript)
 - [JavaScript support](#javascript-support)
 - [Questions or comments?](#questions-or-comments)
@@ -544,16 +546,17 @@ See [Configuration](#configuration).
 
 All of [Ramda's functions][ramda-docs] are available, and also:
 
-| function         | signature           | description                                    |
-| ---------------- | ------------------- | ---------------------------------------------- |
-| `id`             | `a → a`             | Alias to `R.identity`                          |
-| [`treis`][treis] | `treis(name?, fn)`  | Observe functions' input and output values     |
-| [`flat`][flat]   | `* → Object`        | Flatten a deep structure into a shallow object |
-| `readFile`       | `filePath → String` | Read a file as string                          |
-| `lines`          | `String → [String]` | Split a string into lines                      |
-| `words`          | `String → [String]` | Split a string into words                      |
-| `unlines`        | `[String] → String` | Join a list of lines into a string             |
-| `unwords`        | `[String] → String` | Join a list of words into a string             |
+| function         | signature             | description                                    |
+|------------------|-----------------------|------------------------------------------------|
+| `id`             | `a → a`               | Alias to `R.identity`                          |
+| [`treis`][treis] | `treis(name?, fn)`    | Observe functions' input and output values     |
+| [`flat`][flat]   | `* → Object`          | Flatten a deep structure into a shallow object |
+| `readFile`       | `filePath → String`   | Read a file as string                          |
+| `lines`          | `String → [String]`   | Split a string into lines                      |
+| `words`          | `String → [String]`   | Split a string into words                      |
+| `unlines`        | `[String] → String`   | Join a list of lines into a string             |
+| `unwords`        | `[String] → String`   | Join a list of words into a string             |
+| `then`           | `Function -> Promise` | Map a value inside Promise                     |
 
 ## configuration
 
@@ -609,6 +612,17 @@ Packages installed to `$HOME/node_modules` can used with `require()`.
 ```sh
 date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
 less than a minute ago
+```
+
+## promises
+
+Promise values are unwrapped at the end of pipeline.
+
+`then` helper function can be used to map promise values.
+
+```sh
+echo 1 | R --js 'x => Promise.resolve(x)' 'then(add(5))'
+6
 ```
 
 ## debugging
