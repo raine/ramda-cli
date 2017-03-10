@@ -86,6 +86,15 @@ describe 'multiple functions as arguments' (,) ->
         output `eq` expected
         done!
 
+describe 'promises' (,) ->
+    it 'unwraps a promise' (done) ->
+        args     = '(x) -> Promise.resolve(x + 1)'
+        input    = '1\n'
+        expected = '2\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe 'errors' (,) ->
     stub-process-exit!
 

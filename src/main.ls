@@ -24,6 +24,7 @@ unwords = join ' '
 remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
 
+is-thenable = (x) -> x and typeof x.then is 'function'
 str-contains = (x, xs) ~> (xs.index-of x) >= 0
 wrap-in = (a, b, str) --> "#a#str#b"
 wrap-in-parens = wrap-in \(, \)
@@ -119,10 +120,14 @@ pass-through-unless = (val, stream) ->
            | otherwise => PassThrough object-mode: true
 
 map-stream = (func, on-error) -> through.obj (chunk,, next) ->
+    push = (x) ~>
+        # pushing a null would end the stream
+        this.push x unless is-nil x
+        next!
     val = try func chunk
     catch then on-error e
-    this.push val unless is-nil val
-    next!
+    if is-thenable val then val.then push
+    else push val
 
 table-output-stream = (compact) ->
     require! './format-table'
