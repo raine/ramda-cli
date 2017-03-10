@@ -80,6 +80,8 @@ export parse = (argv) ->
     if '-vv' in argv then args.very-verbose = true
     if '-n'  in argv then args.stdin = false
 
+    args.import = typeof args.import == \string and [args.import] or args.import
+
     args
 
 export help = -> HELP

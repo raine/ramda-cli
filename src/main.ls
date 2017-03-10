@@ -3,13 +3,14 @@ require! {livescript, vm, JSONStream, path, split2, fs, 'transduce-stream'}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
+Module = require 'module' .Module
 
 process.env.'NODE_PATH' = path.join HOME, 'node_modules'
-require 'module' .Module._init-paths!
+Module._init-paths!
 
 # naive fix to get `match` work despite being a keyword in LS
 fix-match = ->
@@ -38,13 +39,9 @@ construct-pipe = pipe do
 take-lines = (n, str) -->
     lines str |> take n |> unlines
 
-make-sandbox = ->
-    try user-config = require config.BASE_PATH
-    catch e
-        unless (e.code is 'MODULE_NOT_FOUND' and str-contains (path.join '.config', 'ramda-cli'), e.message)
-            throw e
-
-    {R, require} <<< R <<< user-config <<<
+make-sandbox = (opts) ->
+    imports = opts.import and from-pairs map ((pkg) -> [pkg, require pkg]), opts.import or []
+    helpers =
         treis     : -> apply (require 'treis'), &
         flat      : -> apply (require 'flat'), &
         read-file : relative-to-cwd >> fs.read-file-sync _, 'utf8'
@@ -55,11 +52,18 @@ make-sandbox = ->
         unwords   : unwords
         then      : (fn, promise) --> promise.then(fn)
 
+    try user-config = require config.BASE_PATH
+    catch e
+        unless (e.code is 'MODULE_NOT_FOUND' and str-contains (path.join '.config', 'ramda-cli'), e.message)
+            throw e
+
+    {R, require} <<< R <<< user-config <<< helpers <<< imports
+
 compile-livescript = (code) ->
     livescript.compile code, {+bare, -header}
 
-evaluate = (code) ->
-    ctx = vm.create-context make-sandbox!
+evaluate = (opts, code) -->
+    ctx = vm.create-context make-sandbox opts
     vm.run-in-context code, ctx
 
 select-compiler = (opts) ->
@@ -69,10 +73,10 @@ select-compiler = (opts) ->
 compile-with-opts = (code, opts) ->
     code |> select-compiler opts
 
-compile-and-eval = pipe do
-    compile-with-opts
-    tap -> debug "\n#it", 'compiled code'
-    evaluate
+compile-and-eval = (code, opts) ->
+    compile-with-opts code, opts
+    |> tap -> debug "\n#it", 'compiled code'
+    |> evaluate opts
 
 reduce-stream = (fn, acc) -> through.obj do
     (chunk,, next) ->
