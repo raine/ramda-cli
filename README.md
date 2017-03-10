@@ -607,11 +607,20 @@ echo 1 | R
 
 ## using packages from npm
 
-Packages installed to `$HOME/node_modules` can used with `require()`.
+Packages installed to `$HOME/node_modules` or `$PWD/node_modules` can used
+with `require()`.
 
 ```sh
-date -u +"%Y-%m-%dT%H:%M:%SZ" | R -r 'require \timeago'
-less than a minute ago
+date -v +7d +%s | R -rR --js 'require("moment").unix' 'x => x.fromNow()'
+in 7 days
+```
+
+Additionally, there is `-I, --import` which can be used as a shorthand for
+`require()`.
+
+```sh
+echo test | R -rR --import c=chalk 'c.bold'
+**test**
 ```
 
 ## promises
