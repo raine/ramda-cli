@@ -1,5 +1,5 @@
 #!/usr/bin/env lsc
-require! {livescript, vm, JSONStream, path, split2, fs, camelize}
+require! {vm, JSONStream, path, split2, fs, camelize}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
@@ -62,6 +62,8 @@ make-sandbox = (opts) ->
         unwords   : unwords
         then      : (fn, promise) --> promise.then(fn)
 
+    config-file-path = config.get-existing-config-file!
+    if config-file-path?.match /\.ls$/ then require! livescript
     try user-config = require config.BASE_PATH
     catch e
         unless (e.code is 'MODULE_NOT_FOUND' and str-contains (path.join '.config', 'ramda-cli'), e.message)
@@ -70,6 +72,7 @@ make-sandbox = (opts) ->
     {R, require} <<< R <<< user-config <<< helpers <<< imports
 
 compile-livescript = (code) ->
+    require! livescript
     livescript.compile code, {+bare, -header}
 
 evaluate = (opts, code) -->

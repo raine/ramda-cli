@@ -1,15 +1,16 @@
 require! path
+require! 'is-there'
 require! './utils': {HOME}
 
 export BASE_PATH = path.join HOME, \.config, \ramda-cli
-export edit = (cb) ->
-    require! <[ is-there editor ]>
+export get-existing-config-file = ->
+    exts = <[ .js .ls ]>
+    for ext in exts
+        p = BASE_PATH + ext
+        return p if is-there p
 
-    get-existing-config-file = ->
-        exts = <[ .js .ls ]>
-        for ext in exts
-            p = BASE_PATH + ext
-            return p if is-there p
+export edit = (cb) ->
+    require! editor
 
     if get-existing-config-file! then editor that, cb
     else cb new Error do
