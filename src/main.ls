@@ -1,5 +1,5 @@
 #!/usr/bin/env lsc
-require! {livescript, vm, JSONStream, path, split2, fs, 'transduce-stream', camelize}
+require! {livescript, vm, JSONStream, path, split2, fs, camelize}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
@@ -229,7 +229,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         .pipe pass-through-unless opts.slurp, concat-stream!
 
     mapper =
-        if opts.transduce then transduce-stream fun, {+object-mode}
+        if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
         else map-stream fun, -> die (take-lines 3, it.stack)
 
     (if opts.stdin then stdin-parser! else blank-obj-stream!)
