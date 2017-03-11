@@ -654,6 +654,19 @@ echo 1 | R --js 'x => Promise.resolve(x)' 'then(add(5))'
 6
 ```
 
+```sh
+echo '192.168.1.1\ngoogle.com\nyahoo.com' | \
+  R -r --js --import ping 'ping.promise.probe' 'then(omit(["output", "numeric_host"]))' | \
+  R --slurp -o table --compact
+┌─────────────┬───────┬─────────┬─────────┬─────────┬─────────┬────────┐
+│ host        │ alive │ time    │ min     │ max     │ avg     │ stddev │
+├─────────────┼───────┼─────────┼─────────┼─────────┼─────────┼────────┤
+│ 192.168.1.1 │ true  │ 1.325   │ 1.325   │ 1.325   │ 1.325   │ 0.000  │
+│ google.com  │ true  │ 10.729  │ 10.729  │ 10.729  │ 10.729  │ 0.000  │
+│ yahoo.com   │ true  │ 115.418 │ 115.418 │ 115.418 │ 115.418 │ 0.000  │
+└─────────────┴───────┴─────────┴─────────┴─────────┴─────────┴────────┘
+```
+
 ## debugging
 
 You can turn on the debug output with `-v, --verbose` flag. Use `-vv` for
