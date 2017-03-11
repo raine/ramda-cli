@@ -144,9 +144,9 @@ __Output__
 It looks for `ecto/node-timeago` installed to `$HOME/node_modules`.
 
 ```sh
-npm view ramda --json | R \
+npm view ramda --json | R --import timeago \
   'prop \time' 'to-pairs' \
-  'map -> version: it.0, time: require("timeago")(it.1)' \
+  'map -> version: it.0, time: timeago(it.1)' \
   -o tsv | column -t -s $'\t'
 ...
 0.12.0    2 months ago
@@ -171,7 +171,7 @@ HTTP status codes per minute for last hour:
 
 ```sh
 graphite -t "summarize(stats_counts.status_codes.*, '1min', 'sum', false)" -f '-1h' -o json | \
-  R 'map evolve datapoints: (map head) >> require \sparkline' \
+  R --import sparkline 'map evolve datapoints: (map head) >> sparkline \
     'sort-by prop \target' -o table
 ```
 
@@ -230,12 +230,7 @@ npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table --compac
 
 ##### Generate HTML with hyperscript
 
-With [`hyperscript`][hyperscript] installed to `$HOME/node_modules` and
-[config](#config-file) that exports it as `h`.
-
-```js
-exports.h = require('hyperscript')
-```
+With [`hyperscript`][hyperscript] installed to `${HOME,PWD}/node_modules`.
 
 ```sh
 cat <<EOF > shopping.txt
@@ -246,7 +241,7 @@ EOF
 ```
 
 ```sh
-cat shopping.txt | R \
+cat shopping.txt | R --import h=hyperscript \
   -rR --slurp           `# read raw input into a list` \
   'map (h \li.item, _)' `# apply <li class="item"> into each item` \
   'h \ul#list, _'       `# wrap list inside <ul id="list">` \
