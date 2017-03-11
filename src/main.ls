@@ -48,6 +48,7 @@ make-sandbox = (opts) ->
         |> map split('=')
         |> map ([alias, pkg]) ->
             pkg = pkg or alias
+            debug "requiring #pkg", require.resolve pkg
             [camelize(alias), require pkg]
         |> from-pairs
 
