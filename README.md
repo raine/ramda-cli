@@ -7,6 +7,7 @@ $ npm install -g ramda-cli; alias R=ramda
 $ curl -L http://bit.do/people-json | R \
   'filter (p) -> p.city is /Port/ or p.name is /^Dr\./' \
   'project <[ name city mac ]>' \
+  'take 3' \
   -o table --compact
 ┌──────────────────┬─────────────────┬───────────────────┐
 │ name             │ city            │ mac               │
