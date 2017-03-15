@@ -566,7 +566,6 @@ All of [Ramda's functions][ramda-docs] are available, and also:
 | function         | signature             | description                                    |
 |------------------|-----------------------|------------------------------------------------|
 | `id`             | `a → a`               | Alias to `R.identity`                          |
-| [`treis`][treis] | `treis(name?, fn)`    | Observe functions' input and output values     |
 | [`flat`][flat]   | `* → Object`          | Flatten a deep structure into a shallow object |
 | `readFile`       | `filePath → String`   | Read a file as string                          |
 | `lines`          | `String → [String]`   | Split a string into lines                      |
@@ -669,11 +668,11 @@ echo '192.168.1.1\ngoogle.com\nyahoo.com' | \
 You can turn on the debug output with `-v, --verbose` flag. Use `-vv` for
 even more verbose output.
 
-[`treis`][treis] is available for debugging individual functions in the
-pipeline. Wrap a function with `treis` to decorate it with debugging
-capabilities. It will make the function print its input and output values.
+To debug individual functions in the pipeline, you can use something like [`treis`][treis].
 
-<img width="370" height="99" src="https://raw.githubusercontent.com/raine/ramda-cli/media/treis-face.png" />
+```sh
+echo 1 | R --import treis 'treis(add(1))'
+```
 
 ## livescript?
 
