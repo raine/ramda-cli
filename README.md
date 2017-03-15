@@ -18,7 +18,7 @@ $ curl -L http://bit.do/people-json | R \
 └──────────────────┴─────────────────┴───────────────────┘
 ```
 
-Brings together [Ramda's][ramda] curried, data-last API and
+Unites [Ramda's][ramda] curried, data-last API and
 [LiveScript's][livescript] terse and powerful syntax.
 
 With a variety of supported input/output types and the ability [pull any
