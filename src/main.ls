@@ -53,7 +53,6 @@ make-sandbox = (opts) ->
         |> from-pairs
 
     helpers =
-        treis     : -> apply (require 'treis'), &
         flat      : -> apply (require 'flat'), &
         read-file : relative-to-cwd >> fs.read-file-sync _, 'utf8'
         id        : R.identity
