@@ -62,6 +62,8 @@ make-sandbox = (opts) ->
         unwords   : unwords
         then      : (fn, promise) --> promise.then(fn)
 
+    helpers._then = helpers.then
+
     config-file-path = config.get-existing-config-file!
     if config-file-path?.match /\.ls$/ then require! livescript
     try user-config = require config.BASE_PATH
