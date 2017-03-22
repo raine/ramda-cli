@@ -29,6 +29,7 @@ many kinds of data manipulation in command-line environment.
 
 - [Examples](#examples)
 - [Options](#options)
+- [Functions](#functions)
 - [Configuration](#configuration)
 - [Using packages from NPM](#using-packages-from-npm)
 - [Promises](#promises)
