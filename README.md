@@ -564,16 +564,18 @@ See [Configuration](#configuration).
 
 All of [Ramda's functions][ramda-docs] are available, and also:
 
-| function         | signature             | description                                    |
-|------------------|-----------------------|------------------------------------------------|
-| `id`             | `a → a`               | Alias to `R.identity`                          |
-| [`flat`][flat]   | `* → Object`          | Flatten a deep structure into a shallow object |
-| `readFile`       | `filePath → String`   | Read a file as string                          |
-| `lines`          | `String → [String]`   | Split a string into lines                      |
-| `words`          | `String → [String]`   | Split a string into words                      |
-| `unlines`        | `[String] → String`   | Join a list of lines into a string             |
-| `unwords`        | `[String] → String`   | Join a list of words into a string             |
-| `then`           | `Function -> Promise` | Map a value inside Promise                     |
+| function       | signature                    | description                                      |
+|----------------|------------------------------|--------------------------------------------------|
+| `id`           | `a → a`                      | Alias to `R.identity`                            |
+| [`flat`][flat] | `* → Object`                 | Flatten a deep structure into a shallow object   |
+| `readFile`     | `filePath → String`          | Read a file as string                            |
+| `lines`        | `String → [String]`          | Split a string into lines                        |
+| `words`        | `String → [String]`          | Split a string into words                        |
+| `unlines`      | `[String] → String`          | Join a list of lines into a string               |
+| `unwords`      | `[String] → String`          | Join a list of words into a string               |
+| `then`         | `Function → Promise`         | Map a value inside Promise                       |
+| `pickDotPaths` | `[k] → {k: v} → {k: v}`      | Like `R.pick` but deep using dot delimited paths |
+| `renameKeysBy` | `Function → {k: v} → {k: v}` | Like `R.map` but for keys instead of values      |
 
 ## configuration
 

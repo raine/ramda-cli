@@ -1,8 +1,8 @@
-require! path
+require! path: Path
 require! 'is-there'
 require! './utils': {HOME}
 
-export BASE_PATH = path.join HOME, \.config, \ramda-cli
+export BASE_PATH = Path.join HOME, \.config, \ramda-cli
 export get-existing-config-file = ->
     exts = <[ .js .ls ]>
     for ext in exts

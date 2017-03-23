@@ -1,9 +1,9 @@
 #!/usr/bin/env lsc
-require! {vm, JSONStream, path, split2, fs, camelize}
+require! {vm, JSONStream, path: Path, split2, fs, camelize}
 require! <[ ./argv ./config ]>
 require! through2: through
 require! stream: {PassThrough}
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs}: R
+require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs, merge-all, path, reduce, obj-of, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
 require! './utils': {HOME}
 debug = require 'debug' <| 'ramda-cli:main'
@@ -11,8 +11,8 @@ Module = require 'module' .Module
 
 # caveat: require will still prioritize ramda-cli's own node_modules
 process.env.'NODE_PATH' = join ':', [
-    path.join(process.cwd(), 'node_modules')
-    path.join(HOME, 'node_modules') ]
+    Path.join(process.cwd(), 'node_modules')
+    Path.join(HOME, 'node_modules') ]
 
 Module._init-paths!
 
@@ -34,7 +34,7 @@ str-contains = (x, xs) ~> (xs.index-of x) >= 0
 wrap-in = (a, b, str) --> "#a#str#b"
 wrap-in-parens = wrap-in \(, \)
 wrap-in-pipe = wrap-in \pipe(, \)
-relative-to-cwd = path.join process.cwd!, _
+relative-to-cwd = Path.join process.cwd!, _
 construct-pipe = pipe do
     map wrap-in-parens
     join ','
@@ -42,6 +42,19 @@ construct-pipe = pipe do
 
 take-lines = (n, str) -->
     lines str |> take n |> unlines
+
+rename-keys-by = (fn, obj) -->
+    to-pairs obj
+    |> map (adjust fn, 0)
+    |> from-pairs
+
+pick-dot-paths = (paths, obj) -->
+    reduce do
+        (res, p) ->
+            val = path p, obj
+            if val? then assoc-path p, val, res else res
+        {},
+        (map (split '.'), paths)
 
 make-sandbox = (opts) ->
     imports = opts.import or []
@@ -53,14 +66,16 @@ make-sandbox = (opts) ->
         |> from-pairs
 
     helpers =
-        flat      : -> apply (require 'flat'), &
-        read-file : relative-to-cwd >> fs.read-file-sync _, 'utf8'
-        id        : R.identity
-        lines     : lines
-        words     : words
-        unlines   : unlines
-        unwords   : unwords
-        then      : (fn, promise) --> promise.then(fn)
+        flat           : -> apply (require 'flat'), &
+        read-file      : relative-to-cwd >> fs.read-file-sync _, 'utf8'
+        id             : R.identity
+        lines          : lines
+        words          : words
+        unlines        : unlines
+        unwords        : unwords
+        then           : (fn, promise) --> promise.then(fn)
+        pick-dot-paths : pick-dot-paths
+        rename-keys-by : rename-keys-by
 
     helpers._then = helpers.then
 
@@ -68,7 +83,7 @@ make-sandbox = (opts) ->
     if config-file-path?.match /\.ls$/ then require! livescript
     try user-config = require config.BASE_PATH
     catch e
-        unless (e.code is 'MODULE_NOT_FOUND' and str-contains (path.join '.config', 'ramda-cli'), e.message)
+        unless (e.code is 'MODULE_NOT_FOUND' and str-contains (Path.join '.config', 'ramda-cli'), e.message)
             throw e
 
     {R, require} <<< R <<< user-config <<< helpers <<< imports
@@ -200,7 +215,7 @@ main = (process-argv, stdin, stdout, stderr) ->
             else process.exit 0
 
     if opts.file
-        try fun = require path.resolve opts.file
+        try fun = require Path.resolve opts.file
         catch {stack, code}
             return switch code
             | \MODULE_NOT_FOUND  => die head lines stack

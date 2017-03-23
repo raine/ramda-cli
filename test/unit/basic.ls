@@ -68,7 +68,7 @@ describe 'eval-context' (,) ->
         output `eq` 'hello\n'
         done!
 
-    functions = <[ flat lines unlines words unwords ]>
+    functions = <[ flat id lines unlines words unwords then pickDotPaths renameKeysBy ]>
     functions |> for-each (fn) ->
         it "has #fn" (done) ->
             args     = <[ eval type -rR ]>
