@@ -86,7 +86,7 @@ make-sandbox = (opts) ->
         unless (e.code is 'MODULE_NOT_FOUND' and str-contains (Path.join '.config', 'ramda-cli'), e.message)
             throw e
 
-    {R, require} <<< R <<< user-config <<< helpers <<< imports
+    {R, require, console, process} <<< R <<< user-config <<< helpers <<< imports
 
 compile-livescript = (code) ->
     require! livescript

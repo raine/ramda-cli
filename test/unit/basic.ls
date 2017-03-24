@@ -70,10 +70,19 @@ describe 'eval-context' (,) ->
 
     functions = <[ flat id lines unlines words unwords then pickDotPaths renameKeysBy ]>
     functions |> for-each (fn) ->
-        it "has #fn" (done) ->
+        it "has #fn function" (done) ->
             args     = <[ eval type -rR ]>
             expected = 'Function\n'
             output <-! run-main args, fn
+            output `eq` expected
+            done!
+
+    objects = <[ process console ]>
+    objects |> for-each (obj) ->
+        it "has #obj object" (done) ->
+            args     = ['eval', '-> typeof it', '-rR']
+            expected = 'object\n'
+            output <-! run-main args, obj
             output `eq` expected
             done!
 

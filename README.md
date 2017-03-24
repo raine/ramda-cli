@@ -29,7 +29,7 @@ many kinds of data manipulation in command-line environment.
 
 - [Examples](#examples)
 - [Options](#options)
-- [Functions](#functions)
+- [Evaluation context](#evaluation-context)
 - [Configuration](#configuration)
 - [Using packages from NPM](#using-packages-from-npm)
 - [Promises](#promises)
@@ -560,7 +560,7 @@ Edit ramda-cli config file in `$EDITOR`.
 
 See [Configuration](#configuration).
 
-## functions
+## evaluation context
 
 All of [Ramda's functions][ramda-docs] are available, and also:
 
@@ -576,6 +576,20 @@ All of [Ramda's functions][ramda-docs] are available, and also:
 | `then`         | `Function → Promise`         | Map a value inside Promise                       |
 | `pickDotPaths` | `[k] → {k: v} → {k: v}`      | Like `R.pick` but deep using dot delimited paths |
 | `renameKeysBy` | `Function → {k: v} → {k: v}` | Like `R.map` but for keys instead of values      |
+
+| object    | description                         |
+|-----------|-------------------------------------|
+| `process` | https://nodejs.org/api/process.html |
+| `console` | https://nodejs.org/api/console.html |
+
+`process.exit()` can be used to short-circuit pipeline in case of an error,
+for example:
+
+```sh
+  curl api | ramda 'tap (res) -> if res.error then console.error(res); process.exit(1)'
+```
+
+An alternative is to use `Maybe` type.
 
 ## configuration
 
@@ -670,6 +684,8 @@ echo '192.168.1.1\ngoogle.com\nyahoo.com' | \
 
 You can turn on the debug output with `-v, --verbose` flag. Use `-vv` for
 even more verbose output.
+
+Verbose output shows what entered LiveScript compiled to.
 
 To debug individual functions in the pipeline, you can use something like [`treis`][treis].
 
