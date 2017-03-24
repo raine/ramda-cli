@@ -562,6 +562,8 @@ See [Configuration](#configuration).
 
 ## evaluation context
 
+### functions
+
 All of [Ramda's functions][ramda-docs] are available, and also:
 
 | function       | signature                    | description                                      |
@@ -576,6 +578,8 @@ All of [Ramda's functions][ramda-docs] are available, and also:
 | `then`         | `Function → Promise`         | Map a value inside Promise                       |
 | `pickDotPaths` | `[k] → {k: v} → {k: v}`      | Like `R.pick` but deep using dot delimited paths |
 | `renameKeysBy` | `Function → {k: v} → {k: v}` | Like `R.map` but for keys instead of values      |
+
+### objects
 
 | object    | description                         |
 |-----------|-------------------------------------|
