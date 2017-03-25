@@ -293,8 +293,6 @@ Usage: ramda [options] [function] ...
   -h, --help          displays help
 ```
 
---
-
 #### `-f, --file`
 
 Load a function pipeline from a file. Useful for scripts difficult to express
@@ -321,8 +319,6 @@ module.exports = function() { /* ... */ }
 module.exports.opts = '--slurp -o table'
 ```
 
---
-
 #### `-c, --compact`
 
 Print compact tables and JSON output without whitespace.
@@ -335,8 +331,6 @@ __Example__
 seq 10 | R --input-type raw --output-type raw --compact identity # or -rRc
 12345678910%
 ```
-
---
 
 #### `-s, --slurp`
 
@@ -357,8 +351,6 @@ EOF
 ]
 ```
 
---
-
 #### `-S, --unslurp`
 
 After the pipeline is applied to an item and if the result is an array, its
@@ -372,8 +364,6 @@ echo '[1,2,3]' | R --unslurp 'map inc'
 3
 4
 ```
-
---
 
 #### `-t, --transduce`
 
@@ -397,9 +387,6 @@ echo '1 2 2 3 3 4' | R --transduce drop-repeats
 4
 ```
 
---
-
-
 #### `-P, --json-path`
 
 Parse the input stream with given [JSONPath](http://goessner.net/articles/JsonPath/) expression.
@@ -419,8 +406,6 @@ curl -Ls http://bit.do/countries-json | R --json-path '*' --compact identity
 {"name":"Albania","code":"AL"}
 ...
 ```
-
---
 
 #### `-i, --input-type`
 
@@ -444,8 +429,6 @@ EOF
   { "id": "2", "name": "Alice" }
 ]
 ```
-
---
 
 #### `-o, --output-type`
 
@@ -484,13 +467,9 @@ curl -Ls http://bit.do/countries-json | R 'take 3' -o table --compact
 └───────────────┴──────┘
 ```
 
---
-
 #### `-p, --pretty`
 
 Alias of `--output-type pretty`.
-
---
 
 #### `-D, --pretty-depth`
 
@@ -501,8 +480,6 @@ Useful when output is huge and you want to see the general structure of an
 object or list.
 
 See documentation of [`util.inspect(object[, options])`](https://nodejs.org/api/util.html#util_util_inspect_object_options)
-
---
 
 #### `-n, --no-stdin`
 
@@ -515,8 +492,6 @@ __Example__
 R --no-stdin 'always "hello world"' 'add __, \!'
 "hello world!"
 ```
-
---
 
 #### `--js`
 
@@ -532,8 +507,6 @@ echo '[1,2,3]' | R --js 'map(x => Math.pow(x, 2))'
   9
 ]
 ```
-
---
 
 #### `-I, --import`
 
@@ -552,8 +525,6 @@ __Example__
 echo test | R -rR --import c=chalk 'c.bold'
 **test**
 ```
-
---
 
 #### `-C, --configure`
 
@@ -749,8 +720,6 @@ echo '[1,2,3]' | R --js 'map(x => x + 1)'
 - [Ask on Gitter][gitter]
 - [Open an issue](https://github.com/raine/ramda-cli/issues/new)
 - [Tweet at `@rane`](https://twitter.com/rane)
-
---
 
 [![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s/master "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
 
