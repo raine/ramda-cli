@@ -285,6 +285,7 @@ Usage: ramda [options] [function] ...
   -r, --raw-input     alias for --input-type raw
   -R, --raw-output    alias for --output-type raw
   -n, --no-stdin      don't read input from stdin
+      --[no-]headers  csv/tsv has a header row
       --js            use javascript instead of livescript
   -I, --import        require module as a variable
   -C, --configure     edit config in $EDITOR
@@ -492,6 +493,12 @@ __Example__
 R --no-stdin 'always "hello world"' 'add __, \!'
 "hello world!"
 ```
+
+#### `--[no-]headers`
+
+Set if input csv/tsv contains a header row.
+
+By default, csv/tsv input is assumed to contain headers.
 
 #### `--js`
 

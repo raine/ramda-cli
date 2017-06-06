@@ -307,6 +307,22 @@ describe '--input-type csv' (,) ->
         output `strip-eq` expected
         done!
 
+    it 'reads csv without headers with --no-headers' (done) ->
+          args  = <[ --no-headers -i csv identity ]>
+          input = """
+          Afghanistan,AF
+          Åland Islands,AX
+          Albania,AL
+          """
+          expected = """
+          [ [ "Afghanistan", "AF" ],
+            [ "Åland Islands", "AX" ],
+            [ "Albania", "AL" ] ]
+          """
+          output <-! run-main args, input
+          output `strip-eq` expected
+          done!
+
 describe '--input-type tsv' (,) ->
     it 'reads tsv with headers into a list of objects' (done) ->
         args  = <[ -i tsv identity ]>

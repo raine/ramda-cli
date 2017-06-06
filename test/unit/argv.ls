@@ -55,6 +55,16 @@ describe 'argv.parse' (,) ->
             parse '--import foo' .import `deep-eq` ['foo']
             parse '--import foo --import bar' .import `deep-eq` ['foo', 'bar']
 
+    describe '-H, --[no-]headers', (,) ->
+        it 'defaults to true' ->
+            parse '' .headers `eq` true
+
+        it 'sets `headers` to false' ->
+            parse '--no-headers' .headers `eq` false
+
+        it 'sets `headers` to true' ->
+            parse '--headers' .headers `eq` true
+
     it 'wraps function expressions in parentheses' ->
          args = argv.parse [,, 'identity', '-> it']
          args._.1 `eq` '(-> it)'

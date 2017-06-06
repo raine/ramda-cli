@@ -25,6 +25,7 @@ HELP =
       -r, --raw-input     alias for --input-type raw
       -R, --raw-output    alias for --output-type raw
       -n, --no-stdin      don't read input from stdin
+          --[no-]headers  csv/tsv has a header row
           --js            use javascript instead of livescript
       -I, --import        require module as a variable
       -C, --configure     edit config in $EDITOR
@@ -64,9 +65,9 @@ export parse = (argv) ->
     argv = map (wrap-number-lookup << wrap-function), argv.slice 2
     args = camelize minimist argv,
         string: <[ file input-type output-type json-path ]>
-        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce ]>
+        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce headers ]>
         alias: parse-aliases HELP
-        default: {+stdin}
+        default: {+stdin, +headers}
 
     args._ = args.''; delete args.''
 
