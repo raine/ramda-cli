@@ -1,6 +1,8 @@
 # CHANGELOG
 
-Better late than never.
+## 1.7.0 - 2017-06-07
+
+- Added: `--[no-]headers` flag.
 
 ## 1.6.0 - 2017-03-24
 
