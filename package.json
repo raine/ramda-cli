@@ -29,7 +29,7 @@
     "is-there": "^2.0.0",
     "livescript": "^1.4.0",
     "minimist": "^1.1.1",
-    "ramda": "0.19.1",
+    "ramda": "0.25.0",
     "split2": "^0.2.1",
     "through2": "^0.6.5",
     "transduce-stream": "^0.5.0"
