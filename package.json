@@ -19,9 +19,9 @@
   "author": "Raine Virta <raine.virta@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "@rane/cli-table": "^0.3.2",
     "JSONStream": "^1.0.6",
     "camelize": "^1.0.0",
-    "cli-table": "Automattic/cli-table#4a1ff1e",
     "debug": "^2.2.0",
     "editor": "^1.0.0",
     "fast-csv": "^0.6.0",
