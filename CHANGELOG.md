@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.0.0 - 2017-12-03
+
+- Changed: Updated ramda to `0.25.0`
+
 ## 1.7.0 - 2017-06-07
 
 - Added: `--[no-]headers` flag.
