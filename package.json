@@ -24,7 +24,7 @@
     "camelize": "^1.0.0",
     "debug": "^2.2.0",
     "editor": "^1.0.0",
-    "fast-csv": "^0.6.0",
+    "fast-csv": "^2.4.1",
     "flat": "^1.6.0",
     "is-there": "^2.0.0",
     "livescript": "^1.4.0",
