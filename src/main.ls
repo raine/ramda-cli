@@ -172,7 +172,7 @@ table-output-stream = (compact) ->
         next!
 
 csv-opts = (type, headers) ->
-    opts = headers: headers
+    opts = headers: headers, include-end-row-delimiter: true
     switch type
     | \csv => opts
     | \tsv => opts <<< delimiter: '\t'

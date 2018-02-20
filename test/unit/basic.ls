@@ -434,7 +434,7 @@ describe '--output-type csv' (,) ->
         name,code
         Afghanistan,AF
         Åland Islands,AX
-        Albania,AL
+        Albania,AL\n
         """
         output <-! run-main args, input
         output `eq` expected
@@ -451,7 +451,7 @@ describe '--output-type csv' (,) ->
         name,code
         Afghanistan,AF
         Åland Islands,AX
-        Albania,AL
+        Albania,AL\n
         """
         output <-! run-main args, input
         output `eq` expected
@@ -464,7 +464,7 @@ describe '--output-type csv' (,) ->
         """
         expected = """
         foo,bar
-        hello,world
+        hello,world\n
         """
         output <-! run-main args, input
         output `eq` expected
@@ -475,7 +475,7 @@ describe '--output-type csv' (,) ->
         input    = '["foo", "bar"]\n["hello", "world"]'
         expected = """
         foo,bar
-        hello,world
+        hello,world\n
         """
         output <-! run-main args, input
         output `eq` expected
@@ -493,7 +493,7 @@ describe '--output-type tsv' (,) ->
         name\tcode
         Afghanistan\tAF
         Åland Islands\tAX
-        Albania\tAL
+        Albania\tAL\n
         """
         output <-! run-main args, input
         output `eq` expected

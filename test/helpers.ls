@@ -7,7 +7,7 @@ export MAIN = '../src/main'
 
 export run = (main, args, input, cb) ->
     stdin  = new stream.PassThrough!
-    stdout = new stream.PassThrough {+object-mode}
+    stdout = new stream.PassThrough!
         ..pipe concat-stream encoding: \string, -> cb it, null
     stderr = new stream.PassThrough!
         .on \data, (data) -> cb null, data.to-string!
