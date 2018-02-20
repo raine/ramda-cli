@@ -1,6 +1,5 @@
 require! stream
 require! sinon
-require! 'concat-stream'
 require! 'strip-ansi'
 require! '../helpers': {run-main, stub-process-exit}
 require! ramda: {repeat, join, flip, split, head, for-each, intersperse}
