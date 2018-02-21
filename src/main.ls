@@ -171,8 +171,8 @@ table-output-stream = (compact) ->
         this.push "#{format-table chunk, opts}\n"
         next!
 
-csv-opts = (type, headers) ->
-    opts = headers: headers, include-end-row-delimiter: true
+csv-opts = (type, delimiter, headers) ->
+    opts = { headers, include-end-row-delimiter: true, delimiter }
     switch type
     | \csv => opts
     | \tsv => opts <<< delimiter: '\t'
@@ -181,14 +181,14 @@ opts-to-output-stream = (opts) ->
     switch opts.output-type
     | \pretty       => inspect-stream opts.pretty-depth
     | \raw          => raw-output-stream opts.compact
-    | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts opts.output-type, opts.headers
+    | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts opts.output-type, opts.csv-delimiter, opts.headers
     | \table        => table-output-stream opts.compact
     | otherwise     => json-stringify-stream opts.compact
 
 opts-to-input-stream = (opts) ->
     switch opts.input-type
     | \raw          => split2!
-    | <[ csv tsv ]> => (require 'fast-csv') csv-opts opts.input-type, opts.headers
+    | <[ csv tsv ]> => (require 'fast-csv') csv-opts opts.input-type, opts.csv-delimiter, opts.headers
     | otherwise     => JSONStream.parse opts.json-path
 
 blank-obj-stream = ->

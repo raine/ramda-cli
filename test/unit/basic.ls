@@ -481,6 +481,23 @@ describe '--output-type csv' (,) ->
         output `eq` expected
         done!
 
+    it 'uses --csv-delimiter' (done) ->
+        args  = <[ identity -o csv --csv-delimiter=; ]>
+        input = """
+        [ { "name": "Afghanistan", "code": "AF" },
+          { "name": "Åland Islands", "code": "AX" },
+          { "name": "Albania", "code": "AL" } ]
+        """
+        expected = """
+        name;code
+        Afghanistan;AF
+        Åland Islands;AX
+        Albania;AL\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--output-type tsv' (,) ->
     it 'prints a list of objects as TSV with headers' (done) ->
         args  = <[ identity -o tsv ]>
