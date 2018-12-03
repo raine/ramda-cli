@@ -199,12 +199,12 @@ EOF
 ]
 ```
 
-##### Solution to the [credit card JSON to CSV challenge](https://gist.github.com/jorin-vogel/2e43ffa981a97bc17259) using `--output-type csv`
+##### Solution to the [credit card JSON to CSV challenge](https://gist.github.com/jorinvo/2e43ffa981a97bc17259) using `--output-type csv`
 
 ```bash
 #!/usr/bin/env bash
 
-data_url=https://gist.githubusercontent.com/jorin-vogel/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
+data_url=https://gist.githubusercontent.com/jorinvo/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
 curl $data_url | R \
   'filter where creditcard: (!= null)' `# filter out those who don't have credit card` \
   'project [\name, \creditcard]'       `# pick name and creditcard fields from all objects` \
