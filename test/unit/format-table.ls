@@ -128,9 +128,9 @@ describe 'format-table' (,) ->
     it 'formats a function' ->
         (format (->)) `eq` do
             """
-            ┌───────────────┐
-            │ function (){} │
-            └───────────────┘
+            ┌──────────────┐
+            │ function(){} │
+            └──────────────┘
             """
 
     it 'formats a boolean' ->
