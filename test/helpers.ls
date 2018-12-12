@@ -23,7 +23,7 @@ export stub-process-exit = ->
     sandbox = null
 
     before-each ->
-        sandbox := sinon.sandbox.create!
+        sandbox := sinon.createSandbox!
         sandbox.stub process, \exit
 
     after-each ->
