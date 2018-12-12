@@ -1,8 +1,16 @@
 # CHANGELOG
 
+## 3.1.0 - 2018-02-21
+
+- Added: `--csv-delimiter` option.
+
+## 3.0.0 - 2018-02-21
+
+- Changed: Add line change at end when using `--output-type csv`.
+
 ## 2.0.0 - 2017-12-03
 
-- Changed: Updated ramda to `0.25.0`
+- Changed: Updated ramda to `0.25.0`.
 
 ## 1.7.0 - 2017-06-07
 
