@@ -1,4 +1,4 @@
 --timeout 3000
---compilers ls:livescript
+--require livescript
 --require ./test/_globals.ls
 --recursive

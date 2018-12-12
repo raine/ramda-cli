@@ -45,16 +45,16 @@ publish: all test
 	npm publish
 
 test:
-	@$(MOCHA) $(MOCHA_ARGS) --reporter $(REPORTER) test/unit
+	@$(MOCHA) $(MOCHA_ARGS) --reporter $(REPORTER) test/unit/*.ls
 
 test-w:
-	@$(MOCHA_WATCH) test/unit
+	@$(MOCHA_WATCH) test/unit/*.ls
 
 test-func: compile
-	@$(MOCHA) $(MOCHA_ARGS) --reporter $(REPORTER) test/functional --timeout 30000
+	@$(MOCHA) $(MOCHA_ARGS) --reporter $(REPORTER) test/functional/*.ls --timeout 30000
 
 test-func-w: compile
-	@$(MOCHA_WATCH) test/functional --timeout 10000
+	@$(MOCHA_WATCH) test/functional/*.ls --timeout 10000
 
 docker-test-func:
 	@$(DOCKER) make test-func
