@@ -30,7 +30,7 @@
     "livescript": "^1.4.0",
     "minimist": "^1.1.1",
     "ramda": "0.26.1",
-    "split2": "^0.2.1",
+    "split2": "^3.0.0",
     "through2": "^3.0.0",
     "transduce-stream": "^0.5.0"
   },
