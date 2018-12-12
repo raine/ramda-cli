@@ -26,7 +26,7 @@
     "editor": "^1.0.0",
     "fast-csv": "^2.4.1",
     "flat": "^1.6.0",
-    "is-there": "^2.0.0",
+    "is-there": "^4.4.3",
     "livescript": "^1.4.0",
     "minimist": "^1.1.1",
     "ramda": "0.26.1",
