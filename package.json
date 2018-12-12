@@ -22,7 +22,7 @@
     "@rane/cli-table": "^0.3.2",
     "JSONStream": "^1.0.6",
     "camelize": "^1.0.0",
-    "debug": "^2.2.0",
+    "debug": "^4.1.0",
     "editor": "^1.0.0",
     "fast-csv": "^2.4.1",
     "flat": "^4.1.0",
