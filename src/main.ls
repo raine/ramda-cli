@@ -1,6 +1,7 @@
 #!/usr/bin/env lsc
 require! {vm, JSONStream, path: Path, split2, fs, camelize}
 require! <[ ./argv ./config ]>
+require! './compile-fun'
 require! through2: through
 require! stream: {PassThrough}
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs, merge-all, path, reduce, obj-of, assoc-path, adjust, to-pairs}: R
@@ -16,11 +17,6 @@ process.env.'NODE_PATH' = join ':', [
 
 Module._init-paths!
 
-# naive fix to get `match` work despite being a keyword in LS
-fix-match = ->
-    "#it".replace /\bmatch\b/g, (m, i, str) ->
-        if str[i-1] is not \. then \R.match else m
-
 lines   = split '\n'
 words   = split ' '
 unlines = join '\n'
@@ -30,83 +26,9 @@ remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str
 
 is-thenable = (x) -> x and typeof x.then is 'function'
-str-contains = (x, xs) ~> (xs.index-of x) >= 0
-wrap-in = (a, b, str) --> "#a#str#b"
-wrap-in-parens = wrap-in \(, \)
-wrap-in-pipe = wrap-in \pipe(, \)
-relative-to-cwd = Path.join process.cwd!, _
-construct-pipe = pipe do
-    map wrap-in-parens
-    join ','
-    wrap-in-pipe
 
 take-lines = (n, str) -->
     lines str |> take n |> unlines
-
-rename-keys-by = (fn, obj) -->
-    to-pairs obj
-    |> map (adjust fn, 0)
-    |> from-pairs
-
-pick-dot-paths = (paths, obj) -->
-    reduce do
-        (res, p) ->
-            val = path p, obj
-            if val? then assoc-path p, val, res else res
-        {},
-        (map (split '.'), paths)
-
-make-sandbox = (opts) ->
-    imports = opts.import or []
-        |> map split('=')
-        |> map ([alias, pkg]) ->
-            pkg = pkg or alias
-            debug "requiring #pkg", require.resolve pkg
-            [camelize(alias), require pkg]
-        |> from-pairs
-
-    helpers =
-        flat           : -> apply (require 'flat'), &
-        read-file      : relative-to-cwd >> fs.read-file-sync _, 'utf8'
-        id             : R.identity
-        lines          : lines
-        words          : words
-        unlines        : unlines
-        unwords        : unwords
-        then           : (fn, promise) --> promise.then(fn)
-        pick-dot-paths : pick-dot-paths
-        rename-keys-by : rename-keys-by
-
-    helpers._then = helpers.then
-
-    config-file-path = config.get-existing-config-file!
-    if config-file-path?.match /\.ls$/ then require! livescript
-    try user-config = require config.BASE_PATH
-    catch e
-        unless (e.code is 'MODULE_NOT_FOUND' and str-contains (Path.join '.config', 'ramda-cli'), e.message)
-            throw e
-
-    {R, require, console, process} <<< R <<< user-config <<< helpers <<< imports
-
-compile-livescript = (code) ->
-    require! livescript
-    livescript.compile code, {+bare, -header}
-
-evaluate = (opts, code) -->
-    ctx = vm.create-context make-sandbox opts
-    vm.run-in-context code, ctx
-
-select-compiler = (opts) ->
-    | opts.js   => identity
-    | otherwise => compile-livescript
-
-compile-with-opts = (code, opts) ->
-    code |> select-compiler opts
-
-compile-and-eval = (code, opts) ->
-    compile-with-opts code, opts
-    |> tap -> debug "\n#it", 'compiled code'
-    |> evaluate opts
 
 reduce-stream = (fn, acc) -> through.obj do
     (chunk,, next) ->
@@ -227,14 +149,7 @@ main = (process-argv, stdin, stdout, stderr) ->
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
         if is-empty opts._ then return die argv.help!
-        fns = (if opts.transduce then reverse else identity) opts._
-        piped-inline-functions = construct-pipe switch
-            | opts.js   => fns
-            | otherwise => map fix-match, fns
-
-        debug (inspect piped-inline-functions), 'input code'
-        try fun = compile-and-eval piped-inline-functions, opts
-        catch {message} then return die "Error: #{message}"
+        fun = compile-fun opts, die
 
     if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
     if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
