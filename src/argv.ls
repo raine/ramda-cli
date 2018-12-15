@@ -88,6 +88,9 @@ export parse = (argv) ->
 
     args.import = typeof args.import == \string and [args.import] or args.import
 
+    if args.input-type  in <[ csv tsv ]> then args.slurp   = true
+    if args.output-type in <[ csv tsv ]> then args.unslurp = true
+
     args
 
 export help = -> HELP

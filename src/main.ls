@@ -181,9 +181,6 @@ main = (process-argv, stdin, stdout, stderr) ->>
         try fun = compile-fun opts
         catch {message} then return die "Error: #{message}"
 
-    if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
-    if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
-
     mapper =
         if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
         else map-stream fun, -> die (take-lines 3, it.stack)
