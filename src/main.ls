@@ -107,7 +107,7 @@ opts-to-output-stream = (opts) ->
     | \table        => table-output-stream opts.compact
     | otherwise     => json-stringify-stream opts.compact
 
-opts-to-input-stream = (opts) ->
+opts-to-input-parser-stream = (opts) ->
     switch opts.input-type
     | \raw          => split2!
     | <[ csv tsv ]> => (require 'fast-csv') csv-opts opts.input-type, opts.csv-delimiter, opts.headers
@@ -116,6 +116,17 @@ opts-to-input-stream = (opts) ->
 blank-obj-stream = ->
     PassThrough {+object-mode}
         ..end {}
+
+make-stdin-parser = (die, opts, stdin) ->
+    input-parser = opts-to-input-parser-stream opts
+    stdin
+    .pipe debug-stream debug, opts, \stdin
+    .pipe input-parser .on \error -> die it
+    .pipe pass-through-unless opts.slurp, concat-stream!
+
+make-input-stream = (die, opts, stdin) ->
+    if opts.stdin then make-stdin-parser die, opts, stdin
+    else               blank-obj-stream!
 
 main = (process-argv, stdin, stdout, stderr) ->
     stdout.on \error ->
@@ -154,23 +165,14 @@ main = (process-argv, stdin, stdout, stderr) ->
     if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
     if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
 
-    input-parser = opts-to-input-stream opts
-    output-formatter = opts-to-output-stream opts
-
-    stdin-parser = ->
-        stdin
-        .pipe debug-stream debug, opts, \stdin
-        .pipe input-parser .on \error -> die it
-        .pipe pass-through-unless opts.slurp, concat-stream!
-
     mapper =
         if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
         else map-stream fun, -> die (take-lines 3, it.stack)
 
-    (if opts.stdin then stdin-parser! else blank-obj-stream!)
+    make-input-stream die, opts, stdin
         .pipe mapper
         .pipe pass-through-unless opts.unslurp, unconcat-stream!
-        .pipe output-formatter
+        .pipe opts-to-output-stream opts
         .pipe debug-stream debug, opts, \stdout
         .pipe stdout
 
