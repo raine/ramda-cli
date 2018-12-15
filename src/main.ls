@@ -128,6 +128,10 @@ make-input-stream = (die, opts, stdin) ->
     if opts.stdin then make-stdin-parser die, opts, stdin
     else               blank-obj-stream!
 
+make-map-stream = (die, opts, fun) ->
+    if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
+    else map-stream fun, -> die (take-lines 3, it.stack)
+
 append-buffer =
     (buf1, buf2) -> Buffer.concat([ buf1, buf2 ])
 
@@ -181,12 +185,8 @@ main = (process-argv, stdin, stdout, stderr) ->>
         try fun = compile-fun opts
         catch {message} then return die "Error: #{message}"
 
-    mapper =
-        if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
-        else map-stream fun, -> die (take-lines 3, it.stack)
-
     make-input-stream die, opts, stdin
-        .pipe mapper
+        .pipe make-map-stream die, opts, fun
         .pipe pass-through-unless opts.unslurp, unconcat-stream!
         .pipe opts-to-output-stream opts
         .pipe debug-stream debug, opts, \stdout
