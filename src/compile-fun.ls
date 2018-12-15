@@ -88,7 +88,6 @@ compile-fun = (opts, die) ->
         | otherwise => map fix-match, fns
 
     debug (inspect piped-inline-functions), 'input code'
-    try compile-and-eval piped-inline-functions, opts
-    catch {message} then return die "Error: #{message}"
+    compile-and-eval piped-inline-functions, opts
 
 module.exports = compile-fun

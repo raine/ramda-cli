@@ -160,7 +160,8 @@ main = (process-argv, stdin, stdout, stderr) ->
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
         if is-empty opts._ then return die argv.help!
-        fun = compile-fun opts, die
+        try fun = compile-fun opts
+        catch {message} then return die "Error: #{message}"
 
     if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
     if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
