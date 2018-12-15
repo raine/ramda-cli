@@ -72,10 +72,6 @@ json-stringify-stream = (compact) ->
         this.push json + '\n'
         next!
 
-pass-through-unless = (val, stream) ->
-    switch | val       => stream
-           | otherwise => PassThrough object-mode: true
-
 map-stream = (func, on-error) -> through.obj (chunk,, next) ->
     push = (x) ~>
         # pushing a null would end the stream
@@ -119,10 +115,11 @@ blank-obj-stream = ->
 
 make-stdin-parser = (die, opts, stdin) ->
     input-parser = opts-to-input-parser-stream opts
-    stdin
-    .pipe debug-stream debug, opts, \stdin
-    .pipe input-parser .on \error -> die it
-    .pipe pass-through-unless opts.slurp, concat-stream!
+    pipeline stdin, [
+        debug-stream debug, opts, \stdin
+        input-parser .on \error -> die it
+        if opts.slurp then concat-stream! else null
+    ]
 
 make-input-stream = (die, opts, stdin) ->
     if opts.stdin then make-stdin-parser die, opts, stdin
@@ -142,6 +139,18 @@ get-stream-as-promise = (stream, cb) ->
             .pipe reduce-stream append-buffer, Buffer.alloc-unsafe 0
             .on 'data', (chunk) -> res := chunk
             .on 'end', -> resolve res
+
+pipeline = (first, rest) ->
+    reduce ((acc, s) -> acc.pipe s), first, rest.filter((!= null))
+
+process-input-stream = (die, opts, fn, input-stream, output-stream) ->
+    pipeline (make-input-stream die, opts, input-stream), [
+        make-map-stream die, opts, fn
+        if opts.unslurp then unconcat-stream! else null
+        opts-to-output-stream opts
+        debug-stream debug, opts, \stdout
+        output-stream
+    ]
 
 main = (process-argv, stdin, stdout, stderr) ->>
     stdout.on \error ->
@@ -170,26 +179,21 @@ main = (process-argv, stdin, stdout, stderr) ->>
         return
 
     if opts.file
-        try fun = require Path.resolve opts.file
+        try fn = require Path.resolve opts.file
         catch {stack, code}
             return switch code
             | \MODULE_NOT_FOUND  => die head lines stack
             | otherwise          => die stack
 
-        unless typeof fun is 'function'
+        unless typeof fn is 'function'
             return die "Error: #{opts.file} does not export a function"
 
-        if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
+        if fn.opts then opts <<< argv.parse [,,] ++ words fn.opts
     else
         if is-empty opts._ then return die argv.help!
-        try fun = compile-fun opts
+        try fn = compile-fun opts
         catch {message} then return die "Error: #{message}"
 
-    make-input-stream die, opts, stdin
-        .pipe make-map-stream die, opts, fun
-        .pipe pass-through-unless opts.unslurp, unconcat-stream!
-        .pipe opts-to-output-stream opts
-        .pipe debug-stream debug, opts, \stdout
-        .pipe stdout
+    process-input-stream die, opts, fn, stdin, stdout
 
 module.exports = main
