@@ -118,7 +118,7 @@ make-stdin-parser = (die, opts, stdin) ->
     pipeline stdin, [
         debug-stream debug, opts, \stdin
         input-parser .on \error -> die it
-        if opts.slurp then concat-stream! else null
+        if opts.slurp then concat-stream!
     ]
 
 make-input-stream = (die, opts, stdin) ->
@@ -143,12 +143,12 @@ get-stream-as-promise = (stream, cb) ->
 pipeline = (input, pipe-through) ->
     reduce ((acc, s) -> acc.pipe s),
            input,
-           pipe-through.filter((!= null))
+           pipe-through.filter((!= undefined))
 
 process-input-stream = (die, opts, fun, input-stream, output-stream) ->
     pipeline (make-input-stream die, opts, input-stream), [
         make-map-stream die, opts, fun
-        if opts.unslurp then unconcat-stream! else null
+        if opts.unslurp then unconcat-stream!
         opts-to-output-stream opts
         debug-stream debug, opts, \stdout
         output-stream
