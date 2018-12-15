@@ -1,6 +1,6 @@
 #!/usr/bin/env lsc
 require! {vm, JSONStream, path: Path, split2, fs, camelize}
-require! <[ ./argv ./config ]>
+require! <[ ./argv ./config ./server ]>
 require! './compile-fun'
 require! through2: through
 require! stream: {PassThrough}
@@ -128,7 +128,18 @@ make-input-stream = (die, opts, stdin) ->
     if opts.stdin then make-stdin-parser die, opts, stdin
     else               blank-obj-stream!
 
-main = (process-argv, stdin, stdout, stderr) ->
+append-buffer =
+    (buf1, buf2) -> Buffer.concat([ buf1, buf2 ])
+
+get-stream-as-promise = (stream, cb) ->
+    new Promise (resolve, reject) ->
+        res = null
+        stream
+            .pipe reduce-stream append-buffer, Buffer.alloc-unsafe 0
+            .on 'data', (chunk) -> res := chunk
+            .on 'end', -> resolve res
+
+main = (process-argv, stdin, stdout, stderr) ->>
     stdout.on \error ->
         if it.code is 'EPIPE' then process.exit 0
 
@@ -142,10 +153,17 @@ main = (process-argv, stdin, stdout, stderr) ->
 
     if opts.help    then return die argv.help!
     if opts.version then return die <| require '../package.json' .version
+
     if opts.configure
-        return config.edit (err) ->
+        config.edit (err) ->
             if err != 0 or err then die err
             else process.exit 0
+        return
+
+    if opts.interactive
+        raw-stdin-buf = await get-stream-as-promise stdin
+        server.start log-error, raw-stdin-buf, process-argv
+        return
 
     if opts.file
         try fun = require Path.resolve opts.file

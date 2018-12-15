@@ -10,6 +10,7 @@ HELP =
     """
     Usage: ramda [options] [function] ...
 
+          --interactive    interactive mode
       -f, --file           read a function from a js/ls file instead of args; useful for
                            larger scripts
       -c, --compact        compact output for JSON and tables
@@ -66,7 +67,7 @@ export parse = (argv) ->
     argv = map (wrap-number-lookup << wrap-function), argv.slice 2
     args = camelize minimist argv,
         string: <[ file input-type output-type json-path csv-delimiter ]>
-        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce headers ]>
+        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce headers interactive ]>
         alias: parse-aliases HELP
         default: {+stdin, +headers, 'csv-delimiter': \,}
 

@@ -11,10 +11,15 @@
   "scripts": {
     "test": "make test",
     "test-ci": "make test && make test-func",
-    "test-local": "make test && make docker-test-func"
+    "test-local": "make test && make docker-test-func",
+    "build-web:watch": "parcel serve --no-source-maps web/index.html",
+    "build:watch": "watchy -w 'src/**' -- make"
   },
   "bin": {
     "ramda": "./bin/ramda"
+  },
+  "browser": {
+    "./lib/config": false
   },
   "author": "Raine Virta <raine.virta@gmail.com>",
   "license": "ISC",
@@ -24,23 +29,33 @@
     "camelize": "^1.0.0",
     "debug": "^4.1.0",
     "editor": "^1.0.0",
+    "express": "^4.16.4",
     "fast-csv": "^2.4.1",
     "flat": "^4.1.0",
     "is-there": "^4.4.3",
     "livescript": "^1.6.0",
     "minimist": "^1.2.0",
+    "opn": "^5.4.0",
+    "polka": "^0.5.1",
     "ramda": "0.26.1",
+    "serve-static": "^1.13.2",
     "split2": "^3.0.0",
+    "string-argv": "^0.1.1",
     "through2": "^3.0.0",
     "transduce-stream": "^0.5.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "concat-stream": "^1.6.2",
+    "lodash.debounce": "^4.0.8",
     "mocha": "^5.2.0",
+    "parcel-bundler": "^1.10.3",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
     "rewire": "^4.0.1",
     "shelljs": "^0.8.3",
     "sinon": "^7.2.2",
+    "string-to-stream": "^1.1.1",
     "strip-ansi": "^5.0.0"
   }
 }
