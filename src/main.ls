@@ -6,7 +6,8 @@ require! through2: through
 require! stream: {PassThrough}
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs, merge-all, path, reduce, obj-of, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
-require! './utils': {HOME}
+require! './utils': {HOME, lines, words}
+require! './stream': {process-input-stream, get-stream-as-promise}
 debug = require 'debug' <| 'ramda-cli:main'
 Module = require 'module' .Module
 
@@ -16,143 +17,6 @@ process.env.'NODE_PATH' = join ':', [
     Path.join(HOME, 'node_modules') ]
 
 Module._init-paths!
-
-lines   = split '\n'
-words   = split ' '
-unlines = join '\n'
-unwords = join ' '
-
-remove-extra-newlines = (str) ->
-    if /\n$/ == str then str.replace /\n*$/, '\n' else str
-
-is-thenable = (x) -> x and typeof x.then is 'function'
-
-take-lines = (n, str) -->
-    lines str |> take n |> unlines
-
-reduce-stream = (fn, acc) -> through.obj do
-    (chunk,, next) ->
-        acc := fn acc, chunk
-        next!
-    (next) ->
-        this.push acc
-        next!
-
-concat-stream   = -> reduce-stream flip(append), []
-unconcat-stream = -> through.obj (chunk,, next) ->
-    switch type chunk
-    | \Array    => for-each this~push, chunk
-    | otherwise => this.push chunk
-    next!
-
-raw-output-stream = (compact) -> through.obj (chunk,, next) ->
-    end = unless compact then "\n" else ''
-    switch type chunk
-    | \Array    => for-each (~> this.push "#it#end"), chunk
-    | otherwise => this.push remove-extra-newlines "#chunk#end"
-    next!
-
-inspect-stream = (depth) -> through.obj (chunk,, next) ->
-    this.push (inspect chunk, colors: true, depth: depth) + '\n'
-    next!
-
-debug-stream = (debug, opts, str) ->
-    unless debug.enabled and opts.very-verbose
-        return PassThrough {+object-mode}
-
-    through.obj (chunk,, next) ->
-        debug {"#str": chunk.to-string!}
-        this.push chunk
-        next!
-
-json-stringify-stream = (compact) ->
-    indent = if not compact then 2 else void
-    through.obj (data,, next) ->
-        json = JSON.stringify data, null, indent
-        this.push json + '\n'
-        next!
-
-map-stream = (func, on-error) -> through.obj (chunk,, next) ->
-    push = (x) ~>
-        # pushing a null would end the stream
-        this.push x unless is-nil x
-        next!
-    val = try func chunk
-    catch then on-error e
-    if is-thenable val then val.then push
-    else push val
-
-table-output-stream = (compact) ->
-    require! './format-table'
-    opts = {compact}
-    through.obj (chunk,, next) ->
-        this.push "#{format-table chunk, opts}\n"
-        next!
-
-csv-opts = (type, delimiter, headers) ->
-    opts = { headers, include-end-row-delimiter: true, delimiter }
-    switch type
-    | \csv => opts
-    | \tsv => opts <<< delimiter: '\t'
-
-opts-to-output-stream = (opts) ->
-    switch opts.output-type
-    | \pretty       => inspect-stream opts.pretty-depth
-    | \raw          => raw-output-stream opts.compact
-    | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts opts.output-type, opts.csv-delimiter, opts.headers
-    | \table        => table-output-stream opts.compact
-    | otherwise     => json-stringify-stream opts.compact
-
-opts-to-input-parser-stream = (opts) ->
-    switch opts.input-type
-    | \raw          => split2!
-    | <[ csv tsv ]> => (require 'fast-csv') csv-opts opts.input-type, opts.csv-delimiter, opts.headers
-    | otherwise     => JSONStream.parse opts.json-path
-
-blank-obj-stream = ->
-    PassThrough {+object-mode}
-        ..end {}
-
-make-stdin-parser = (die, opts, stdin) ->
-    input-parser = opts-to-input-parser-stream opts
-    pipeline stdin, [
-        debug-stream debug, opts, \stdin
-        input-parser .on \error -> die it
-        if opts.slurp then concat-stream!
-    ]
-
-make-input-stream = (die, opts, stdin) ->
-    if opts.stdin then make-stdin-parser die, opts, stdin
-    else               blank-obj-stream!
-
-make-map-stream = (die, opts, fun) ->
-    if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
-    else map-stream fun, -> die (take-lines 3, it.stack)
-
-append-buffer =
-    (buf1, buf2) -> Buffer.concat([ buf1, buf2 ])
-
-get-stream-as-promise = (stream, cb) ->
-    new Promise (resolve, reject) ->
-        res = null
-        stream
-            .pipe reduce-stream append-buffer, Buffer.alloc-unsafe 0
-            .on 'data', (chunk) -> res := chunk
-            .on 'end', -> resolve res
-
-pipeline = (input, pipe-through) ->
-    reduce ((acc, s) -> acc.pipe s),
-           input,
-           pipe-through.filter((!= undefined))
-
-process-input-stream = (die, opts, fun, input-stream, output-stream) ->
-    pipeline (make-input-stream die, opts, input-stream), [
-        make-map-stream die, opts, fun
-        if opts.unslurp then unconcat-stream!
-        opts-to-output-stream opts
-        debug-stream debug, opts, \stdout
-        output-stream
-    ]
 
 main = (process-argv, stdin, stdout, stderr) ->>
     stdout.on \error ->

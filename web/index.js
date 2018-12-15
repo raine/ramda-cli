@@ -7,6 +7,7 @@ import debounce from 'lodash.debounce'
 import compileFun from '../lib/compile-fun'
 import { parse } from '../lib/argv'
 import stringArgv from 'string-argv'
+import { processInputStream } from '../lib/stream'
 
 const getStdin = () =>
   window
@@ -44,6 +45,9 @@ class App extends React.Component {
     const argv = stringArgv(input, 'node', 'dummy.js')
     const opts = parse(argv)
     const fun = compileFun(opts, die)
+    const inputStream = stringToStream(stdin)
+    const stream = processInputStream(die, opts, fun, inputStream)
+    stream.on('data', console.log)
   }
 
   render() {
@@ -65,4 +69,4 @@ class App extends React.Component {
 const doRender = (props) =>
   render(<App {...props} />, document.getElementById('root'))
 
-doRender({ stdin: null, input: 'identity' })
+doRender({ stdin: null, input: '-vv identity' })
