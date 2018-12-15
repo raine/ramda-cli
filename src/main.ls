@@ -1,6 +1,6 @@
 #!/usr/bin/env lsc
 require! {vm, JSONStream, path: Path, split2, fs, camelize}
-require! <[ ./argv ./config ./server ]>
+require! <[ ./argv ./config ]>
 require! './compile-fun'
 require! through2: through
 require! stream: {PassThrough}
@@ -175,7 +175,7 @@ main = (process-argv, stdin, stdout, stderr) ->>
 
     if opts.interactive
         raw-stdin-buf = await get-stream-as-promise stdin
-        server.start log-error, raw-stdin-buf, process-argv
+        require './server' .start log-error, raw-stdin-buf, process-argv
         return
 
     if opts.file
