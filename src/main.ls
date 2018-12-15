@@ -140,12 +140,14 @@ get-stream-as-promise = (stream, cb) ->
             .on 'data', (chunk) -> res := chunk
             .on 'end', -> resolve res
 
-pipeline = (first, rest) ->
-    reduce ((acc, s) -> acc.pipe s), first, rest.filter((!= null))
+pipeline = (input, pipe-through) ->
+    reduce ((acc, s) -> acc.pipe s),
+           input,
+           pipe-through.filter((!= null))
 
-process-input-stream = (die, opts, fn, input-stream, output-stream) ->
+process-input-stream = (die, opts, fun, input-stream, output-stream) ->
     pipeline (make-input-stream die, opts, input-stream), [
-        make-map-stream die, opts, fn
+        make-map-stream die, opts, fun
         if opts.unslurp then unconcat-stream! else null
         opts-to-output-stream opts
         debug-stream debug, opts, \stdout
@@ -179,21 +181,21 @@ main = (process-argv, stdin, stdout, stderr) ->>
         return
 
     if opts.file
-        try fn = require Path.resolve opts.file
+        try fun = require Path.resolve opts.file
         catch {stack, code}
             return switch code
             | \MODULE_NOT_FOUND  => die head lines stack
             | otherwise          => die stack
 
-        unless typeof fn is 'function'
+        unless typeof fun is 'function'
             return die "Error: #{opts.file} does not export a function"
 
-        if fn.opts then opts <<< argv.parse [,,] ++ words fn.opts
+        if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
         if is-empty opts._ then return die argv.help!
-        try fn = compile-fun opts
+        try fun = compile-fun opts
         catch {message} then return die "Error: #{message}"
 
-    process-input-stream die, opts, fn, stdin, stdout
+    process-input-stream die, opts, fun, stdin, stdout
 
 module.exports = main
