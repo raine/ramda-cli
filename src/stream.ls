@@ -52,11 +52,6 @@ debug-stream = (debug, opts, str) ->
 append-buffer =
     (buf1, buf2) -> Buffer.concat([ buf1, buf2 ])
 
-pipeline = (input, pipe-through) ->
-    reduce ((acc, s) -> acc.pipe s),
-           input,
-           pipe-through.filter((!= undefined))
-
 blank-obj-stream = ->
     PassThrough {+object-mode}
         ..end {}
@@ -101,11 +96,14 @@ opts-to-input-parser-stream = (opts) ->
 
 make-stdin-parser = (die, opts, stdin) ->
     input-parser = opts-to-input-parser-stream opts
-    pipeline stdin, [
-        debug-stream debug, opts, \stdin
-        input-parser .on \error -> die it
-        if opts.slurp then concat-stream!
-    ]
+    s = stdin
+        .pipe debug-stream debug, opts, \stdin
+        .pipe input-parser .on \error -> die it
+
+    if opts.slurp
+        s := s.pipe concat-stream!
+
+    return s
 
 make-input-stream = (die, opts, stdin) ->
     if opts.stdin then make-stdin-parser die, opts, stdin
@@ -123,12 +121,22 @@ export get-stream-as-promise = (stream) ->
             .on 'data', (chunk) -> res := chunk
             .on 'end', -> resolve res
 
-export process-input-stream = (die, opts, fun, input-stream, output-stream) ->
-    pipeline (make-input-stream die, opts, input-stream), [
-        make-map-stream die, opts, fun
-        if opts.unslurp then unconcat-stream!
-        opts-to-output-stream opts
-        debug-stream debug, opts, \stdout
-        if output-stream then output-stream
-    ]
+pass-through-unless = (val, stream) ->
+    switch | val       => stream
+           | otherwise => PassThrough object-mode: true
 
+export process-input-stream = (die, opts, fun, input-stream, output-stream) ->
+    s = make-input-stream die, opts, input-stream
+        .pipe make-map-stream die, opts, fun
+
+    if opts.unslurp
+        s := s.pipe unconcat-stream!
+
+    s := s
+        .pipe opts-to-output-stream opts
+        .pipe debug-stream debug, opts, \stdout
+
+    if output-stream
+       s.pipe output-stream
+
+    return s

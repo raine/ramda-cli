@@ -40,16 +40,26 @@ main = (process-argv, stdin, stdout, stderr) ->>
         return
 
     if opts.interactive
+        require! 'string-argv'
         raw-stdin-buf = await get-stream-as-promise stdin
-        require './server' .start log-error, raw-stdin-buf, opts
+        server = require './server' .start log-error, raw-stdin-buf, opts, (input) ->
+            server.close!
+            new-stdin = PassThrough!
+            new-stdin.end raw-stdin-buf
+            try fun = compile-fun { ...opts, _: string-argv input }
+            catch {message} then return die "Error: #{message}"
+            # something in the server is keeping the process open despite the
+            # close(), hence the manual exit. seems to work.
+            process-input-stream die, opts, fun, new-stdin, stdout
+                .on 'end', -> process.exit!
         return
 
     if opts.file
         try fun = require Path.resolve opts.file
         catch {stack, code}
             return switch code
-            | \MODULE_NOT_FOUND  => die head lines stack
-            | otherwise          => die stack
+            | \MODULE_NOT_FOUND => die head lines stack
+            | otherwise         => die stack
 
         unless typeof fun is 'function'
             return die "Error: #{opts.file} does not export a function"

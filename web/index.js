@@ -16,10 +16,6 @@ const getStdin = () =>
     .fetch('/stdin')
     .then((res) => res.text())
 
-getStdin().then((str) => {
-  doRender({ stdin: str })
-})
-
 const die = (msg) => console.error(msg)
 
 class App extends React.Component {
@@ -51,6 +47,11 @@ class App extends React.Component {
       .on('data', (chunk) => {
         this.setState({ output: chunk })
       })
+
+    window.fetch('/update-input', {
+      method: 'POST',
+      body: trimmedInput
+    })
   }
 
   render() {
@@ -76,3 +77,15 @@ const doRender = (props) =>
 const { input } = querystring.parse(window.location.href.split('?')[1])
 
 doRender({ stdin: null, input })
+
+getStdin().then((str) => {
+  doRender({ stdin: str })
+})
+
+const aliveCheck = () => {
+  window.ALIVE_CHECK = window
+    .fetch('/alive-check')
+    .catch(aliveCheck)
+}
+
+if (!window.ALIVE_CHECK) aliveCheck()
