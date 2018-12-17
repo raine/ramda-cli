@@ -1,4 +1,4 @@
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs, merge-all, path, reduce, obj-of, assoc-path, adjust, to-pairs}: R
+require! ramda: {is-nil, append, flip, type, for-each, reduce}: R
 require! stream: {PassThrough}
 require! through2: through
 require! {JSONStream, split2}
@@ -15,7 +15,7 @@ reduce-stream = (fn, acc) -> through.obj do
         this.push acc
         next!
 
-concat-stream = -> reduce-stream flip(append), []
+export concat-stream = -> reduce-stream flip(append), []
 
 unconcat-stream = -> through.obj (chunk,, next) ->
     switch type chunk
@@ -115,7 +115,7 @@ make-map-stream = (die, opts, fun) ->
     if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
     else map-stream fun, -> die (take-lines 3, it.stack)
 
-export get-stream-as-promise = (stream, cb) ->
+export get-stream-as-promise = (stream) ->
     new Promise (resolve, reject) ->
         res = null
         stream

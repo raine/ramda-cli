@@ -1,7 +1,9 @@
 require! {vm, path: Path, fs}
-require! <[ ./config ./get-user-config ]>
-require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs, merge-all, path, reduce, obj-of, assoc-path, adjust, to-pairs}: R
+require! <[ ./get-user-config ]>
+require! ramda: {apply, map, join, split, tap, pipe, identity, reverse, from-pairs, path, reduce, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
+require! camelize
+
 debug = require 'debug' <| 'ramda-cli:compile-fun'
 
 # naive fix to get `match` work despite being a keyword in LS
@@ -81,7 +83,7 @@ compile-and-eval = (code, opts) ->
     |> tap -> debug "\n#it", 'compiled code'
     |> evaluate opts
 
-compile-fun = (opts, die) ->
+compile-fun = (opts) ->
     fns = (if opts.transduce then reverse else identity) opts._
     piped-inline-functions = construct-pipe switch
         | opts.js   => fns
