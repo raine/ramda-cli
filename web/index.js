@@ -6,14 +6,14 @@ import livescript from 'livescript'
 import debounce from 'lodash.debounce'
 import compileFun from '../lib/compile-fun'
 import { parse } from '../lib/argv'
+import querystring from 'querystring'
 import stringArgv from 'string-argv'
-import { processInputStream } from '../lib/stream'
+import { processInputStream, concatStream } from '../lib/stream'
+import Output from './output'
 
 const getStdin = () =>
   window
-    .fetch('/stdin', {
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-    })
+    .fetch('/stdin')
     .then((res) => res.text())
 
 getStdin().then((str) => {
@@ -26,11 +26,8 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.onInputChange = this.onInputChange.bind(this)
-    this.evalInput = debounce(this.evalInput.bind(this), 300)
-    this.state = {
-      input: props.input
-    }
-
+    this.evalInput = debounce(this.evalInput.bind(this), 400)
+    this.state = { input: props.input, output: [] }
     this.evalInput()
   }
 
@@ -42,12 +39,18 @@ class App extends React.Component {
   evalInput() {
     const { stdin } = this.props
     const { input } = this.state
+    const trimmedInput = input.trim()
+    if (trimmedInput === '') return
     const argv = stringArgv(input, 'node', 'dummy.js')
     const opts = parse(argv)
     const fun = compileFun(opts, die)
     const inputStream = stringToStream(stdin)
     const stream = processInputStream(die, opts, fun, inputStream)
-    stream.on('data', console.log)
+    stream
+      .pipe(concatStream())
+      .on('data', (chunk) => {
+        this.setState({ output: chunk })
+      })
   }
 
   render() {
@@ -61,6 +64,7 @@ class App extends React.Component {
             this.onInputChange(ev)
           }}
         />
+        <Output output={this.state.output} />
       </div>
     )
   }
@@ -69,4 +73,6 @@ class App extends React.Component {
 const doRender = (props) =>
   render(<App {...props} />, document.getElementById('root'))
 
-doRender({ stdin: null, input: '-vv identity' })
+const { input } = querystring.parse(window.location.href.split('?')[1])
+
+doRender({ stdin: null, input })

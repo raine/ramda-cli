@@ -41,7 +41,7 @@ main = (process-argv, stdin, stdout, stderr) ->>
 
     if opts.interactive
         raw-stdin-buf = await get-stream-as-promise stdin
-        require './server' .start log-error, raw-stdin-buf, process-argv
+        require './server' .start log-error, raw-stdin-buf, opts
         return
 
     if opts.file
