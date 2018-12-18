@@ -27,7 +27,7 @@ export start = (log-error, raw-stdin-buf, opts, on-complete) ->
             res.write-head 200, 'Content-Type': 'text/plain'
             res.end raw-stdin-buf
         .post '/update-input', body-parser.text!, (req, res) ->
-            debug "updating input"
+            debug "received input"
             input := req.body
             res.write-head 200, 'Content-Type': 'text/plain'
             res.end 'OK'
@@ -37,6 +37,7 @@ export start = (log-error, raw-stdin-buf, opts, on-complete) ->
             req.on 'close', -> start-timer -> on-complete input
         .listen 63958, (err) ->
             debug "listening at port #{app.server.address().port}"
+            # sending only varargs to browser right now
             qs = querystring.stringify input: var-args-to-string opts._
             opn "http://localhost:#{app.server.address().port}?#qs", { wait: false }
     return app.server
