@@ -1,0 +1,15 @@
+.output {
+  color: #afafaf;
+  background-color: #0a0a0a;
+  padding: 8px;
+  overflow: scroll;
+  flex: 2;
+  display: flex;
+
+  pre {
+    margin: 0;
+    width: 100%;
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+}

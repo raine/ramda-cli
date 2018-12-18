@@ -9,7 +9,12 @@ import { parse } from '../lib/argv'
 import querystring from 'querystring'
 import stringArgv from 'string-argv'
 import { processInputStream, concatStream } from '../lib/stream'
-import Output from './output'
+import Output from './Output'
+
+import './styles/reboot.css'
+import './styles/main.css'
+
+import style from './styles/App.scss'
 
 const getStdin = () =>
   window
@@ -56,15 +61,17 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <input
-          type="text"
-          value={this.state.input}
-          onChange={(ev) => {
-            ev.persist()
-            this.onInputChange(ev)
-          }}
-        />
+      <div className={style.app}>
+        <div className={style.inputWrapper}>
+          <input
+            type="text"
+            value={this.state.input}
+            onChange={(ev) => {
+              ev.persist()
+              this.onInputChange(ev)
+            }}
+          />
+        </div>
         <Output output={this.state.output} />
       </div>
     )

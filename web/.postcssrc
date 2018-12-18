@@ -1,0 +1,12 @@
+{
+  "modules": true,
+  "plugins": {
+    "autoprefixer": {
+      "grid": true
+    },
+    "postcss-modules": {
+      "camelCase": true,
+      "generateScopedName": "[name]_[local]_[hash:base64:5]"
+    }
+  }
+}
