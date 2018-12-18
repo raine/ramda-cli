@@ -12,7 +12,7 @@
     "test": "make test",
     "test-ci": "make test && make test-func",
     "test-local": "make test && make docker-test-func",
-    "build-web:watch": "parcel serve --no-source-maps web/index.html",
+    "build-web:watch": "parcel watch --no-source-maps web/index.html",
     "build:watch": "watchy -w 'src/**' -- make"
   },
   "bin": {
