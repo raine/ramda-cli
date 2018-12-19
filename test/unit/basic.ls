@@ -340,6 +340,23 @@ describe '--input-type tsv' (,) ->
         output `strip-eq` expected
         done!
 
+describe '--output-type json' (,) ->
+    it 'prints functions as strings' (done) ->
+        args     = <[ take ]>
+        input    = '"foo"'
+        expected = """
+        function f1(a) {
+            if (arguments.length === 0 || _isPlaceholder(a)) {
+              return f1;
+            } else {
+              return fn.apply(this, arguments);
+            }
+          }\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--output-type raw' (,) ->
     it 'prints a string without quotes' (done) ->
         args     = <[ identity -o raw ]>
@@ -401,26 +418,26 @@ describe '--output-type pretty' (,) ->
         output `eq` expected
         done!
 
-describe '--pretty-depth' (,) ->
-    it 'configures pretty printing of objects up to specific depth' (done) ->
-        args     = <[ identity -o pretty --pretty-depth 1 ]>
-        input    = '{"a":{"b":{"c":[1,2,3]}}}'
-        expected = """
-        { a: { b: [Object] } }\n
-        """
-        output <-! run-main args, input
-        (strip-ansi output) `eq` expected
-        done!
+    describe '--pretty-depth' (,) ->
+        it 'configures pretty printing of objects up to specific depth' (done) ->
+            args     = <[ identity -o pretty --pretty-depth 1 ]>
+            input    = '{"a":{"b":{"c":[1,2,3]}}}'
+            expected = """
+            { a: { b: [Object] } }\n
+            """
+            output <-! run-main args, input
+            (strip-ansi output) `eq` expected
+            done!
 
-    it 'parses null as infinite' (done) ->
-        args     = <[ identity -o pretty --pretty-depth null ]>
-        input    = '{"a":{"b":{"c":[1,2,3]}}}'
-        expected = """
-        { a: { b: { c: [ 1, 2, 3 ] } } }\n
-        """
-        output <-! run-main args, input
-        (strip-ansi output) `eq` expected
-        done!
+        it 'parses null as infinite' (done) ->
+            args     = <[ identity -o pretty --pretty-depth null ]>
+            input    = '{"a":{"b":{"c":[1,2,3]}}}'
+            expected = """
+            { a: { b: { c: [ 1, 2, 3 ] } } }\n
+            """
+            output <-! run-main args, input
+            (strip-ansi output) `eq` expected
+            done!
 
 describe '--output-type csv' (,) ->
     it 'prints a list of objects as CSV with headers' (done) ->

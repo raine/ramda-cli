@@ -36,7 +36,9 @@ map-stream = (fun, on-error) -> through.obj (chunk,, next) ->
 json-stringify-stream = (compact) ->
     indent = if not compact then 2 else void
     through.obj (data,, next) ->
-        json = JSON.stringify data, null, indent
+        json = switch type data
+        | \Function => data.to-string!
+        | otherwise => JSON.stringify data, null, indent
         this.push json + '\n'
         next!
 
@@ -45,7 +47,7 @@ debug-stream = (debug, opts, str) ->
         return PassThrough {+object-mode}
 
     through.obj (chunk,, next) ->
-        debug {"#str": chunk.to-string!}
+        debug inspect(chunk), str
         this.push chunk
         next!
 
@@ -99,6 +101,7 @@ make-stdin-parser = (die, opts, stdin) ->
     s = stdin
         .pipe debug-stream debug, opts, \stdin
         .pipe input-parser .on \error -> die it
+        .pipe debug-stream debug, opts, "after input-parser"
 
     if opts.slurp
         s := s.pipe concat-stream!
@@ -128,6 +131,7 @@ pass-through-unless = (val, stream) ->
 export process-input-stream = (die, opts, fun, input-stream, output-stream) ->
     s = make-input-stream die, opts, input-stream
         .pipe make-map-stream die, opts, fun
+        .pipe debug-stream debug, opts, "after map-stream"
 
     if opts.unslurp
         s := s.pipe unconcat-stream!
