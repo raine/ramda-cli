@@ -35,7 +35,7 @@ export start = (log-error, raw-stdin-buf, opts, on-complete) ->
             debug "alive check start"
             if timer then clear-timer!
             req.on 'close', -> start-timer -> on-complete input
-        .listen 63958, (err) ->
+        .listen 63958, '127.0.0.1', (err) ->
             debug "listening at port #{app.server.address().port}"
             # sending only varargs to browser right now
             qs = querystring.stringify input: var-args-to-string opts._
