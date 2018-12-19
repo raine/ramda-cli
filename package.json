@@ -46,6 +46,7 @@
     "wtfnode": "^0.8.0"
   },
   "devDependencies": {
+    "ansi-to-html": "^0.6.9",
     "chai": "^4.2.0",
     "concat-stream": "^1.6.2",
     "lodash.debounce": "^4.0.8",

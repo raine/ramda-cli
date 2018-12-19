@@ -3,6 +3,7 @@ import debounce from 'lodash.debounce'
 import compileFun from '../lib/compile-fun'
 import { parse } from '../lib/argv'
 import stringArgv from 'string-argv'
+import stringToStream from 'string-to-stream'
 import { processInputStream, concatStream } from '../lib/stream'
 import Output from './Output'
 
@@ -15,7 +16,11 @@ class App extends React.Component {
     super(props)
     this.onInputChange = this.onInputChange.bind(this)
     this.evalInput = debounce(this.evalInput.bind(this), 400)
-    this.state = { input: props.input, output: [] }
+    this.state = {
+      input: props.input,
+      output: [],
+      opts: {}
+    }
     this.evalInput()
   }
 
@@ -34,11 +39,12 @@ class App extends React.Component {
     const fun = compileFun(opts, die)
     const inputStream = stringToStream(stdin)
     const stream = processInputStream(die, opts, fun, inputStream)
-    stream
-      .pipe(concatStream())
-      .on('data', (chunk) => {
-        this.setState({ output: chunk })
+    stream.pipe(concatStream()).on('data', (chunk) => {
+      this.setState({
+        output: chunk,
+        opts
       })
+    })
 
     window.fetch('/update-input', {
       method: 'POST',
@@ -47,6 +53,7 @@ class App extends React.Component {
   }
 
   render() {
+    const { output, opts } = this.state
     return (
       <div className={style.app}>
         <div className={style.inputWrapper}>
@@ -59,8 +66,15 @@ class App extends React.Component {
             }}
           />
         </div>
-        <Output output={this.state.output} />
+        {output && (
+          <Output
+            output={output.join('')}
+            outputType={opts.outputType}
+          />
+        )}
       </div>
     )
   }
 }
+
+export default App
