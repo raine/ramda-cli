@@ -26,7 +26,7 @@ unconcat-stream = -> through.obj (chunk,, next) ->
 map-stream = (fun, on-error) -> through.obj (chunk,, next) ->
     push = (x) ~>
         # pushing a null would end the stream
-        this.push x unless is-nil x
+        this.push x unless x is null
         next!
     val = try fun chunk
     catch then on-error e
@@ -43,11 +43,9 @@ json-stringify-stream = (compact) ->
         next!
 
 debug-stream = (debug, opts, str) ->
-    unless debug.enabled and opts.very-verbose
-        return PassThrough {+object-mode}
-
     through.obj (chunk,, next) ->
-        debug inspect(chunk), str
+        if debug.enabled and opts.very-verbose
+            debug inspect(chunk), str
         this.push chunk
         next!
 
@@ -123,10 +121,6 @@ export get-stream-as-promise = (stream) ->
             .pipe reduce-stream append-buffer, Buffer.alloc-unsafe 0
             .on 'data', (chunk) -> res := chunk
             .on 'end', -> resolve res
-
-pass-through-unless = (val, stream) ->
-    switch | val       => stream
-           | otherwise => PassThrough object-mode: true
 
 export process-input-stream = (die, opts, fun, input-stream, output-stream) ->
     s = make-input-stream die, opts, input-stream

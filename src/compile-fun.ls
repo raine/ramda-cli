@@ -80,7 +80,7 @@ compile-with-opts = (code, opts) ->
 
 compile-and-eval = (code, opts) ->
     compile-with-opts code, opts
-    |> tap -> debug "\n#it", 'compiled code'
+    |> tap -> debug "#it", 'compiled code'
     |> evaluate opts
 
 compile-fun = (opts) ->

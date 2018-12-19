@@ -43,6 +43,13 @@ describe 'basic' (,) ->
         output `eq` '"bar"\n'
         done!
 
+    it 'passes undefined values through', (done) ->
+        args     = ['-> undefined']
+        expected = 'undefined\n'
+        output <-! run-main args, '[1,2,3]'
+        output `eq` expected
+        done!
+
 describe 'match function' (,) ->
     cases =
         'match /foo/'
