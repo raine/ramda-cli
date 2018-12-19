@@ -46,11 +46,12 @@ main = (process-argv, stdin, stdout, stderr) ->>
             server.close!
             new-stdin = PassThrough!
             new-stdin.end raw-stdin-buf
-            try fun = compile-fun { ...opts, _: string-argv input }
+            new-opts = argv.parse string-argv input, 'node', 'dummy.js'
+            try fun = compile-fun new-opts
             catch {message} then return die "Error: #{message}"
             # something in the server is keeping the process open despite the
             # close(), hence the manual exit. seems to work.
-            process-input-stream die, opts, fun, new-stdin, stdout
+            process-input-stream die, new-opts, fun, new-stdin, stdout
                 .on 'end', -> process.exit!
         return
 
