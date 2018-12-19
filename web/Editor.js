@@ -15,7 +15,7 @@ import style from './styles/Editor.scss'
 
 const Editor = ({ value, onChange, placeholder }) => (
   <div className={style.editor}>
-    <div className={style.prefix}>&gt;</div>
+    <div className={style.prefix}>stdin | ramda</div>
     <CodeMirror
       className={style.codemirror}
       value={value}
