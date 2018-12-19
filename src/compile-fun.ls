@@ -1,6 +1,6 @@
 require! {vm, path: Path, fs}
 require! <[ ./get-user-config ]>
-require! ramda: {apply, map, join, split, tap, pipe, identity, reverse, from-pairs, path, reduce, assoc-path, adjust, to-pairs}: R
+require! ramda: {apply, map, join, is-empty, split, tap, pipe, identity, reverse, from-pairs, path, reduce, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
 require! camelize
 
@@ -84,6 +84,7 @@ compile-and-eval = (code, opts) ->
     |> evaluate opts
 
 compile-fun = (opts) ->
+    if is-empty opts._ then opts._ = <[ identity ]>
     fns = (if opts.transduce then reverse else identity) opts._
     piped-inline-functions = construct-pipe switch
         | opts.js   => fns

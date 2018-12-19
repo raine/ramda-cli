@@ -67,7 +67,6 @@ main = (process-argv, stdin, stdout, stderr) ->>
 
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
-        if is-empty opts._ then return die argv.help!
         try fun = compile-fun opts
         catch {message} then return die "Error: #{message}"
 

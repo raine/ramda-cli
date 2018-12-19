@@ -50,6 +50,11 @@ describe 'basic' (,) ->
         output `eq` expected
         done!
 
+    it 'uses identity function by default' , (done) ->
+        output, errput <-! run-main [], '[1,2,3]'
+        output `eq` '[\n  1,\n  2,\n  3\n]\n'
+        done!
+
 describe 'match function' (,) ->
     cases =
         'match /foo/'
@@ -129,12 +134,6 @@ describe 'errors' (,) ->
         it 'shows terse error' (done) ->
             output, errput <-! run-main 'identity', 'b'
             errput `eq` 'Error: Invalid JSON (Unexpected "b" at position 0 in state STOP)\n'
-            done!
-
-    describe 'without arguments' (,) ->
-        it 'shows help' (done) ->
-            output, errput <-! run-main [], ''
-            (head lines errput) `eq` 'Usage: ramda [options] [function] ...'
             done!
 
 describe '--compact' (,) ->
