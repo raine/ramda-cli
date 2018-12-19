@@ -6,6 +6,7 @@ import stringArgv from 'string-argv'
 import stringToStream from 'string-to-stream'
 import { processInputStream, concatStream } from '../lib/stream'
 import Output from './Output'
+import Editor from './Editor'
 
 import style from './styles/App.scss'
 
@@ -24,9 +25,8 @@ class App extends React.Component {
     this.evalInput()
   }
 
-  onInputChange(ev) {
-    const val = ev.target.value
-    this.setState({ input: val }, this.evalInput)
+  onInputChange(input) {
+    this.setState({ input }, this.evalInput)
   }
 
   evalInput() {
@@ -56,21 +56,14 @@ class App extends React.Component {
     const { output, opts } = this.state
     return (
       <div className={style.app}>
-        <div className={style.inputWrapper}>
-          <input
-            type="text"
-            value={this.state.input}
-            onChange={(ev) => {
-              ev.persist()
-              this.onInputChange(ev)
-            }}
-          />
-        </div>
+        <Editor
+          value={this.state.input}
+          onChange={(value) => {
+            this.onInputChange(value)
+          }}
+        />
         {output && (
-          <Output
-            output={output.join('')}
-            outputType={opts.outputType}
-          />
+          <Output output={output.join('')} outputType={opts.outputType} />
         )}
       </div>
     )

@@ -1,5 +1,4 @@
 import React from 'react'
-import { render } from 'react-dom'
 import stripAnsi from 'strip-ansi'
 import { pure } from 'recompose'
 import ansi2html from './ansi2html'

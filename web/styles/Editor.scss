@@ -1,0 +1,12 @@
+:global .CodeMirror {
+  height: auto;
+
+  pre {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+      'Courier New', monospace;
+  }
+}
+
+:global .CodeMirror-lines {
+  padding: 10px 8px;
+}
