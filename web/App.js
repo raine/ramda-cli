@@ -20,7 +20,8 @@ class App extends React.Component {
     this.state = {
       input: props.input,
       output: [],
-      opts: {}
+      opts: {},
+      error: false
     }
     this.evalInput()
   }
@@ -29,20 +30,35 @@ class App extends React.Component {
     this.setState({ input }, this.evalInput)
   }
 
+  onEvalInputError(err) {
+    this.setState({
+      output: [err.stack],
+      error: true
+    })
+  }
+
   evalInput() {
     const { stdin } = this.props
     let { input } = this.state
     input = input.trim()
     const argv = stringArgv(input, 'node', 'dummy.js')
     const opts = parse(argv)
-    if (opts._.length === 0) opts._ = ['identity']
-    const fun = compileFun(opts, die)
+
+    let fun
+    try {
+      fun = compileFun(opts)
+    } catch (err) {
+      this.onEvalInputError(err)
+      return
+    }
+
     const inputStream = stringToStream(stdin)
-    const stream = processInputStream(die, opts, fun, inputStream)
+    const stream = processInputStream(this.onEvalInputError, opts, fun, inputStream)
     stream.pipe(concatStream()).on('data', (chunk) => {
       this.setState({
         output: chunk,
-        opts
+        opts,
+        error: false
       })
     })
 
@@ -53,7 +69,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { output, opts } = this.state
+    const { output, opts, error } = this.state
     return (
       <div className={style.app}>
         <Editor
@@ -64,7 +80,11 @@ class App extends React.Component {
           placeholder="identity"
         />
         {output && (
-          <Output output={output.join('')} outputType={opts.outputType} />
+          <Output
+            output={output.join('')}
+            outputType={opts.outputType}
+            error={error}
+          />
         )}
       </div>
     )

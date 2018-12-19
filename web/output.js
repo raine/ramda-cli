@@ -1,12 +1,13 @@
 import React from 'react'
 import stripAnsi from 'strip-ansi'
 import { pure } from 'recompose'
+import classNames from 'classnames'
 import ansi2html from './ansi2html'
 
 import style from './styles/Output.scss'
 
-const Output = ({ output, outputType }) => (
-  <div className={style.output}>
+const Output = ({ output, outputType, error }) => (
+  <div className={classNames(style.output, { [style.error]: error })}>
     {['pretty', 'table'].includes(outputType) ? (
       <pre
         dangerouslySetInnerHTML={ansi2html(output, {

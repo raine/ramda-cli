@@ -6,6 +6,10 @@
   flex: 2;
   display: flex;
 
+  &.error {
+    color: #ff7043;
+  }
+
   pre {
     margin: 0;
     width: 100%;

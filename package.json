@@ -48,6 +48,7 @@
   "devDependencies": {
     "ansi-to-html": "^0.6.9",
     "chai": "^4.2.0",
+    "classnames": "^2.2.6",
     "codemirror": "^5.42.0",
     "concat-stream": "^1.6.2",
     "lodash.debounce": "^4.0.8",
