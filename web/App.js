@@ -1,7 +1,7 @@
 import React from 'react'
 import debounce from 'lodash.debounce'
 import compileFun from '../lib/compile-fun'
-import { parse } from '../lib/argv'
+import { parse, help } from '../lib/argv'
 import stringArgv from 'string-argv'
 import stringToStream from 'string-to-stream'
 import { processInputStream, concatStream } from '../lib/stream'
@@ -44,6 +44,15 @@ class App extends React.Component {
     const argv = stringArgv(input, 'node', 'dummy.js')
     const opts = parse(argv)
 
+    if (opts.help) {
+      this.setState({
+        output: [help()],
+        opts,
+        error: false
+      })
+      return
+    }
+
     let fun
     try {
       fun = compileFun(opts)
@@ -53,7 +62,12 @@ class App extends React.Component {
     }
 
     const inputStream = stringToStream(stdin)
-    const stream = processInputStream(this.onEvalInputError, opts, fun, inputStream)
+    const stream = processInputStream(
+      this.onEvalInputError,
+      opts,
+      fun,
+      inputStream
+    )
     stream.pipe(concatStream()).on('data', (chunk) => {
       this.setState({
         output: chunk,
