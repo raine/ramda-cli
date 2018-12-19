@@ -4,6 +4,10 @@
   pre {
     font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
       'Courier New', monospace;
+
+    &.CodeMirror-placeholder {
+      color: #999;
+    }
   }
 }
 

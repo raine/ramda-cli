@@ -31,11 +31,11 @@ class App extends React.Component {
 
   evalInput() {
     const { stdin } = this.props
-    const { input } = this.state
-    const trimmedInput = input.trim()
-    if (trimmedInput === '') return
+    let { input } = this.state
+    input = input.trim()
     const argv = stringArgv(input, 'node', 'dummy.js')
     const opts = parse(argv)
+    if (opts._.length === 0) opts._ = ['identity']
     const fun = compileFun(opts, die)
     const inputStream = stringToStream(stdin)
     const stream = processInputStream(die, opts, fun, inputStream)
@@ -48,7 +48,7 @@ class App extends React.Component {
 
     window.fetch('/update-input', {
       method: 'POST',
-      body: trimmedInput
+      body: input
     })
   }
 
@@ -61,6 +61,7 @@ class App extends React.Component {
           onChange={(value) => {
             this.onInputChange(value)
           }}
+          placeholder="identity"
         />
         {output && (
           <Output output={output.join('')} outputType={opts.outputType} />
