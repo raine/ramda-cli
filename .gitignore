@@ -3,4 +3,4 @@
 npm-debug.log
 lib/
 .cache
-dist/
+web-dist/

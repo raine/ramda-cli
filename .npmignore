@@ -7,3 +7,4 @@ Makefile
 wercker.yml
 stuff
 .cache
+web/

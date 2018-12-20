@@ -22,7 +22,7 @@ clear-timer = ->
 export start = (log-error, raw-stdin-buf, opts, on-complete) ->
     input = null
     app = polka!
-        .use serve-static (Path.join __dirname, '..', 'dist'), {'index': ['index.html']}
+        .use serve-static (Path.join __dirname, '..', 'web-dist'), {'index': ['index.html']}
         .get '/stdin', (req, res) ->
             res.write-head 200, 'Content-Type': 'text/plain'
             res.end raw-stdin-buf
