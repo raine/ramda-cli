@@ -42,7 +42,7 @@ main = (process-argv, stdin, stdout, stderr) ->>
     if opts.interactive
         require! 'string-argv'
         raw-stdin-buf = await get-stream-as-promise stdin
-        server = require './server' .start log-error, raw-stdin-buf, opts, (input) ->
+        server = require './server' .start log-error, raw-stdin-buf, process-argv, (input) ->
             server.close!
             new-stdin = PassThrough!
             new-stdin.end raw-stdin-buf

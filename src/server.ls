@@ -2,15 +2,16 @@ require! {path: Path}
 require! polka
 require! 'serve-static'
 require! opn
+require! ramda: {without, pipe, join, map}: R
 require! querystring
 require! 'body-parser'
 debug = require 'debug' <| 'ramda-cli:server'
 
-var-args-to-string = (args) ->
-    args.map -> if /\s/.test(it) then "'#it'" else it
-        .join ' '
+var-args-to-string = pipe do
+    map -> if /\s|"/.test(it) then "'#it'" else it
+    join ' '
 
-TIMEOUT = 500
+TIMEOUT = 1000
 timer = null
 start-timer = (cb) ->
     debug "starting timer"
@@ -19,7 +20,7 @@ clear-timer = ->
     debug "clearing timer"
     clear-timeout timer
 
-export start = (log-error, raw-stdin-buf, opts, on-complete) ->
+export start = (log-error, raw-stdin-buf, process-argv, on-complete) ->
     input = null
     app = polka!
         .use serve-static (Path.join __dirname, '..', 'web-dist'), {'index': ['index.html']}
@@ -37,7 +38,8 @@ export start = (log-error, raw-stdin-buf, opts, on-complete) ->
             req.on 'close', -> start-timer -> on-complete input
         .listen 63958, '127.0.0.1', (err) ->
             debug "listening at port #{app.server.address().port}"
-            # sending only varargs to browser right now
-            qs = querystring.stringify input: var-args-to-string opts._
+            argv = process-argv .slice 2
+                |> without ["--interactive"]
+            qs = querystring.stringify input: var-args-to-string argv
             opn "http://localhost:#{app.server.address().port}?#qs", { wait: false }
     return app.server
