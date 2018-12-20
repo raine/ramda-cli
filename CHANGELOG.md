@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Unreleased
+
+- Changed: If no functions are given as arguments, uses `identity` function
+    instead of showing `--help` output.
+- Changed: When using JSON output type, functions are stringified instead of
+    printed as `undefined`.
+- Changed: `undefined` values are properly passed through the pipeline.
+
 ## 3.1.0 - 2018-02-21
 
 - Added: `--csv-delimiter` option.
