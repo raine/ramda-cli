@@ -14,7 +14,7 @@
     "test-local": "make test && make docker-test-func",
     "build-web:watch": "parcel watch --no-source-maps --out-dir web-dist web/index.html",
     "build-web": "parcel build --no-source-maps --out-dir web-dist web/index.html",
-    "build:watch": "watchy -w 'src/**' -- make"
+    "build:watch": "watchy -w 'src/**' -- make compile"
   },
   "bin": {
     "ramda": "./bin/ramda"
