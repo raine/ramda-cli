@@ -25,7 +25,10 @@ getStdin().then((str) => {
 const aliveCheck = () => {
   window.ALIVE_CHECK = window
     .fetch('/alive-check')
-    .catch(aliveCheck)
+    .catch((err) => {
+      console.error(err)
+      setTimeout(aliveCheck, 100)
+    })
 }
 
 if (!window.ALIVE_CHECK) aliveCheck()
