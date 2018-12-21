@@ -17,11 +17,12 @@ class App extends React.Component {
     super(props)
     this.onInputChange = this.onInputChange.bind(this)
     this.evalInput = debounce(this.evalInput.bind(this), 400)
+    this.onEvalInputError = this.onEvalInputError.bind(this)
     this.state = {
       input: props.input,
       output: [],
       opts: {},
-      error: false
+      error: null
     }
     this.evalInput()
   }
@@ -32,8 +33,8 @@ class App extends React.Component {
 
   onEvalInputError(err) {
     this.setState({
-      output: [err.stack],
-      error: true
+      output: [],
+      error: err
     })
   }
 
@@ -48,7 +49,7 @@ class App extends React.Component {
       this.setState({
         output: [help()],
         opts,
-        error: false
+        error: null
       })
       return
     }
@@ -72,7 +73,7 @@ class App extends React.Component {
       this.setState({
         output: chunk,
         opts,
-        error: false
+        error: null
       })
     })
 
