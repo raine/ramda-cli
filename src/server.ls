@@ -9,7 +9,7 @@ debug = require 'debug' <| 'ramda-cli:server'
 
 var-args-to-string = pipe do
     map -> if /\s|"/.test(it) then "'#it'" else it
-    join ' '
+    -> if it.length > 3 then it.join '\n' else it.join ' '
 
 TIMEOUT = 1000
 timer = null
