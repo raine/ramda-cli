@@ -1,7 +1,9 @@
 import React from 'react'
+import * as R from 'ramda'
 import debounce from 'lodash.debounce'
 import compileFun from '../lib/compile-fun'
 import { parse, help } from '../lib/argv'
+import { lines, unlines } from '../lib/utils'
 import stringArgv from 'string-argv'
 import stringToStream from 'string-to-stream'
 import { processInputStream, concatStream } from '../lib/stream'
@@ -11,6 +13,12 @@ import Editor from './Editor'
 import style from './styles/App.scss'
 
 const die = (msg) => console.error(msg)
+
+const removeCommentedLines = R.pipe(
+  lines,
+  R.reject(x => /^#/.test(x)),
+  unlines
+)
 
 class App extends React.Component {
   constructor(props) {
@@ -42,7 +50,11 @@ class App extends React.Component {
     const { stdin } = this.props
     let { input } = this.state
     input = input.trim()
-    const argv = stringArgv(input, 'node', 'dummy.js')
+    const argv = stringArgv(
+      removeCommentedLines(input),
+      'node',
+      'dummy.js'
+    )
     const opts = parse(argv)
 
     if (opts.help) {
