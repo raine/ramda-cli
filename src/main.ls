@@ -6,7 +6,7 @@ require! through2: through
 require! stream: {PassThrough}
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs, merge-all, path, reduce, obj-of, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
-require! './utils': {HOME, lines, words}
+require! './utils': {HOME, lines, words, take-lines}
 require! './stream': {process-input-stream, get-stream-as-promise}
 debug = require 'debug' <| 'ramda-cli:main'
 Module = require 'module' .Module
@@ -24,7 +24,10 @@ main = (process-argv, stdin, stdout, stderr) ->>
 
     debug {argv: process-argv}
     log-error = (+ '\n') >> stderr~write
-    die       = log-error >> -> process.exit 1
+    die = (err) ->
+        msg = if err.stack then (take-lines 1, err.stack) else err
+        log-error msg
+        process.exit 1
 
     try opts = argv.parse process-argv
     catch e then return die [argv.help!, e.message] * '\n\n'

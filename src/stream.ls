@@ -1,5 +1,5 @@
-require! ramda: {is-nil, append, flip, type, for-each, reduce}: R
-require! stream: {PassThrough}
+require! ramda: {is-nil, append, flip, type, for-each, reduce, filter}: R
+require! stream: {PassThrough, pipeline}
 require! through2: through
 require! {JSONStream, split2}
 require! util: {inspect}
@@ -23,13 +23,15 @@ unconcat-stream = -> through.obj (chunk,, next) ->
     | otherwise => this.push chunk
     next!
 
-map-stream = (fun, on-error) -> through.obj (chunk,, next) ->
+map-stream = (fun) -> through.obj (chunk,, next) ->
     push = (x) ~>
         # pushing a null would end the stream
         this.push x unless x is null
         next!
     val = try fun chunk
-    catch then on-error e
+    catch
+        this.push null
+        next e
     if is-thenable val then val.then push
     else push val
 
@@ -94,11 +96,11 @@ opts-to-input-parser-stream = (opts) ->
     | <[ csv tsv ]> => (require 'fast-csv') csv-opts opts.input-type, opts.csv-delimiter, opts.headers
     | otherwise     => JSONStream.parse opts.json-path
 
-make-stdin-parser = (die, opts, stdin) ->
+make-stdin-parser = (on-error, opts, stdin) ->
     input-parser = opts-to-input-parser-stream opts
     s = stdin
         .pipe debug-stream debug, opts, \stdin
-        .pipe input-parser .on \error -> die it
+        .pipe input-parser .on \error -> on-error it
         .pipe debug-stream debug, opts, "after input-parser"
 
     if opts.slurp
@@ -106,13 +108,13 @@ make-stdin-parser = (die, opts, stdin) ->
 
     return s
 
-make-input-stream = (die, opts, stdin) ->
-    if opts.stdin then make-stdin-parser die, opts, stdin
+make-input-stream = (on-error, opts, stdin) ->
+    if opts.stdin then make-stdin-parser on-error, opts, stdin
     else               blank-obj-stream!
 
-make-map-stream = (die, opts, fun) ->
+make-map-stream = (opts, fun) ->
     if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
-    else map-stream fun, -> die (take-lines 3, it.stack)
+    else map-stream fun
 
 export get-stream-as-promise = (stream) ->
     new Promise (resolve, reject) ->
@@ -122,19 +124,15 @@ export get-stream-as-promise = (stream) ->
             .on 'data', (chunk) -> res := chunk
             .on 'end', -> resolve res
 
-export process-input-stream = (die, opts, fun, input-stream, output-stream) ->
-    s = make-input-stream die, opts, input-stream
-        .pipe make-map-stream die, opts, fun
-        .pipe debug-stream debug, opts, "after map-stream"
+export process-input-stream = (on-error, opts, fun, input-stream, output-stream) ->
+    p = pipeline ...filter (!= null), [
+        make-input-stream on-error, opts, input-stream
+        make-map-stream opts, fun
+        debug-stream debug, opts, "after map-stream"
+        if opts.unslurp then unconcat-stream! else null
+        opts-to-output-stream opts
+        debug-stream debug, opts, \stdout
+        (err) -> if err then on-error err
+    ]
 
-    if opts.unslurp
-        s := s.pipe unconcat-stream!
-
-    s := s
-        .pipe opts-to-output-stream opts
-        .pipe debug-stream debug, opts, \stdout
-
-    if output-stream
-       s.pipe output-stream
-
-    return s
+    if output-stream then p.pipe output-stream
