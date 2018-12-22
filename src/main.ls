@@ -44,11 +44,8 @@ main = (process-argv, stdin, stdout, stderr) ->>
 
     if opts.interactive
         require! 'string-argv'
-        raw-stdin-buf = await get-stream-as-promise stdin
-        server = require './server' .start log-error, raw-stdin-buf, process-argv, (input) ->
+        server = require './server' .start log-error, stdin, process-argv, (new-stdin, input) ->
             server.close!
-            new-stdin = PassThrough!
-            new-stdin.end raw-stdin-buf
             new-opts = argv.parse string-argv input, 'node', 'dummy.js'
             try fun = compile-fun new-opts
             catch {message} then return die "Error: #{message}"
