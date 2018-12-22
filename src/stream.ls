@@ -28,10 +28,10 @@ map-stream = (fun) -> through.obj (chunk,, next) ->
         # pushing a null would end the stream
         this.push x unless x is null
         next!
-    val = try fun chunk
+    try
+        val = fun chunk
     catch
-        this.push null
-        next e
+        return next e
     if is-thenable val then val.then push
     else push val
 
