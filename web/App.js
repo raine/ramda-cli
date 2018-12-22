@@ -49,13 +49,19 @@ class App extends React.Component {
   evalInput() {
     const { stdin } = this.props
     let { input } = this.state
+    let opts
     input = input.trim()
     const argv = stringArgv(
       removeCommentedLines(input),
       'node',
       'dummy.js'
     )
-    const opts = parse(argv)
+    try {
+      opts = parse(argv)
+    } catch (err) {
+      this.onEvalInputError(err)
+      return
+    }
 
     if (opts.help) {
       this.setState({
