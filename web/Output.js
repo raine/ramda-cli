@@ -9,7 +9,9 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 
 import style from './styles/Output.scss'
 
-const errorOutput = (err) => (isSafari ? err.toString() : err.stack)
+const errorOutput = (err) =>
+  err.stack ? (isSafari ? err.toString() : err.stack)
+            : err
 
 const hasAnsiColors = (outputType) => ['pretty', 'table'].includes(outputType)
 
