@@ -1,4 +1,4 @@
-require! ramda: {is-nil, append, flip, type, for-each, reduce, filter}: R
+require! ramda: {is-nil, append, flip, type, for-each, reduce}: R
 require! stream: {PassThrough, pipeline}
 require! through2: through
 require! {JSONStream, split2}
@@ -125,14 +125,19 @@ export get-stream-as-promise = (stream) ->
             .on 'end', -> resolve res
 
 export process-input-stream = (on-error, opts, fun, input-stream, output-stream) ->
-    p = pipeline ...filter (!= null), [
-        make-input-stream on-error, opts, input-stream
-        make-map-stream opts, fun
-        debug-stream debug, opts, "after map-stream"
-        if opts.unslurp then unconcat-stream! else null
-        opts-to-output-stream opts
-        debug-stream debug, opts, \stdout
-        (err) -> if err then on-error err
-    ]
+    s = make-input-stream on-error, opts, input-stream
+        .pipe make-map-stream opts, fun
+            .on 'error', on-error
+        .pipe debug-stream debug, opts, "after map-stream"
 
-    if output-stream then p.pipe output-stream
+    if opts.unslurp
+        s := s.pipe unconcat-stream!
+
+    s := s
+        .pipe opts-to-output-stream opts
+        .pipe debug-stream debug, opts, \stdout
+
+    if output-stream
+       s.pipe output-stream
+
+    return s
