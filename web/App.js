@@ -49,6 +49,7 @@ class App extends React.Component {
   evalInput() {
     const { stdin } = this.props
     let { input } = this.state
+    if (stdin === null) return
     let opts
     input = input.trim()
     const argv = stringArgv(
