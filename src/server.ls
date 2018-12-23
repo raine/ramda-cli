@@ -5,6 +5,7 @@ require! opn
 require! ramda: {without, pipe, join, map}: R
 require! stream: {finished}
 require! querystring
+require! 'stream-concat': StreamConcat
 require! 'body-parser'
 require! 'tempfile'
 debug = require 'debug' <| 'ramda-cli:server'
@@ -29,18 +30,19 @@ export start = (log-error, stdin, process-argv, on-complete) ->
     finished stdin, (err) -> stdin-finished := true
     input = null
     on-close = -> on-complete (fs.create-read-stream tmp-file-path, flags: 'r'), input
+    stdin.pipe stdin-tmp-file
 
     app = polka!
         .use serve-static (Path.join __dirname, '..', 'web-dist'), {'index': ['index.html']}
         .get '/stdin', (req, res) ->
-            stdin-paused = stdin.readable-flowing
-            if !stdin-finished
-                stdin.pipe res
-            else
+            if stdin-finished
                 fs.create-read-stream tmp-file-path, flags: 'r'
                     .pipe res
-            if stdin-paused is null
-                stdin.pipe stdin-tmp-file
+            else
+                read-stream = fs.create-read-stream tmp-file-path, flags: 'r'
+                combined = new StreamConcat([ read-stream, stdin ])
+                combined.pipe res
+                req.on 'close', -> combined.destroy!
         .post '/update-input', body-parser.text!, (req, res) ->
             debug "received input"
             input := req.body
