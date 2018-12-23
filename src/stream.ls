@@ -79,6 +79,7 @@ raw-output-stream = (compact) -> through.obj (chunk,, next) ->
     end = unless compact then "\n" else ''
     switch type chunk
     | \Array    => for-each (~> this.push "#it#end"), chunk
+    | \Object   => this.push "#{JSON.stringify(chunk)}#end"
     | otherwise => this.push remove-extra-newlines "#chunk#end"
     next!
 
