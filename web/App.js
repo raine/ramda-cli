@@ -35,6 +35,12 @@ class App extends React.Component {
     this.evalInput()
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.stdin !== prevProps.stdin) {
+      this.evalInput()
+    }
+  }
+
   onInputChange(input) {
     this.setState({ input }, this.evalInput)
   }
