@@ -75,12 +75,15 @@ inspect-stream = (depth) -> through.obj (chunk,, next) ->
     this.push (inspect chunk, colors: true, depth: depth) + '\n'
     next!
 
+raw-output-stringify = ->
+    if type(it) is 'Object' then JSON.stringify it
+    else it.to-string!
+
 raw-output-stream = (compact) -> through.obj (chunk,, next) ->
     end = unless compact then "\n" else ''
     switch type chunk
-    | \Array    => for-each (~> this.push "#it#end"), chunk
-    | \Object   => this.push "#{JSON.stringify(chunk)}#end"
-    | otherwise => this.push remove-extra-newlines "#chunk#end"
+    | \Array    => for-each (~> this.push "#{raw-output-stringify it}#end"), chunk
+    | otherwise => this.push remove-extra-newlines "#{raw-output-stringify chunk}#end"
     next!
 
 opts-to-output-stream = (opts) ->

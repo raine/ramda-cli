@@ -412,6 +412,22 @@ describe '--output-type raw' (,) ->
         output `eq` expected
         done!
 
+    it 'prints array of objects as json' (done) ->
+        args     = <[ identity -o raw ]>
+        input    = '[{"foo":"bar"},{"foo":"bar"}]'
+        expected = '{"foo":"bar"}\n{"foo":"bar"}\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints objects as json' (done) ->
+        args     = <[ identity -o raw ]>
+        input    = '{"foo":"bar"}\n{"foo":"bar"}'
+        expected = '{"foo":"bar"}\n{"foo":"bar"}\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--output-type pretty' (,) ->
     it 'pretty prints objects' (done) ->
         args     = <[ identity -o pretty ]>
