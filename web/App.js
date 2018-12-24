@@ -1,4 +1,5 @@
 import React from 'react'
+import http from 'stream-http'
 import * as R from 'ramda'
 import debounce from 'lodash.debounce'
 import compileFun from '../lib/compile-fun'
@@ -9,14 +10,16 @@ import stringToStream from 'string-to-stream'
 import { processInputStream, concatStream } from '../lib/stream'
 import Output from './Output'
 import Editor from './Editor'
+import initDebug from 'debug'
 
 import style from './styles/App.scss'
 
+const debug = initDebug('ramda-cli:App')
 const die = (msg) => console.error(msg)
 
 const removeCommentedLines = R.pipe(
   lines,
-  R.reject(x => /^#/.test(x)),
+  R.reject((x) => /^#/.test(x)),
   unlines
 )
 
@@ -26,19 +29,25 @@ class App extends React.Component {
     this.onInputChange = this.onInputChange.bind(this)
     this.evalInput = debounce(this.evalInput.bind(this), 400)
     this.onEvalInputError = this.onEvalInputError.bind(this)
+    this.stdin = ''
     this.state = {
       input: props.input,
       output: [],
       opts: {},
       error: null
     }
+    this.stdinHttpReq = http.get('/stdin', (res) => {
+      res.on('data', this.onStdinChunk.bind(this))
+    })
+  }
+
+  onStdinChunk(buf) {
+    this.stdin += buf.toString()
     this.evalInput()
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.stdin !== prevProps.stdin) {
-      this.evalInput()
-    }
+  componentWillUnmount() {
+    this.stdinHttpReq.abort()
   }
 
   onInputChange(input) {
@@ -53,16 +62,12 @@ class App extends React.Component {
   }
 
   evalInput() {
-    const { stdin } = this.props
+    const { stdin } = this
     let { input } = this.state
     if (stdin === null) return
     let opts
     input = input.trim()
-    const argv = stringArgv(
-      removeCommentedLines(input),
-      'node',
-      'dummy.js'
-    )
+    const argv = stringArgv(removeCommentedLines(input), 'node', 'dummy.js')
     try {
       opts = parse(argv)
     } catch (err) {
