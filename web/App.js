@@ -29,6 +29,7 @@ class App extends React.Component {
     this.onInputChange = this.onInputChange.bind(this)
     this.evalInput = debounce(this.evalInput.bind(this), 400)
     this.onEvalInputError = this.onEvalInputError.bind(this)
+    this.setDocumentTitle = this.setDocumentTitle.bind(this)
     this.stdin = ''
     this.state = {
       input: props.input,
@@ -39,6 +40,8 @@ class App extends React.Component {
     this.stdinHttpReq = http.get('/stdin', (res) => {
       res.on('data', this.onStdinChunk.bind(this))
     })
+
+    window.addEventListener('blur', this.setDocumentTitle, false)
   }
 
   onStdinChunk(buf) {
@@ -48,6 +51,7 @@ class App extends React.Component {
 
   componentWillUnmount() {
     this.stdinHttpReq.abort()
+    window.removeEventListener('blur', this.setDocumentTitle)
   }
 
   onInputChange(input) {
@@ -59,6 +63,11 @@ class App extends React.Component {
       output: [],
       error: err
     })
+  }
+
+  setDocumentTitle() {
+    const { input } = this.state
+    document.title = `ramda ${input !== '' ? input : 'identity'}`
   }
 
   evalInput() {
