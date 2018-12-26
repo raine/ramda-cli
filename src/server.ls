@@ -8,7 +8,7 @@ require! querystring
 require! 'stream-concat': StreamConcat
 require! 'body-parser'
 require! 'tempfile'
-require! 'compression': compress
+require! 'compression'
 debug = require 'debug' <| 'ramda-cli:server'
 
 var-args-to-string = pipe do
@@ -34,7 +34,12 @@ export start = (log-error, stdin, process-argv, on-complete) ->
     stdin.pipe stdin-tmp-file
 
     app = polka!
-        .use compress!,
+        .use compression {
+            # streamed /stdin does not work with gzip enabled for some reason
+            filter: (req, res) ->
+                if req.path is '/stdin' then false
+                else compression.filter(req, res)
+        }
         .use serve-static (Path.join __dirname, '..', 'web-dist'), {'index': ['index.html']}
         .get '/stdin', (req, res) ->
             res.write-head 200, 'Content-Type': 'application/json'
