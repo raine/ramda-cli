@@ -6,6 +6,7 @@ import stringToStream from 'string-to-stream'
 import concat from './concat'
 
 let stdin = Uint8Array.of()
+let curOpts = null
 
 const window = { localStorage: { debug: '*' } }
 const debug = require('debug')('ramda-cli:web:worker')
@@ -15,7 +16,8 @@ debug('worker initialized')
 const stdinHttpReq = http.get('/stdin', (res) => {
   res.on('data', (chunk) => {
     debug('got stdin chunk')
-    stdin = concat(Uint8Array, [ stdin, chunk ])
+    stdin = concat(Uint8Array, [stdin, chunk])
+    onEvalInput({ opts: curOpts })
   })
 })
 
@@ -27,6 +29,8 @@ const onEvalInputError = (err) => {
 }
 
 const onEvalInput = ({ opts }) => {
+  if (opts === null) return
+  curOpts = opts
   let fun
   try {
     fun = compileFun(opts)
@@ -38,18 +42,15 @@ const onEvalInput = ({ opts }) => {
   const inputStream = new Readable()
   inputStream.push(stdin)
   inputStream.push(null)
-  const stream = processInputStream(
-    onEvalInputError,
-    opts,
-    fun,
-    inputStream
-  )
-  stream.pipe(concatStream()).on('data', (chunk) => {
-    self.postMessage({
-      event: 'EVAL_OUTPUT',
-      output: chunk,
-      opts
-    })
+  const stream = processInputStream(onEvalInputError, opts, fun, inputStream)
+  stream
+    .pipe(concatStream())
+    .on('data', (chunk) => {
+      self.postMessage({
+        event: 'EVAL_OUTPUT',
+        output: chunk,
+        opts
+      })
   })
 }
 
