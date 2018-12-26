@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react'
-import stripAnsi from 'strip-ansi'
 import { pure } from 'recompose'
 import classNames from 'classnames'
 import ansi2html from './ansi2html'
