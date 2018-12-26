@@ -1,20 +1,16 @@
 import React from 'react'
-import http from 'stream-http'
 import * as R from 'ramda'
 import debounce from 'lodash.debounce'
-import compileFun from '../lib/compile-fun'
 import { parse, help } from '../lib/argv'
 import { lines, unlines } from '../lib/utils'
 import stringArgv from 'string-argv'
-import stringToStream from 'string-to-stream'
-import { processInputStream, concatStream } from '../lib/stream'
 import Output from './Output'
 import Editor from './Editor'
 import initDebug from 'debug'
 
 import style from './styles/App.scss'
 
-const debug = initDebug('ramda-cli:App')
+const debug = initDebug('ramda-cli:web:App')
 const die = (msg) => console.error(msg)
 
 const removeCommentedLines = R.pipe(
@@ -26,31 +22,45 @@ const removeCommentedLines = R.pipe(
 class App extends React.Component {
   constructor(props) {
     super(props)
+    this.worker = new Worker('./worker.js')
+    this.worker.addEventListener('message', this.onWorkerMessage.bind(this))
+    this.worker.addEventListener('error', console.error)
     this.onInputChange = this.onInputChange.bind(this)
     this.evalInput = debounce(this.evalInput.bind(this), 400)
     this.onEvalInputError = this.onEvalInputError.bind(this)
     this.setDocumentTitle = this.setDocumentTitle.bind(this)
-    this.stdin = ''
     this.state = {
       input: props.input,
       output: [],
       opts: {},
       error: null
     }
-    this.stdinHttpReq = http.get('/stdin', (res) => {
-      res.on('data', this.onStdinChunk.bind(this))
-    })
-
     window.addEventListener('blur', this.setDocumentTitle, false)
-  }
-
-  onStdinChunk(buf) {
-    this.stdin += buf.toString()
     this.evalInput()
   }
 
+  onWorkerMessage({ data }) {
+    const { event } = data
+    debug('worker message', data)
+    if (event === 'EVAL_OUTPUT') {
+      const { opts, output } = data
+      this.setState({
+        output,
+        opts,
+        error: null
+      })
+    }
+    if (event === 'EVAL_ERROR') {
+      const { err } = data
+      this.setState({
+        output: [],
+        error: err
+      })
+    }
+  }
+
   componentWillUnmount() {
-    this.stdinHttpReq.abort()
+    this.worker.terminate()
     window.removeEventListener('blur', this.setDocumentTitle)
   }
 
@@ -71,9 +81,7 @@ class App extends React.Component {
   }
 
   evalInput() {
-    const { stdin } = this
     let { input } = this.state
-    if (stdin === null) return
     let opts
     input = input.trim()
     const argv = stringArgv(removeCommentedLines(input), 'node', 'dummy.js')
@@ -93,27 +101,9 @@ class App extends React.Component {
       return
     }
 
-    let fun
-    try {
-      fun = compileFun(opts)
-    } catch (err) {
-      this.onEvalInputError(err)
-      return
-    }
-
-    const inputStream = stringToStream(stdin)
-    const stream = processInputStream(
-      this.onEvalInputError,
-      opts,
-      fun,
-      inputStream
-    )
-    stream.pipe(concatStream()).on('data', (chunk) => {
-      this.setState({
-        output: chunk,
-        opts,
-        error: null
-      })
+    this.worker.postMessage({
+      event: 'EVAL_INPUT',
+      opts
     })
 
     window.fetch('/update-input', {

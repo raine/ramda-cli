@@ -3,9 +3,10 @@ require! stream: {PassThrough, pipeline}
 require! through2: through
 require! {JSONStream, split2}
 require! util: {inspect}
-require! './utils': {is-thenable, take-lines, remove-extra-newlines}
+require! './utils': {is-thenable, take-lines, remove-extra-newlines, is-browser}
 
 debug = require 'debug' <| 'ramda-cli:stream'
+debug.enabled = true if is-browser!
 
 reduce-stream = (fn, acc) -> through.obj do
     (chunk,, next) ->

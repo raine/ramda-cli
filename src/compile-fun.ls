@@ -2,9 +2,11 @@ require! {vm, path: Path, fs}
 require! <[ ./get-user-config ]>
 require! ramda: {apply, map, join, is-empty, split, tap, pipe, identity, reverse, from-pairs, path, reduce, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
+require! './utils': {is-browser}
 require! camelize
 
 debug = require 'debug' <| 'ramda-cli:compile-fun'
+debug.enabled = true if is-browser!
 
 # naive fix to get `match` work despite being a keyword in LS
 fix-match = ->
