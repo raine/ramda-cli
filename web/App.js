@@ -11,8 +11,6 @@ import initDebug from 'debug'
 import style from './styles/App.scss'
 
 const debug = initDebug('ramda-cli:web:App')
-const die = (msg) => console.error(msg)
-
 const removeCommentedLines = R.pipe(
   lines,
   R.reject((x) => /^#/.test(x)),
