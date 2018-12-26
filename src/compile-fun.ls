@@ -68,8 +68,7 @@ compile-livescript = (code) ->
     livescript.compile code, {+bare, -header}
 
 evaluate = (opts, code) -->
-    ctx = vm.create-context make-sandbox opts
-    vm.run-in-context code, ctx
+    vm.run-in-new-context code, make-sandbox opts
 
 select-compiler = (opts) ->
     | opts.js   => identity
