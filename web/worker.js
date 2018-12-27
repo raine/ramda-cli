@@ -14,7 +14,10 @@ const debug = require('debug')('ramda-cli:web:worker')
 debug.enabled = true
 debug('worker initialized')
 
-const stdinHttpReq = http.get('/stdin', (res) => {
+const stdinHttpReq = http.get({
+  path: '/stdin',
+  mode: 'prefer-streaming'
+}, (res) => {
   res.on('data', (chunk) => {
     debug('got stdin chunk')
     stdin = concat(Uint8Array, [stdin, chunk])
