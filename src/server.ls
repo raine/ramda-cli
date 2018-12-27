@@ -42,7 +42,9 @@ export start = (log-error, stdin, process-argv, on-complete) ->
         }
         .use serve-static (Path.join __dirname, '..', 'web-dist'), {'index': ['index.html']}
         .get '/stdin', (req, res) ->
-            res.write-head 200, 'Content-Type': 'application/json'
+            res.write-head 200,
+                'Content-Type': 'application/json'
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
             if stdin-finished
                 fs.create-read-stream tmp-file-path, flags: 'r'
                     .pipe res
