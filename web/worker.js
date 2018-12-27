@@ -2,6 +2,7 @@ import compileFun from '../lib/compile-fun'
 import { Readable } from 'readable-stream'
 import http from 'stream-http'
 import { processInputStream, concatStream } from '../lib/stream'
+import isSafari from './is-safari'
 import stringToStream from 'string-to-stream'
 import concat from './concat'
 
@@ -21,10 +22,15 @@ const stdinHttpReq = http.get('/stdin', (res) => {
   })
 })
 
+const serializeError = (err) =>
+  err.stack ? (isSafari ? `${err.toString()}\n${err.stack}` : err.stack)
+            : err
+
 const onEvalInputError = (err) => {
+  console.log(err)
   self.postMessage({
     event: 'EVAL_ERROR',
-    err: err.stack || err.message || err
+    err: serializeError(err)
   })
 }
 
