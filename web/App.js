@@ -1,12 +1,13 @@
 import React from 'react'
 import * as R from 'ramda'
 import debounce from 'lodash.debounce'
-import { parse, help } from '../lib/argv'
 import { lines, unlines } from '../lib/utils'
 import stringArgv from 'string-argv'
 import Output from './Output'
 import Editor from './Editor'
 import initDebug from 'debug'
+import http from 'stream-http'
+import { parse, help } from '../lib/argv'
 
 import style from './styles/App.scss'
 
@@ -20,9 +21,6 @@ const removeCommentedLines = R.pipe(
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.worker = new Worker('./worker.js')
-    this.worker.addEventListener('message', this.onWorkerMessage.bind(this))
-    this.worker.addEventListener('error', console.error)
     this.onInputChange = this.onInputChange.bind(this)
     this.evalInput = debounce(this.evalInput.bind(this), 400)
     this.onEvalInputError = this.onEvalInputError.bind(this)
@@ -31,7 +29,7 @@ class App extends React.Component {
       input: props.input,
       output: [],
       opts: {},
-      error: null
+      error: false
     }
     window.addEventListener('blur', this.setDocumentTitle, false)
     this.evalInput()
@@ -45,7 +43,7 @@ class App extends React.Component {
       this.setState({
         output,
         opts,
-        error: null
+        error: false
       })
     }
     if (event === 'EVAL_ERROR') {
@@ -58,8 +56,8 @@ class App extends React.Component {
   }
 
   componentWillUnmount() {
-    this.worker.terminate()
     window.removeEventListener('blur', this.setDocumentTitle)
+    this.evalHttpReq.abort()
   }
 
   onInputChange(input) {
@@ -68,8 +66,8 @@ class App extends React.Component {
 
   onEvalInputError(err) {
     this.setState({
-      output: [],
-      error: err
+      output: [err.message],
+      error: true
     })
   }
 
@@ -81,6 +79,7 @@ class App extends React.Component {
   evalInput() {
     let { input } = this.state
     let opts
+    if (input == null) input = 'identity'
     input = input.trim()
     const argv = stringArgv(removeCommentedLines(input), 'node', 'dummy.js')
     try {
@@ -94,20 +93,41 @@ class App extends React.Component {
       this.setState({
         output: [help()],
         opts,
-        error: null
+        error: false
       })
       return
     }
 
-    this.worker.postMessage({
-      event: 'EVAL_INPUT',
-      opts
-    })
+    let gotFirstChunk = false
+    if (this.evalHttpReq) this.evalHttpReq.abort()
+    const req = (this.evalHttpReq = http.request(
+      {
+        method: 'POST',
+        path: '/eval',
+        mode: 'prefer-streaming',
+        headers: {
+          'Content-Type': 'text/plain',
+          'Content-Length': Buffer.byteLength(input)
+        }
+      },
+      (res) => {
+        res.on('data', (chunk) => {
+          // debug('got chunk')
+          // Resetting the output only after receiving the first chunk of the
+          // next evaluation result avoids subtle but annoying flicker of the
+          // output text.
+          this.setState((state, props) => ({
+            output: !gotFirstChunk ? [chunk] : state.output.concat(chunk),
+            opts,
+            error: res.statusCode !== 200
+          }))
+          gotFirstChunk = true
+        })
+      }
+    ))
 
-    window.fetch('/update-input', {
-      method: 'POST',
-      body: input
-    })
+    req.write(input)
+    req.end()
   }
 
   render() {
@@ -125,7 +145,7 @@ class App extends React.Component {
           <Output
             output={output.join('')}
             outputType={opts.outputType}
-            error={error}
+            isError={error}
           />
         )}
       </div>

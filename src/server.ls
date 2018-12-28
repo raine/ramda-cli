@@ -9,6 +9,9 @@ require! 'stream-concat': StreamConcat
 require! 'body-parser'
 require! 'tempfile'
 require! 'compression'
+require! 'string-argv'
+require! <[ ./argv ./compile-fun ]>
+require! './stream': {process-input-stream, get-stream-as-promise}
 debug = require 'debug' <| 'ramda-cli:server'
 
 var-args-to-string = pipe do
@@ -32,27 +35,48 @@ export start = (log-error, stdin, process-argv, on-complete) ->
     input = null
     on-close = -> on-complete (fs.create-read-stream tmp-file-path, flags: 'r'), input
     stdin.pipe stdin-tmp-file
+    stream-temp-file = ->
+        fs.create-read-stream tmp-file-path, flags: 'r'
 
     app = polka!
         .use compression {
             # streamed /stdin does not work with gzip enabled for some reason
             filter: (req, res) ->
-                if req.path is '/stdin' then false
+                if req.path is '/eval' then false
                 else compression.filter(req, res)
         }
         .use serve-static (Path.join __dirname, '..', 'web-dist'), {'index': ['index.html']}
-        .get '/stdin', (req, res) ->
-            res.write-head 200,
-                'Content-Type': 'application/json'
-                'Cache-Control': 'no-cache, no-store, must-revalidate'
-            if stdin-finished
-                fs.create-read-stream tmp-file-path, flags: 'r'
-                    .pipe res
-            else
-                read-stream = fs.create-read-stream tmp-file-path, flags: 'r'
-                combined = new StreamConcat([ read-stream, stdin ])
-                combined.pipe res
-                req.on 'close', -> combined.destroy!
+        # TODO: update-input
+        .post '/eval', body-parser.text!, (req, res) ->
+            res.set-header 'Content-Type', 'text/plain'
+            input = req.body
+            debug input
+            opts = argv.parse string-argv input, 'node', 'dummy.js'
+            on-error = (err) ->
+                res.write-head 400
+                res.end err.stack
+            try fun = compile-fun opts
+            catch err then return on-error err
+            new-stdin =
+                # If --slurp is used, process-input-stream will wait for the
+                # input stream to end, because you can't wrap the input in an
+                # array without having it end first. In case --slurp is used
+                # with indefinite input stream, we have to use only input
+                # gathered so far from the temp file. Otherwise the request will
+                # be pending until stdin ends.
+                if opts.slurp or stdin-finished
+                    stream-temp-file!
+                else
+                    read-stream = stream-temp-file!
+                    combined = new StreamConcat([ read-stream, stdin ])
+                    req.on 'close', -> combined.destroy!
+                    combined
+            process-input-stream do
+                on-error
+                opts
+                fun
+                new-stdin
+                res
         .post '/update-input', body-parser.text!, (req, res) ->
             debug "received input"
             input := req.body

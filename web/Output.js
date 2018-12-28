@@ -43,11 +43,11 @@ class Output extends PureComponent {
   }
 
   render() {
-    const { outputType, output, error } = this.props
-    const lines = (error ? errorOutput(error) : output).split('\n')
+    const { outputType, output, isError } = this.props
+    const lines = (isError ? errorOutput(output) : output).split('\n')
 
     return (
-      <div className={classNames(style.output, { [style.error]: error })}>
+      <div className={classNames(style.output, { [style.error]: isError })}>
         <AutoSizer disableWidth={true}>
           {({ height }) => (
             <FixedSizeList
