@@ -43,7 +43,7 @@ class Output extends PureComponent {
   }
 
   render() {
-    const { outputType, output, isError } = this.props
+    const { outputType, output, isError, nearEnd } = this.props
     const lines = (isError ? errorOutput(output) : output).split('\n')
 
     return (
@@ -56,6 +56,12 @@ class Output extends PureComponent {
               itemData={lines}
               itemCount={lines.length}
               itemSize={24}
+              onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
+                const visibleLines = visibleStopIndex - visibleStartIndex
+                const isNearEnd =
+                  lines.length - visibleStopIndex < visibleLines * 3
+                if (isNearEnd) nearEnd()
+              }}
             >
               {(props) => <OutputRow {...props} outputType={outputType} />}
             </FixedSizeList>

@@ -1,6 +1,7 @@
 import React from 'react'
 import * as R from 'ramda'
 import debounce from 'lodash.debounce'
+import throttle from 'lodash.throttle'
 import { lines, unlines } from '../lib/utils'
 import stringArgv from 'string-argv'
 import Output from './Output'
@@ -18,13 +19,23 @@ const removeCommentedLines = R.pipe(
   unlines
 )
 
+const decoder = new TextDecoder('utf-8')
+const decode = decoder.decode.bind(decoder)
+
 class App extends React.Component {
   constructor(props) {
     super(props)
+    this.worker = new Worker('./worker.js')
+    this.worker.addEventListener('message', this.onWorkerMessage.bind(this))
+    this.worker.addEventListener('error', console.error)
     this.onInputChange = this.onInputChange.bind(this)
     this.evalInput = debounce(this.evalInput.bind(this), 400)
     this.onEvalInputError = this.onEvalInputError.bind(this)
     this.setDocumentTitle = this.setDocumentTitle.bind(this)
+    this.outputNearEnd = throttle(this.outputNearEnd.bind(this), 500, {
+      trailing: false
+    })
+
     this.state = {
       input: props.input,
       output: [],
@@ -38,26 +49,24 @@ class App extends React.Component {
   onWorkerMessage({ data }) {
     const { event } = data
     debug('worker message', data)
-    if (event === 'EVAL_OUTPUT') {
-      const { opts, output } = data
-      this.setState({
-        output,
+    if (event === 'EVAL_OUTPUT_CHUNK') {
+      const { chunk, error, firstChunk, opts } = data
+      // Resetting the output only after receiving the first chunk of the
+      // next evaluation result avoids subtle but annoying flicker of the
+      // output text.
+      this.setState((state, props) => ({
+        output: firstChunk
+          ? [decode(chunk)]
+          : state.output.concat(decode(chunk)),
         opts,
-        error: false
-      })
-    }
-    if (event === 'EVAL_ERROR') {
-      const { err } = data
-      this.setState({
-        output: [],
-        error: err
-      })
+        error
+      }))
     }
   }
 
   componentWillUnmount() {
     window.removeEventListener('blur', this.setDocumentTitle)
-    this.evalHttpReq.abort()
+    this.worker.terminate()
   }
 
   onInputChange(input) {
@@ -98,36 +107,17 @@ class App extends React.Component {
       return
     }
 
-    let gotFirstChunk = false
-    if (this.evalHttpReq) this.evalHttpReq.abort()
-    const req = (this.evalHttpReq = http.request(
-      {
-        method: 'POST',
-        path: '/eval',
-        mode: 'prefer-streaming',
-        headers: {
-          'Content-Type': 'text/plain',
-          'Content-Length': Buffer.byteLength(input)
-        }
-      },
-      (res) => {
-        res.on('data', (chunk) => {
-          // debug('got chunk')
-          // Resetting the output only after receiving the first chunk of the
-          // next evaluation result avoids subtle but annoying flicker of the
-          // output text.
-          this.setState((state, props) => ({
-            output: !gotFirstChunk ? [chunk] : state.output.concat(chunk),
-            opts,
-            error: res.statusCode !== 200
-          }))
-          gotFirstChunk = true
-        })
-      }
-    ))
+    this.worker.postMessage({
+      event: 'EVAL_INPUT',
+      input,
+      opts
+    })
+  }
 
-    req.write(input)
-    req.end()
+  outputNearEnd() {
+    this.worker.postMessage({
+      event: 'READ_MORE'
+    })
   }
 
   render() {
@@ -146,6 +136,7 @@ class App extends React.Component {
             output={output.join('')}
             outputType={opts.outputType}
             isError={error}
+            nearEnd={this.outputNearEnd}
           />
         )}
       </div>
