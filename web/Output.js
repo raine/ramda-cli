@@ -57,6 +57,7 @@ class Output extends PureComponent {
               height={height}
               itemData={lines}
               itemCount={lines.length}
+              overscanCount={2}
               itemSize={ITEM_SIZE}
               onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
                 this.visibleStartIndex = visibleStartIndex
