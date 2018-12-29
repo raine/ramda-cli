@@ -60,8 +60,8 @@ class App extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    this.resumeOrPauseStream()
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.lines !== this.state.lines) this.resumeOrPauseStream()
   }
 
   componentWillUnmount() {
