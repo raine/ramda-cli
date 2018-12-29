@@ -27,7 +27,7 @@ class App extends React.Component {
     this.throttledResumeOrPauseStream = throttle(
       this.resumeOrPauseStream,
       500,
-      { trailing: false }
+      { trailing: true }
     )
     this.output = Uint8Array.of()
     this.state = {
