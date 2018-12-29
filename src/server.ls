@@ -33,10 +33,13 @@ export start = (log-error, stdin, process-argv, on-complete) ->
     stdin-tmp-file = fs.create-write-stream tmp-file-path, flags: 'w'
     finished stdin, (err) -> stdin-finished := true
     input = null
-    on-close = -> on-complete (fs.create-read-stream tmp-file-path, flags: 'r'), input
     stdin.pipe stdin-tmp-file
-    stream-temp-file = ->
-        fs.create-read-stream tmp-file-path, flags: 'r'
+    temp-file-stream = -> fs.create-read-stream tmp-file-path, flags: 'r'
+    on-close = ->
+        on-complete do
+            if stdin-finished then temp-file-stream!
+            else new StreamConcat([ temp-file-stream!, stdin ])
+            input
 
     app = polka!
         .use compression {
@@ -46,10 +49,9 @@ export start = (log-error, stdin, process-argv, on-complete) ->
                 else compression.filter(req, res)
         }
         .use serve-static (Path.join __dirname, '..', 'web-dist'), {'index': ['index.html']}
-        # TODO: update-input
         .post '/eval', body-parser.text!, (req, res) ->
             res.set-header 'Content-Type', 'text/plain'
-            input = req.body
+            input := req.body
             debug input
             opts = argv.parse string-argv input, 'node', 'dummy.js'
             on-error = (err) ->
@@ -65,9 +67,9 @@ export start = (log-error, stdin, process-argv, on-complete) ->
                 # gathered so far from the temp file. Otherwise the request will
                 # be pending until stdin ends.
                 if opts.slurp or stdin-finished
-                    stream-temp-file!
+                    temp-file-stream!
                 else
-                    read-stream = stream-temp-file!
+                    read-stream = temp-file-stream!
                     combined = new StreamConcat([ read-stream, stdin ])
                     req.on 'close', -> combined.destroy!
                     combined
@@ -77,11 +79,6 @@ export start = (log-error, stdin, process-argv, on-complete) ->
                 fun
                 new-stdin
                 res
-        .post '/update-input', body-parser.text!, (req, res) ->
-            debug "received input"
-            input := req.body
-            res.write-head 200, 'Content-Type': 'text/plain'
-            res.end 'OK'
         .get '/alive-check', (req, res) ->
             debug "alive check start"
             if timer then clear-timer!
