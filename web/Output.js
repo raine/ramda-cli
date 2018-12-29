@@ -8,10 +8,6 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 
 import style from './styles/Output.scss'
 
-const errorOutput = (err) =>
-  err.stack ? (isSafari ? err.toString() : err.stack)
-            : err
-
 const hasAnsiColors = (outputType) => ['pretty', 'table'].includes(outputType)
 
 const AnsiPre = pure(({ str, style }) => (
@@ -37,30 +33,36 @@ class OutputRow extends PureComponent {
   }
 }
 
+const ITEM_SIZE = 24
+
 class Output extends PureComponent {
   constructor(props) {
     super(props)
   }
 
   render() {
-    const { outputType, output, isError, nearEnd } = this.props
-    const lines = (isError ? errorOutput(output) : output).split('\n')
-
+    const { outputType, lines, isError, onItemsRendered } = this.props
     return (
       <div className={classNames(style.output, { [style.error]: isError })}>
-        <AutoSizer disableWidth={true}>
+        <AutoSizer
+          disableWidth={true}
+          onResize={({ height }) => {
+            this.height = height
+            this.maxLinesForHeight = Math.round(height / ITEM_SIZE)
+          }}
+        >
           {({ height }) => (
             <FixedSizeList
               className={style.outputList}
               height={height}
               itemData={lines}
               itemCount={lines.length}
-              itemSize={24}
+              itemSize={ITEM_SIZE}
               onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
-                const visibleLines = visibleStopIndex - visibleStartIndex
-                const isNearEnd =
-                  lines.length - visibleStopIndex < visibleLines * 3
-                if (isNearEnd) nearEnd()
+                this.visibleStartIndex = visibleStartIndex
+                this.visibleStopIndex = visibleStopIndex
+                this.visibleLines = visibleStopIndex - visibleStartIndex
+                onItemsRendered()
               }}
             >
               {(props) => <OutputRow {...props} outputType={outputType} />}
