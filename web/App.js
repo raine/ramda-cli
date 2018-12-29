@@ -82,11 +82,14 @@ class App extends React.Component {
     let { input } = this.state
     if (input == null) input = 'identity'
     input = input.trim()
+    if (this.prevInput === input) return
 
     this.worker.postMessage({
       event: 'EVAL_INPUT',
       input
     })
+
+    this.prevInput = input
   }
 
   resumeOrPauseStream() {
