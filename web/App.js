@@ -4,14 +4,21 @@ import debounce from 'lodash.debounce'
 import throttle from 'lodash.throttle'
 import Output from './Output'
 import Editor from './Editor'
+import Options from './Options'
 import initDebug from 'debug'
 import concat from './concat'
+import cookies from 'browser-cookies'
 
 import style from './styles/App.scss'
 
 const debug = initDebug('ramda-cli:web:App')
 const decoder = new TextDecoder('utf-8')
 const decode = decoder.decode.bind(decoder)
+
+const COOKIE_NAME = 'ramda-cli:options'
+const DEFAULT_OPTIONS = {
+  autorun: true
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -35,10 +42,20 @@ class App extends React.Component {
       input: props.input,
       lines: [],
       opts: {},
-      error: false
+      error: false,
+      options: JSON.parse(cookies.get(COOKIE_NAME)) || DEFAULT_OPTIONS
     }
     window.addEventListener('blur', this.setDocumentTitle, false)
     this.evalInput()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.lines !== this.state.lines) this.resumeOrPauseStream()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('blur', this.setDocumentTitle)
+    this.worker.terminate()
   }
 
   onWorkerMessage({ data }) {
@@ -61,17 +78,11 @@ class App extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.lines !== this.state.lines) this.resumeOrPauseStream()
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('blur', this.setDocumentTitle)
-    this.worker.terminate()
-  }
-
   onInputChange(input) {
-    this.setState({ input }, this.debouncedEvalInput)
+    this.setState(
+      { input },
+      this.state.options.autorun ? this.debouncedEvalInput : () => {}
+    )
   }
 
   setDocumentTitle() {
@@ -117,6 +128,11 @@ class App extends React.Component {
     }
   }
 
+  onOptionsChange(options) {
+    cookies.set(COOKIE_NAME, JSON.stringify(options), { expires: 365 })
+    this.setState({ options })
+  }
+
   render() {
     const { lines, opts, error } = this.state
 
@@ -128,6 +144,11 @@ class App extends React.Component {
             this.onInputChange(value)
           }}
           placeholder="identity"
+          onRunKeyDown={this.evalInput}
+        />
+        <Options
+          options={this.state.options}
+          onChange={this.onOptionsChange.bind(this)}
         />
         <Output
           ref={this.outputRef}

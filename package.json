@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "ansi-to-html": "^0.6.9",
+    "browser-cookies": "^1.2.0",
     "chai": "^4.2.0",
     "classnames": "^2.2.6",
     "codemirror": "^5.42.0",
