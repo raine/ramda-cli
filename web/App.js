@@ -21,7 +21,8 @@ class App extends React.Component {
     this.worker.addEventListener('error', console.error)
     this.outputRef = React.createRef()
     this.onInputChange = this.onInputChange.bind(this)
-    this.evalInput = debounce(this.evalInput.bind(this), 400)
+    this.evalInput = this.evalInput.bind(this)
+    this.debouncedEvalInput = debounce(this.evalInput, 400)
     this.setDocumentTitle = this.setDocumentTitle.bind(this)
     this.resumeOrPauseStream = this.resumeOrPauseStream.bind(this)
     this.throttledResumeOrPauseStream = throttle(
@@ -70,7 +71,7 @@ class App extends React.Component {
   }
 
   onInputChange(input) {
-    this.setState({ input }, this.evalInput)
+    this.setState({ input }, this.debouncedEvalInput)
   }
 
   setDocumentTitle() {
