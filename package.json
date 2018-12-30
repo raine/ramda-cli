@@ -20,10 +20,6 @@
   "bin": {
     "ramda": "./bin/ramda"
   },
-  "browser": {
-    "./lib/config": false,
-    "vm": "./lib/vm"
-  },
   "author": "Raine Virta <raine.virta@gmail.com>",
   "license": "ISC",
   "dependencies": {
