@@ -6,7 +6,7 @@ require! through2: through
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs, merge-all, path, reduce, obj-of, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
 require! './utils': {HOME, lines, words, take-lines}
-require! './stream': {process-input-stream, get-stream-as-promise}
+require! './stream': {process-input-stream}
 debug = require 'debug' <| 'ramda-cli:main'
 Module = require 'module' .Module
 

@@ -121,14 +121,6 @@ make-map-stream = (opts, fun) ->
     if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
     else map-stream fun
 
-export get-stream-as-promise = (stream) ->
-    new Promise (resolve, reject) ->
-        res = null
-        stream
-            .pipe reduce-stream append-buffer, Buffer.alloc-unsafe 0
-            .on 'data', (chunk) -> res := chunk
-            .on 'end', -> resolve res
-
 export process-input-stream = (on-error, opts, fun, input-stream, output-stream) ->
     s = make-input-stream on-error, opts, input-stream
         .pipe make-map-stream opts, fun

@@ -11,7 +11,7 @@ require! 'tempfile'
 require! 'compression'
 require! 'string-argv'
 require! <[ ./argv ./compile-fun ]>
-require! './stream': {process-input-stream, get-stream-as-promise}
+require! './stream': {process-input-stream}
 debug = require 'debug' <| 'ramda-cli:server'
 
 var-args-to-string = pipe do
