@@ -18,11 +18,13 @@ debug = require 'debug' <| 'ramda-cli:server'
 TIMEOUT = 1000
 timer = null
 start-timer = (cb) ->
-    debug "starting timer"
-    timer := set-timeout cb, TIMEOUT
+    if not timer
+        debug "starting timer"
+        timer := set-timeout cb, TIMEOUT
 clear-timer = ->
     debug "clearing timer"
     clear-timeout timer
+    timer := null
 
 export start = (log-error, stdin, process-argv, on-complete) ->>
     stdin-finished = false
@@ -85,7 +87,7 @@ export start = (log-error, stdin, process-argv, on-complete) ->>
         # Called on app start, cancels on-close timer in case page was refreshed
         .get '/ping', (req, res) ->
             debug 'got ping'
-            if timer then clear-timeout timer
+            if timer then clear-timer!
             res.write-head 200
             res.end 'OK'
         .listen port, '127.0.0.1', (err) ->
