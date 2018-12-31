@@ -11,9 +11,11 @@ debug('worker initialized')
 const encoder = new TextEncoder('utf-8')
 const encode = encoder.encode.bind(encoder)
 
-const removeCommentedLines = R.pipe(
+const sanitize = R.pipe(
   lines,
   R.reject((x) => /^#/.test(x)),
+  // Ignore trailing \ to be compatible with shell
+  R.map((x) => x.replace(/\s*\\$/, '')),
   unlines
 )
 
@@ -29,7 +31,8 @@ const onEvalInput = ({ input }) => {
     cleanup()
   }
 
-  const argv = stringArgv(removeCommentedLines(input), 'node', 'dummy.js')
+  input = sanitize(input)
+  const argv = stringArgv(input, 'node', 'dummy.js')
 
   try {
     opts = parse(argv)
