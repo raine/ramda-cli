@@ -2,7 +2,7 @@ require! {path: Path, fs}
 require! polka
 require! 'serve-static'
 require! opn
-require! ramda: {without, pipe, join, map}: R
+require! ramda: {without}: R
 require! stream: {finished}
 require! querystring
 require! 'stream-concat': StreamConcat
