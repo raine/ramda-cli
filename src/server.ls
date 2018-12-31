@@ -48,7 +48,6 @@ export start = (log-error, stdin, process-argv, on-complete) ->
         .post '/eval', body-parser.text!, (req, res) ->
             res.set-header 'Content-Type', 'text/plain'
             input := req.body
-            debug input
             opts = argv.parse string-argv input, 'node', 'dummy.js'
             on-error = (err) ->
                 res.write-head 400
@@ -75,10 +74,19 @@ export start = (log-error, stdin, process-argv, on-complete) ->
                 fun
                 new-stdin
                 res
-        .get '/alive-check', (req, res) ->
-            debug "alive check start"
-            if timer then clear-timer!
-            req.on 'close', -> start-timer on-close
+        # Called on window's unload event, i.e. tab close or refresh
+        # Used to determine when tab is closed
+        .post '/unload', (req, res) ->
+            start-timer on-close
+            debug 'got unload beacon, timer started'
+            res.write-head 200
+            res.end 'OK'
+        # Called on app start, cancels on-close timer in case page was refreshed
+        .get '/ping', (req, res) ->
+            debug 'got ping'
+            if timer then clear-timeout timer
+            res.write-head 200
+            res.end 'OK'
         .listen 63958, '127.0.0.1', (err) ->
             debug "listening at port #{app.server.address().port}"
             argv = process-argv .slice 2

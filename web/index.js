@@ -15,11 +15,5 @@ const { input } = querystring.parse(window.location.href.split('?')[1])
 
 doRender({ stdin: null, input })
 
-const aliveCheck = () => {
-  window.ALIVE_CHECK = window.fetch('/alive-check').catch((err) => {
-    console.error(err)
-    setTimeout(aliveCheck, 100)
-  })
-}
-
-if (!window.ALIVE_CHECK) aliveCheck()
+window.addEventListener('unload', () => navigator.sendBeacon('/unload'), false)
+window.fetch('/ping')
