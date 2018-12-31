@@ -10,6 +10,7 @@ require! 'body-parser'
 require! 'tempfile'
 require! 'compression'
 require! 'string-argv'
+require! 'get-port'
 require! <[ ./argv ./compile-fun ./argv-to-string ]>
 require! './stream': {process-input-stream}
 debug = require 'debug' <| 'ramda-cli:server'
@@ -23,7 +24,7 @@ clear-timer = ->
     debug "clearing timer"
     clear-timeout timer
 
-export start = (log-error, stdin, process-argv, on-complete) ->
+export start = (log-error, stdin, process-argv, on-complete) ->>
     stdin-finished = false
     tmp-file-path = tempfile!
     stdin-tmp-file = fs.create-write-stream tmp-file-path, flags: 'w'
@@ -36,7 +37,7 @@ export start = (log-error, stdin, process-argv, on-complete) ->
             if stdin-finished then temp-file-stream!
             else new StreamConcat([ temp-file-stream!, stdin ])
             input
-
+    port = await get-port { host: '127.0.0.1' }
     app = polka!
         .use compression {
             # streamed /stdin does not work with gzip enabled for some reason
@@ -87,7 +88,7 @@ export start = (log-error, stdin, process-argv, on-complete) ->
             if timer then clear-timeout timer
             res.write-head 200
             res.end 'OK'
-        .listen 63958, '127.0.0.1', (err) ->
+        .listen port, '127.0.0.1', (err) ->
             debug "listening at port #{app.server.address().port}"
             argv = process-argv .slice 2
                 |> without ["--interactive"]
