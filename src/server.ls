@@ -10,13 +10,9 @@ require! 'body-parser'
 require! 'tempfile'
 require! 'compression'
 require! 'string-argv'
-require! <[ ./argv ./compile-fun ]>
+require! <[ ./argv ./compile-fun ./argv-to-string ]>
 require! './stream': {process-input-stream}
 debug = require 'debug' <| 'ramda-cli:server'
-
-var-args-to-string = pipe do
-    map -> if /\s|"/.test(it) then "'#it'" else it
-    -> if it.length > 3 then it.join '\n' else it.join ' '
 
 TIMEOUT = 1000
 timer = null
@@ -87,6 +83,6 @@ export start = (log-error, stdin, process-argv, on-complete) ->
             debug "listening at port #{app.server.address().port}"
             argv = process-argv .slice 2
                 |> without ["--interactive"]
-            qs = querystring.stringify input: var-args-to-string argv
+            qs = querystring.stringify input: argv-to-string argv
             opn "http://localhost:#{app.server.address().port}?#qs", { wait: false }
     return app.server
