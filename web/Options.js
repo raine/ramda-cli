@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import HelpBall from './HelpBall'
 
 import style from './styles/Options.scss'
 
@@ -26,6 +27,7 @@ class Options extends Component {
             }}
           />
           <label htmlFor="autorun">autorun</label>
+          <HelpBall text="Use ⌘/Ctrl+Enter to run without autorun" />
         </div>
       </div>
     )

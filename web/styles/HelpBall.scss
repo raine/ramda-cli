@@ -1,0 +1,21 @@
+.help-ball:after {
+  content: '?';
+  height: 16px;
+  width: 16px;
+  line-height: 1rem;
+  background-color: #303e46;
+  display: inline-block;
+  text-align: center;
+  border-radius: 100%;
+  font-size: 13px;
+  color: #819898;
+}
+
+.help-ball:hover:after {
+  background-color: #36464f;
+}
+
+.help-ball {
+  display: inline-block;
+  margin-left: 6px;
+}
