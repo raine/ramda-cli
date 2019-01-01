@@ -1,7 +1,9 @@
 # CHANGELOG
 
-## Unreleased
+## 4.0.0 - UNRELEASED
 
+- Added: Interactive mode! Use with `--interactive`.
+- Changed: Alias `-I` points to `--interactive` instead of `--import`.
 - Changed: If no functions are given as arguments, uses `identity` function
     instead of showing `--help` output.
 - Changed: When using JSON output type, functions are stringified instead of
