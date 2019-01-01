@@ -1,10 +1,11 @@
 # ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][gitter]
 
-A command-line tool for processing data with functional pipelines.
+A tool for processing data with functional pipelines. In the command-line or
+interactively in browser.
 
 ```sh
-$ npm install -g ramda-cli; alias R=ramda
-$ curl -L http://bit.do/people-json | R \
+$ npm install -g ramda-cli
+$ curl -Ls https://bit.ly/gist-people-json | ramda \
   'filter (p) -> p.city is /Port/ or p.name is /^Dr\./' \
   'project <[ name city mac ]>' \
   'take 3' \
@@ -18,24 +19,27 @@ $ curl -L http://bit.do/people-json | R \
 └──────────────────┴─────────────────┴───────────────────┘
 ```
 
-Unites [Ramda's][ramda] curried, data-last API and
-[LiveScript's][livescript] terse and powerful syntax.
+Or, pass in `--interactive` to launch in browser.
 
-With a variety of supported input/output types and the ability [pull any
-module from npm](#using-packages-from-npm), ramda-cli is a potent tool for
-many kinds of data manipulation in command-line environment.
+<img src="https://raw.githubusercontent.com/raine/ramda-cli/media/interactive.png" width="716" height="414">
+
+Unites [Ramda's][ramda] curried, data-last API and [LiveScript's][livescript]
+terse and powerful syntax.
+
+With a variety of supported input/output types and the ability [pull any module
+from npm](#using-packages-from-npm), ramda-cli is a potent tool for general data
+manipulation in command-line environment.
 
 ##### Table of Contents
 
 - [Examples](#examples)
+- [JavaScript](#using-javascript)
 - [Options](#options)
 - [Evaluation context](#evaluation-context)
 - [Configuration](#configuration)
 - [Using packages from NPM](#using-packages-from-npm)
 - [Promises](#promises)
 - [LiveScript?](#livescript)
-- [JavaScript support](#javascript-support)
-- [Questions or comments?](#questions-or-comments)
 
 ##### Resources
 
@@ -47,7 +51,6 @@ many kinds of data manipulation in command-line environment.
 
 ```sh
 npm install -g ramda-cli
-alias R='ramda'
 ```
 
 ## synopsis
@@ -56,8 +59,8 @@ alias R='ramda'
 cat data.json | ramda [function] ...
 ```
 
-The idea is to [compose][composition] functions into a pipeline of operations that when
-applied to given data, produces the desired output.
+The idea is to [compose][composition] functions into a pipeline of operations
+that when applied to given data, produces the desired output.
 
 By default, the function is applied to a stream of JSON data read from stdin,
 and the output data is sent to standard out as stringified JSON.
@@ -67,24 +70,38 @@ Technically, `function` should be a snippet of LiveScript (or JavaScript with
 supplied as positional arguments, they are composed into a pipeline in order
 from left to right (see [`R.pipe`](http://ramdajs.com/docs/#pipe)).
 
-As a simple example, in `echo 1 | R inc 'multiply 2'`, which prints 4, the
-computation would look roughly as follows:
+All Ramda's functions are available directly in the context. See
+http://ramdajs.com/docs/ for a full list and [Evaluation
+context](#evaluation-context) section for other functions.
 
-```js
-input = 1
-fn = pipe(inc, multiply(2))
-result = fn(input) // multiply(2, inc(1))
-result             // => 4
+## interactive mode
+
+In interactive mode, ramda-cli is generally operated the same way as on the
+command-line. The key benefit is being able to develop pipelines incrementally
+with much shorter feedback cycle.
+
+Input is passed to interactive mode in stdin, as usual.
+
+You may pipe stdout to other commands even when using interactive mode. When the
+interactive mode tab is closed, the result will printed to stdout.
+
+### runnable example
+
 ```
-
-All Ramda's functions are available directly in the scope. See
-http://ramdajs.com/docs/ for a full list.
+curl -Ls http://bit.ly/gist-people-json | npx ramda-cli@alpha \
+  'filter (p) -> p.city is /Port/ or p.name is /^Dr\./' \
+  'filter (p) -> p.email?.includes ".info"' \
+  'project <[ name city mac email ]>' \
+  'take 100' \
+  --interactive \
+  -o table --compact
+```
 
 ## examples
 
 ```sh
 # Add 1 to each value in a list
-echo [1,2,3] | R 'map add 1'
+echo [1,2,3] | ramda 'map add 1'
 [
   2,
   3,
@@ -94,7 +111,7 @@ echo [1,2,3] | R 'map add 1'
 
 ```sh
 # Add 1 to each value with inline ES6 lambda and take product of all
-echo [1,2,3] | R --js 'map(x => x + 1)' product
+echo [1,2,3] | ramda --js 'map(x => x + 1)' product
 24
 ```
 
@@ -106,7 +123,7 @@ echo [1,2,3] | R --js 'map(x => x + 1)' product
 ##### Get a list of people whose first name starts with "B"
 
 ```sh
-cat people.json | R 'pluck \name' 'filter (name) -> name.0 is \B)' -o raw
+cat people.json | ramda 'pluck \name' 'filter (name) -> name.0 is \B)' -o raw
 Brando Jacobson
 Betsy Bayer
 Beverly Gleichner
@@ -122,7 +139,7 @@ Beryl Lindgren
 
 ```sh
 curl -s http://jsonplaceholder.typicode.com/todos |\
-  R --raw-output \
+  ramda --raw-output \
     'filter where-eq user-id: 10' \
     'map (t) -> "- [#{t.completed && "x" || " "}] #{t.title}"' \
     'take 5' \
@@ -147,7 +164,7 @@ __Output__
 It looks for `ecto/node-timeago` installed to `$HOME/node_modules`.
 
 ```sh
-npm view ramda --json | R --import timeago \
+npm view ramda --json | ramda --import timeago \
   'prop \time' 'to-pairs' \
   'map -> version: it.0, time: timeago(it.1)' \
   -o tsv | column -t -s $'\t'
@@ -160,7 +177,7 @@ npm view ramda --json | R --import timeago \
 ##### Search twitter for people who tweeted about ramda and pretty print [the result](https://raw.githubusercontent.com/raine/ramda-cli/media/twarc-ramda.png)
 
 ```sh
-twarc.py --search '#ramda' | R --slurp -p 'map path [\user, \screen_name]' uniq
+twarc.py --search '#ramda' | ramda --slurp -p 'map path [\user, \screen_name]' uniq
 ```
 
 > Ramda functions used:
@@ -174,7 +191,7 @@ HTTP status codes per minute for last hour:
 
 ```sh
 graphite -t "summarize(stats_counts.status_codes.*, '1min', 'sum', false)" -f '-1h' -o json | \
-  R --import sparkline 'map evolve datapoints: (map head) >> sparkline \
+  ramda --import sparkline 'map evolve datapoints: (map head) >> sparkline \
     'sort-by prop \target' -o table
 ```
 
@@ -187,7 +204,7 @@ graphite -t "summarize(stats_counts.status_codes.*, '1min', 'sum', false)" -f '-
 ##### Use `--slurp` to read multiple JSON objects into a single list before any operations
 
 ```sh
-cat <<EOF | R --slurp identity
+cat <<EOF | ramda --slurp identity
 "foo bar"
 "test lol"
 "hello world"
@@ -205,7 +222,7 @@ EOF
 #!/usr/bin/env bash
 
 data_url=https://gist.githubusercontent.com/jorinvo/7f19ce95a9a842956358/raw/e319340c2f6691f9cc8d8cc57ed532b5093e3619/data.json
-curl $data_url | R \
+curl $data_url | ramda \
   'filter where creditcard: (!= null)' `# filter out those who don't have credit card` \
   'project [\name, \creditcard]'       `# pick name and creditcard fields from all objects` \
   -o csv > `date "+%Y%m%d"`.csv        `# print output as csv to a file named as the current date`
@@ -214,7 +231,7 @@ curl $data_url | R \
 ##### List a project's dependencies in a table
 
 ```sh
-npm ls --json | R 'prop \dependencies' 'map-obj prop \version' -o table --compact
+npm ls --json | ramda 'prop \dependencies' 'map-obj prop \version' -o table --compact
 ┌───────────────┬────────┐
 │ JSONStream    │ 1.0.4  │
 │ treis         │ 2.3.9  │
@@ -244,7 +261,7 @@ EOF
 ```
 
 ```sh
-cat shopping.txt | R --import h=hyperscript \
+cat shopping.txt | ramda --import h=hyperscript \
   -rR --slurp           `# read raw input into a list` \
   'map (h \li.item, _)' `# apply <li class="item"> into each item` \
   'h \ul#list, _'       `# wrap list inside <ul id="list">` \
@@ -265,11 +282,26 @@ that this function is waiting for one more argument.
 
 For more examples, see the [Cookbook][cookbook].
 
+## using javascript
+
+If LiveScript is not your thing, you may write pipelines in JavaScript using the
+[`--js`](#--js) parameter.
+
+```sh
+echo '[1,2,3]' | ramda --js 'map(x => x + 1)'
+[
+  2,
+  3,
+  4
+]
+```
+
 ## options
 
 ```
 Usage: ramda [options] [function] ...
 
+  -I, --interactive    run interactively in browser
   -f, --file           read a function from a js/ls file instead of args; useful for
                        larger scripts
   -c, --compact        compact output for JSON and tables
@@ -288,12 +320,19 @@ Usage: ramda [options] [function] ...
       --[no-]headers   csv/tsv has a header row
       --csv-delimiter  custom csv delimiter character
       --js             use javascript instead of livescript
-  -I, --import         require module as a variable
+      --import         import a module
   -C, --configure      edit config in $EDITOR
   -v, --verbose        print debugging information (use -vv for even more)
       --version        print version
   -h, --help           displays help
 ```
+
+
+#### `-I, --interactive`
+
+Launch interactive mode in browser.
+
+See [Interactive mode](#interactive-mode).
 
 #### `-f, --file`
 
@@ -309,7 +348,7 @@ module.exports = R.pipe(R.toUpper, R.add(R.__, '!'));
 ```
 
 ```sh
-echo -n '"hello world"' | R --file shout.js
+echo -n '"hello world"' | ramda --file shout.js
 "HELLO WORLD!"
 ```
 
@@ -330,7 +369,7 @@ When used with `--output-type raw`, no line breaks are added to output.
 __Example__
 
 ```sh
-seq 10 | R --input-type raw --output-type raw --compact identity # or -rRc
+seq 10 | ramda --input-type raw --output-type raw --compact identity # or -rRc
 12345678910%
 ```
 
@@ -341,7 +380,7 @@ Read all input from `stdin` and wrap the data in a list before operations.
 __Example__
 
 ```sh
-cat <<EOF | R --slurp 'map to-upper'
+cat <<EOF | ramda --slurp 'map to-upper'
 "foo"
 "bar"
 "xyz"
@@ -361,7 +400,7 @@ items are printed separately.
 __Example__
 
 ```sh
-echo '[1,2,3]' | R --unslurp 'map inc'
+echo '[1,2,3]' | ramda --unslurp 'map inc'
 2
 3
 4
@@ -382,7 +421,7 @@ collection with [`--slurp`](#-s---slurp).
 __Example__
 
 ```sh
-echo '1 2 2 3 3 4' | R --transduce drop-repeats
+echo '1 2 2 3 3 4' | ramda --transduce drop-repeats
 1
 2
 3
@@ -402,7 +441,7 @@ Process a huge JSON array one by one without reading the whole thing first.
 `*` as JSON path unwraps the array and objects are passed to `identity` one by one.
 
 ```sh
-curl -Ls http://bit.do/countries-json | R --json-path '*' --compact identity
+curl -Ls http://bit.do/countries-json | ramda --json-path '*' --compact identity
 {"name":"Afghanistan","code":"AF"}
 {"name":"Åland Islands","code":"AX"}
 {"name":"Albania","code":"AL"}
@@ -416,12 +455,12 @@ Parse `stdin` as one of these formats: `raw`, `csv`, `tsv`.
 __Examples__
 
 ```sh
-echo foo | R --input-type raw to-upper
+echo foo | ramda --input-type raw to-upper
 "FOO"
 ```
 
 ```sh
-$ cat <<EOF | R --input-type csv identity
+$ cat <<EOF | ramda --input-type csv identity
 id,name
 1,Bob
 2,Alice
@@ -459,7 +498,7 @@ uses the first object's keys as headers.
 __Example__
 
 ```sh
-curl -Ls http://bit.do/countries-json | R 'take 3' -o table --compact
+curl -Ls http://bit.do/countries-json | ramda 'take 3' -o table --compact
 ┌───────────────┬──────┐
 │ name          │ code │
 ├───────────────┼──────┤
@@ -491,7 +530,7 @@ function.
 __Example__
 
 ```sh
-R --no-stdin 'always "hello world"' 'add __, \!'
+ramda --no-stdin 'always "hello world"' 'add __, \!'
 "hello world!"
 ```
 
@@ -514,7 +553,7 @@ Interpret positional arguments as JavaScript instead of LiveScript.
 __Example__
 
 ```sh
-echo '[1,2,3]' | R --js 'map(x => Math.pow(x, 2))'
+echo '[1,2,3]' | ramda --js 'map(x => Math.pow(x, 2))'
 [
   1,
   4,
@@ -522,7 +561,7 @@ echo '[1,2,3]' | R --js 'map(x => Math.pow(x, 2))'
 ]
 ```
 
-#### `-I, --import`
+#### `--import`
 
 Make modules installed with `npm install` accessible in positional code
 arguments.
@@ -536,7 +575,7 @@ Otherwise, module's name is used as the variable name.
 __Example__
 
 ```sh
-echo test | R -rR --import c=chalk 'c.bold'
+echo test | ramda -rR --import c=chalk 'c.bold'
 **test**
 ```
 
@@ -604,7 +643,7 @@ exports.debug = (val) => {
 ```
 
 ```sh
-echo 1442667243000 | R date debug timeago
+echo 1442667243000 | ramda date debug timeago
 debug: Sat Sep 19 2015 12:54:03 GMT+0000 (UTC)
 "12 minutes ago"
 ```
@@ -616,16 +655,9 @@ For example:
 
 ```sh
 # always interpret as javascript
-alias R="ramda --js"
-echo 1 | R '(x) => x + 1'
+alias ramda="ramda --js"
+echo 1 | ramda '(x) => x + 1'
 2
-```
-
-```sh
-# always use identity function, instead of showing help without args
-alias R="ramda identity"
-echo 1 | R
-1
 ```
 
 ## using packages from npm
@@ -634,7 +666,7 @@ Packages installed to `$HOME/node_modules` or `$PWD/node_modules` can used
 with `require()`.
 
 ```sh
-date -v +7d +%s | R -rR --js 'require("moment").unix' 'x => x.fromNow()'
+date -v +7d +%s | ramda -rR --js 'require("moment").unix' 'x => x.fromNow()'
 in 7 days
 ```
 
@@ -642,7 +674,7 @@ Additionally, there is `-I, --import` which can be used as a shorthand for
 `require()`.
 
 ```sh
-echo test | R -rR --import c=chalk 'c.bold'
+echo test | ramda -rR --import c=chalk 'c.bold'
 **test**
 ```
 
@@ -653,14 +685,14 @@ Promise values are unwrapped at the end of pipeline.
 `then` helper function can be used to map promise values.
 
 ```sh
-echo 1 | R --js 'x => Promise.resolve(x)' 'then(add(5))'
+echo 1 | ramda --js 'x => Promise.resolve(x)' 'then(add(5))'
 6
 ```
 
 ```sh
 echo '192.168.1.1\ngoogle.com\nyahoo.com' | \
-  R -r --js --import ping 'ping.promise.probe' 'then(omit(["output", "numeric_host"]))' | \
-  R --slurp -o table --compact
+  ramda -r --js --import ping 'ping.promise.probe' 'then(omit(["output", "numeric_host"]))' | \
+  ramda --slurp -o table --compact
 ┌─────────────┬───────┬─────────┬─────────┬─────────┬─────────┬────────┐
 │ host        │ alive │ time    │ min     │ max     │ avg     │ stddev │
 ├─────────────┼───────┼─────────┼─────────┼─────────┼─────────┼────────┤
@@ -680,7 +712,7 @@ Verbose output shows what entered LiveScript compiled to.
 To debug individual functions in the pipeline, you can use something like [`treis`][treis].
 
 ```sh
-echo 1 | R --import treis 'treis(add(1))'
+echo 1 | ramda --import treis 'treis(add(1))'
 ```
 
 ## livescript?
@@ -713,21 +745,6 @@ ramda-cli.
 | `toUpper`                 | `(.to-upper-case!)` | `x => x.toUpperCase()`    |
 
 See also: [Essential LiveScript for ramda-cli][essential-livescript]
-
-## javascript support
-
-With the release of node v4 came the ES6 arrow function syntax without a
-compilation penalty. This makes JS more attractive choice for ramda-cli, so
-now there is `--js` flag.
-
-```sh
-echo '[1,2,3]' | R --js 'map(x => x + 1)'
-[
-  2,
-  3,
-  4
-]
-```
 
 ## questions or comments?
 
