@@ -29,7 +29,7 @@ HELP =
           --[no-]headers   csv/tsv has a header row
           --csv-delimiter  custom csv delimiter character
           --js             use javascript instead of livescript
-      -I, --import         require module as a variable
+      -I, --import         import a module
       -C, --configure      edit config in $EDITOR
       -v, --verbose        print debugging information (use -vv for even more)
           --version        print version
