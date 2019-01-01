@@ -50,7 +50,7 @@ describe 'argv.parse' (,) ->
             parse '-n identity' .stdin `eq` false
             parse '--no-stdin identity' .stdin `eq` false
 
-    describe '-I, --import', (,) ->
+    describe '--import', (,) ->
         it 'is always an array' ->
             parse '--import foo' .import `deep-eq` ['foo']
             parse '--import foo --import bar' .import `deep-eq` ['foo', 'bar']

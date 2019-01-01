@@ -10,7 +10,7 @@ HELP =
     """
     Usage: ramda [options] [function] ...
 
-          --interactive    interactive mode
+      -I, --interactive    run interactively in browser
       -f, --file           read a function from a js/ls file instead of args; useful for
                            larger scripts
       -c, --compact        compact output for JSON and tables
@@ -29,7 +29,7 @@ HELP =
           --[no-]headers   csv/tsv has a header row
           --csv-delimiter  custom csv delimiter character
           --js             use javascript instead of livescript
-      -I, --import         import a module
+          --import         import a module
       -C, --configure      edit config in $EDITOR
       -v, --verbose        print debugging information (use -vv for even more)
           --version        print version
