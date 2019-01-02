@@ -30,6 +30,13 @@
       color: #999;
     }
   }
+
+  // This is a hack to color things after a # as a comment.
+  // Shell mode does that by default, but using codemirror's multiplexing addon
+  // to recognize livescript between single quotes breaks it.
+  .cm-comment ~ span {
+    color: #546E7A;
+  }
 }
 
 :global .CodeMirror-lines {
