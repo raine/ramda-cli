@@ -19,7 +19,7 @@ $ curl -Ls https://bit.ly/gist-people-json | ramda \
 └──────────────────┴─────────────────┴───────────────────┘
 ```
 
-Or, pass in `--interactive` to launch in browser.
+Or, pass in [`--interactive`](#interactive-mode) to launch in browser.
 
 <img src="https://raw.githubusercontent.com/raine/ramda-cli/media/interactive.png" width="716" height="414">
 
@@ -32,6 +32,7 @@ manipulation in command-line environment.
 
 ##### Table of Contents
 
+- [Interactive mode](#interactive-mode)
 - [Examples](#examples)
 - [JavaScript](#using-javascript)
 - [Options](#options)
@@ -76,6 +77,17 @@ context](#evaluation-context) section for other functions.
 
 ## interactive mode
 
+<a href="https://raw.githubusercontent.com/raine/ramda-cli/media/interactive.png">
+<img align="right" width="250" src="https://raw.githubusercontent.com/raine/ramda-cli/media/interactive_thumb.png?1"/>
+</a>
+
+**New in v4.0**
+
+When launched with the `--interactive` parameter, ramda-cli opens in the
+browser. The pipeline, if given, is placed in an embedded code editor that
+emulates the prompt in command-line. As the pipeline is edited, changes to
+output are reflected below in the output panel.
+
 In interactive mode, ramda-cli is generally operated the same way as on the
 command-line. The key benefit is being able to develop pipelines incrementally
 with much shorter feedback cycle.
@@ -85,9 +97,9 @@ Input is passed to interactive mode in stdin, as usual.
 You may pipe stdout to other commands even when using interactive mode. When the
 interactive mode tab is closed, the result will printed to stdout.
 
-### runnable example
+### copy-pasteable example
 
-```
+```sh
 curl -Ls http://bit.ly/gist-people-json | npx ramda-cli \
   'filter (p) -> p.city is /Port/ or p.name is /^Dr\./' \
   'filter (p) -> p.email?.includes ".info"' \
