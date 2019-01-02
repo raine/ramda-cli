@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.0.0 - UNRELEASED
+## 4.0.0 - 2019-01-02
 
 - Added: Interactive mode! Use with `--interactive`.
 - Changed: Alias `-I` points to `--interactive` instead of `--import`.
