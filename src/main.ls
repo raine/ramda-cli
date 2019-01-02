@@ -1,11 +1,12 @@
 #!/usr/bin/env lsc
 require! {vm, JSONStream, path: Path, split2, fs, camelize}
 require! <[ ./argv ./config ]>
+require! './compile-fun'
 require! through2: through
-require! stream: {PassThrough}
 require! ramda: {apply, is-nil, append, flip, type, replace, merge, map, join, for-each, split, head, pick-by, tap, pipe, concat, take, identity, is-empty, reverse, invoker, from-pairs, merge-all, path, reduce, obj-of, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
-require! './utils': {HOME}
+require! './utils': {HOME, lines, words, take-lines}
+require! './stream': {process-input-stream}
 debug = require 'debug' <| 'ramda-cli:main'
 Module = require 'module' .Module
 
@@ -16,192 +17,16 @@ process.env.'NODE_PATH' = join ':', [
 
 Module._init-paths!
 
-# naive fix to get `match` work despite being a keyword in LS
-fix-match = ->
-    "#it".replace /\bmatch\b/g, (m, i, str) ->
-        if str[i-1] is not \. then \R.match else m
-
-lines   = split '\n'
-words   = split ' '
-unlines = join '\n'
-unwords = join ' '
-
-remove-extra-newlines = (str) ->
-    if /\n$/ == str then str.replace /\n*$/, '\n' else str
-
-is-thenable = (x) -> x and typeof x.then is 'function'
-str-contains = (x, xs) ~> (xs.index-of x) >= 0
-wrap-in = (a, b, str) --> "#a#str#b"
-wrap-in-parens = wrap-in \(, \)
-wrap-in-pipe = wrap-in \pipe(, \)
-relative-to-cwd = Path.join process.cwd!, _
-construct-pipe = pipe do
-    map wrap-in-parens
-    join ','
-    wrap-in-pipe
-
-take-lines = (n, str) -->
-    lines str |> take n |> unlines
-
-rename-keys-by = (fn, obj) -->
-    to-pairs obj
-    |> map (adjust fn, 0)
-    |> from-pairs
-
-pick-dot-paths = (paths, obj) -->
-    reduce do
-        (res, p) ->
-            val = path p, obj
-            if val? then assoc-path p, val, res else res
-        {},
-        (map (split '.'), paths)
-
-make-sandbox = (opts) ->
-    imports = opts.import or []
-        |> map split('=')
-        |> map ([alias, pkg]) ->
-            pkg = pkg or alias
-            debug "requiring #pkg", require.resolve pkg
-            [camelize(alias), require pkg]
-        |> from-pairs
-
-    helpers =
-        flat           : -> apply (require 'flat'), &
-        read-file      : relative-to-cwd >> fs.read-file-sync _, 'utf8'
-        id             : R.identity
-        lines          : lines
-        words          : words
-        unlines        : unlines
-        unwords        : unwords
-        then           : (fn, promise) --> promise.then(fn)
-        pick-dot-paths : pick-dot-paths
-        rename-keys-by : rename-keys-by
-
-    helpers._then = helpers.then
-
-    config-file-path = config.get-existing-config-file!
-    if config-file-path?.match /\.ls$/ then require! livescript
-    try user-config = require config.BASE_PATH
-    catch e
-        unless (e.code is 'MODULE_NOT_FOUND' and str-contains (Path.join '.config', 'ramda-cli'), e.message)
-            throw e
-
-    {R, require, console, process} <<< R <<< user-config <<< helpers <<< imports
-
-compile-livescript = (code) ->
-    require! livescript
-    livescript.compile code, {+bare, -header}
-
-evaluate = (opts, code) -->
-    ctx = vm.create-context make-sandbox opts
-    vm.run-in-context code, ctx
-
-select-compiler = (opts) ->
-    | opts.js   => identity
-    | otherwise => compile-livescript
-
-compile-with-opts = (code, opts) ->
-    code |> select-compiler opts
-
-compile-and-eval = (code, opts) ->
-    compile-with-opts code, opts
-    |> tap -> debug "\n#it", 'compiled code'
-    |> evaluate opts
-
-reduce-stream = (fn, acc) -> through.obj do
-    (chunk,, next) ->
-        acc := fn acc, chunk
-        next!
-    (next) ->
-        this.push acc
-        next!
-
-concat-stream   = -> reduce-stream flip(append), []
-unconcat-stream = -> through.obj (chunk,, next) ->
-    switch type chunk
-    | \Array    => for-each this~push, chunk
-    | otherwise => this.push chunk
-    next!
-
-raw-output-stream = (compact) -> through.obj (chunk,, next) ->
-    end = unless compact then "\n" else ''
-    switch type chunk
-    | \Array    => for-each (~> this.push "#it#end"), chunk
-    | otherwise => this.push remove-extra-newlines "#chunk#end"
-    next!
-
-inspect-stream = (depth) -> through.obj (chunk,, next) ->
-    this.push (inspect chunk, colors: true, depth: depth) + '\n'
-    next!
-
-debug-stream = (debug, opts, str) ->
-    unless debug.enabled and opts.very-verbose
-        return PassThrough {+object-mode}
-
-    through.obj (chunk,, next) ->
-        debug {"#str": chunk.to-string!}
-        this.push chunk
-        next!
-
-json-stringify-stream = (compact) ->
-    indent = if not compact then 2 else void
-    through.obj (data,, next) ->
-        json = JSON.stringify data, null, indent
-        this.push json + '\n'
-        next!
-
-pass-through-unless = (val, stream) ->
-    switch | val       => stream
-           | otherwise => PassThrough object-mode: true
-
-map-stream = (func, on-error) -> through.obj (chunk,, next) ->
-    push = (x) ~>
-        # pushing a null would end the stream
-        this.push x unless is-nil x
-        next!
-    val = try func chunk
-    catch then on-error e
-    if is-thenable val then val.then push
-    else push val
-
-table-output-stream = (compact) ->
-    require! './format-table'
-    opts = {compact}
-    through.obj (chunk,, next) ->
-        this.push "#{format-table chunk, opts}\n"
-        next!
-
-csv-opts = (type, delimiter, headers) ->
-    opts = { headers, include-end-row-delimiter: true, delimiter }
-    switch type
-    | \csv => opts
-    | \tsv => opts <<< delimiter: '\t'
-
-opts-to-output-stream = (opts) ->
-    switch opts.output-type
-    | \pretty       => inspect-stream opts.pretty-depth
-    | \raw          => raw-output-stream opts.compact
-    | <[ csv tsv ]> => require 'fast-csv' .create-write-stream csv-opts opts.output-type, opts.csv-delimiter, opts.headers
-    | \table        => table-output-stream opts.compact
-    | otherwise     => json-stringify-stream opts.compact
-
-opts-to-input-stream = (opts) ->
-    switch opts.input-type
-    | \raw          => split2!
-    | <[ csv tsv ]> => (require 'fast-csv') csv-opts opts.input-type, opts.csv-delimiter, opts.headers
-    | otherwise     => JSONStream.parse opts.json-path
-
-blank-obj-stream = ->
-    PassThrough {+object-mode}
-        ..end {}
-
-main = (process-argv, stdin, stdout, stderr) ->
+main = (process-argv, stdin, stdout, stderr) ->>
     stdout.on \error ->
         if it.code is 'EPIPE' then process.exit 0
 
     debug {argv: process-argv}
     log-error = (+ '\n') >> stderr~write
-    die       = log-error >> -> process.exit 1
+    die = (err) ->
+        msg = if err.stack then (take-lines 1, err.stack) else err
+        log-error msg
+        process.exit 1
 
     try opts = argv.parse process-argv
     catch e then return die [argv.help!, e.message] * '\n\n'
@@ -209,54 +34,41 @@ main = (process-argv, stdin, stdout, stderr) ->
 
     if opts.help    then return die argv.help!
     if opts.version then return die <| require '../package.json' .version
+
     if opts.configure
-        return config.edit (err) ->
+        config.edit (err) ->
             if err != 0 or err then die err
             else process.exit 0
+        return
+
+    if opts.interactive
+        require! 'string-argv'
+        server = await require './server' .start log-error, stdin, process-argv, (new-stdin, input) ->
+            server.close!
+            new-opts = argv.parse string-argv input, 'node', 'dummy.js'
+            try fun = compile-fun new-opts
+            catch {message} then return die "Error: #{message}"
+            # something in the server is keeping the process open despite the
+            # close(), hence the manual exit. seems to work.
+            process-input-stream die, new-opts, fun, new-stdin, stdout
+                .on 'end', -> process.exit!
+        return
 
     if opts.file
         try fun = require Path.resolve opts.file
         catch {stack, code}
             return switch code
-            | \MODULE_NOT_FOUND  => die head lines stack
-            | otherwise          => die stack
+            | \MODULE_NOT_FOUND => die head lines stack
+            | otherwise         => die stack
 
         unless typeof fun is 'function'
             return die "Error: #{opts.file} does not export a function"
 
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
-        if is-empty opts._ then return die argv.help!
-        fns = (if opts.transduce then reverse else identity) opts._
-        piped-inline-functions = construct-pipe switch
-            | opts.js   => fns
-            | otherwise => map fix-match, fns
-
-        debug (inspect piped-inline-functions), 'input code'
-        try fun = compile-and-eval piped-inline-functions, opts
+        try fun = compile-fun opts
         catch {message} then return die "Error: #{message}"
 
-    if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
-    if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
-
-    input-parser = opts-to-input-stream opts
-    output-formatter = opts-to-output-stream opts
-
-    stdin-parser = ->
-        stdin
-        .pipe debug-stream debug, opts, \stdin
-        .pipe input-parser .on \error -> die it
-        .pipe pass-through-unless opts.slurp, concat-stream!
-
-    mapper =
-        if opts.transduce then (require 'transduce-stream') fun, {+object-mode}
-        else map-stream fun, -> die (take-lines 3, it.stack)
-
-    (if opts.stdin then stdin-parser! else blank-obj-stream!)
-        .pipe mapper
-        .pipe pass-through-unless opts.unslurp, unconcat-stream!
-        .pipe output-formatter
-        .pipe debug-stream debug, opts, \stdout
-        .pipe stdout
+    process-input-stream die, opts, fun, stdin, stdout
 
 module.exports = main

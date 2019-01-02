@@ -10,6 +10,7 @@ HELP =
     """
     Usage: ramda [options] [function] ...
 
+      -I, --interactive    run interactively in browser
       -f, --file           read a function from a js/ls file instead of args; useful for
                            larger scripts
       -c, --compact        compact output for JSON and tables
@@ -28,7 +29,7 @@ HELP =
           --[no-]headers   csv/tsv has a header row
           --csv-delimiter  custom csv delimiter character
           --js             use javascript instead of livescript
-      -I, --import         require module as a variable
+          --import         import a module
       -C, --configure      edit config in $EDITOR
       -v, --verbose        print debugging information (use -vv for even more)
           --version        print version
@@ -64,29 +65,32 @@ export parse = (argv) ->
     # - wrap '-> it' style lambdas in parens, minimist thinks they're options
     # - wrap implicit number lookups '.0' in parens, minimist thinks they're numbers
     argv = map (wrap-number-lookup << wrap-function), argv.slice 2
-    args = camelize minimist argv,
+    opts = camelize minimist argv,
         string: <[ file input-type output-type json-path csv-delimiter ]>
-        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce headers ]>
+        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce headers interactive ]>
         alias: parse-aliases HELP
         default: {+stdin, +headers, 'csv-delimiter': \,}
 
-    args._ = args.''; delete args.''
+    opts._ = opts.''; delete opts.''
 
-    if args.raw-input  then args.input-type  = \raw
-    if args.raw-output then args.output-type = \raw
-    if args.pretty     then args.output-type = \pretty
+    if opts.raw-input  then opts.input-type  = \raw
+    if opts.raw-output then opts.output-type = \raw
+    if opts.pretty     then opts.output-type = \pretty
 
-    if args.output-type? and args.output-type not in OUTPUT_TYPES
+    if opts.output-type? and opts.output-type not in OUTPUT_TYPES
         throw new Error "Output type should be #{format-enum-list OUTPUT_TYPES}"
 
-    if args.input-type? and args.input-type not in INPUT_TYPES
+    if opts.input-type? and opts.input-type not in INPUT_TYPES
         throw new Error "Input type should be #{format-enum-list INPUT_TYPES}"
 
-    if '-vv' in argv then args.very-verbose = true
-    if '-n'  in argv then args.stdin = false
+    if '-vv' in argv then opts.very-verbose = true
+    if '-n'  in argv then opts.stdin = false
 
-    args.import = typeof args.import == \string and [args.import] or args.import
+    opts.import = typeof opts.import == \string and [opts.import] or opts.import
 
-    args
+    if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
+    if opts.output-type in <[ csv tsv ]> then opts.unslurp = true
+
+    opts
 
 export help = -> HELP

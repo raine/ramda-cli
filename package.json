@@ -1,6 +1,6 @@
 {
   "name": "ramda-cli",
-  "version": "3.1.1",
+  "version": "4.0.0",
   "description": "A command-line tool for processing JSON with Ramda and LiveScript",
   "repository": "raine/ramda-cli",
   "keywords": [
@@ -11,7 +11,11 @@
   "scripts": {
     "test": "make test",
     "test-ci": "make test && make test-func",
-    "test-local": "make test && make docker-test-func"
+    "test-local": "make test && make docker-test-func",
+    "build-web:watch": "parcel watch --no-source-maps --out-dir web-dist web/index.html",
+    "build-web": "parcel build --no-source-maps --out-dir web-dist web/index.html",
+    "build:watch": "watchy --debounce 0.1 -w 'src/**' -- make compile",
+    "watch": "run-p build-web:watch build:watch"
   },
   "bin": {
     "ramda": "./bin/ramda"
@@ -21,26 +25,55 @@
   "dependencies": {
     "@rane/cli-table": "^0.3.3",
     "JSONStream": "^1.3.5",
+    "body-parser": "^1.18.3",
     "camelize": "^1.0.0",
+    "compression": "^1.7.3",
     "debug": "^4.1.0",
     "editor": "^1.0.0",
     "fast-csv": "^2.4.1",
     "flat": "^4.1.0",
+    "get-port": "^4.1.0",
     "is-there": "^4.4.3",
     "livescript": "^1.6.0",
     "minimist": "^1.2.0",
+    "opn": "^5.4.0",
+    "polka": "^0.5.1",
     "ramda": "0.26.1",
+    "serve-static": "^1.13.2",
     "split2": "^3.0.0",
+    "stream-concat": "^0.3.0",
+    "string-argv": "^0.1.1",
+    "tempfile": "^2.0.0",
     "through2": "^3.0.0",
     "transduce-stream": "^0.5.0"
   },
   "devDependencies": {
+    "ansi-to-html": "^0.6.9",
+    "browser-cookies": "^1.2.0",
     "chai": "^4.2.0",
+    "classnames": "^2.2.6",
+    "codemirror": "^5.42.0",
     "concat-stream": "^1.6.2",
+    "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
     "mocha": "^5.2.0",
+    "npm-run-all": "^4.1.5",
+    "parcel-bundler": "^1.10.3",
+    "postcss-modules": "^1.4.1",
+    "react": "^16.6.3",
+    "react-codemirror2": "^5.1.0",
+    "react-dom": "^16.6.3",
+    "react-virtualized-auto-sizer": "^1.0.2",
+    "react-window": "^1.3.1",
+    "reactstrap": "^7.0.2",
+    "recompose": "^0.30.0",
     "rewire": "^4.0.1",
+    "sass": "^1.15.2",
     "shelljs": "^0.8.3",
     "sinon": "^7.2.2",
-    "strip-ansi": "^5.0.0"
+    "stream-http": "^3.0.0",
+    "string-to-stream": "^1.1.1",
+    "strip-ansi": "^5.0.0",
+    "watchy": "^0.9.5"
   }
 }

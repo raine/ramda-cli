@@ -1,0 +1,13 @@
+html,
+body {
+  height: 100%;
+  background-color: #18171b;
+}
+
+body {
+  padding: 15px;
+}
+
+:global #root {
+  height: 100%;
+}

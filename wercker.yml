@@ -1,7 +1,0 @@
-box: node
-build:
-    steps:
-        - npm-install
-        - script:
-            name: run tests
-            code: npm run test-ci

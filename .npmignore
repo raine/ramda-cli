@@ -6,3 +6,7 @@ test
 Makefile
 wercker.yml
 stuff
+.cache
+web/
+.eslintrc
+.prettierrc

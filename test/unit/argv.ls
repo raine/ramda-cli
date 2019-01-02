@@ -50,7 +50,7 @@ describe 'argv.parse' (,) ->
             parse '-n identity' .stdin `eq` false
             parse '--no-stdin identity' .stdin `eq` false
 
-    describe '-I, --import', (,) ->
+    describe '--import', (,) ->
         it 'is always an array' ->
             parse '--import foo' .import `deep-eq` ['foo']
             parse '--import foo --import bar' .import `deep-eq` ['foo', 'bar']
@@ -64,6 +64,13 @@ describe 'argv.parse' (,) ->
 
         it 'sets `headers` to true' ->
             parse '--headers' .headers `eq` true
+
+    describe '-I, --interactive', (,) ->
+        it 'defaults to true' ->
+            parse '' .interactive `eq` false
+
+        it 'sets `interactive` to true' ->
+            parse '--interactive' .interactive `eq` true
 
     it 'wraps function expressions in parentheses' ->
          args = argv.parse [,, 'identity', '-> it']

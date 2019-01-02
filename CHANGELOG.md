@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 4.0.0 - UNRELEASED
+
+- Added: Interactive mode! Use with `--interactive`.
+- Changed: Alias `-I` points to `--interactive` instead of `--import`.
+- Changed: If no functions are given as arguments, uses `identity` function
+    instead of showing `--help` output.
+- Changed: When using JSON output type, functions are stringified instead of
+    printed as `undefined`.
+- Changed: `undefined` values are properly passed through the pipeline.
+- Changed: In `--raw-output`, values of type object will be formatted with
+    `JSON.stringify()` instead of `toString()`, meaning that objects won't
+    appear as `[object Object]` in the output.
+
 ## 3.1.0 - 2018-02-21
 
 - Added: `--csv-delimiter` option.

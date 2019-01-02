@@ -1,0 +1,19 @@
+.output {
+  color: #afafaf;
+  background-color: #0a0a0a;
+  padding: 10px;
+  flex: 2;
+  overflow: scroll;
+
+  &.error {
+    color: #ff7043;
+  }
+
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+
+  pre {
+    margin-bottom: 0;
+    overflow: inherit;
+  }
+}

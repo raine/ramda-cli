@@ -5,6 +5,7 @@ LIB = $(patsubst src/%.ls, lib/%.js, $(SRC))
 
 MOCHA = ./node_modules/.bin/mocha
 LSC = ./node_modules/.bin/lsc
+PARCEL = ./node_modules/.bin/parcel
 DOCKER = docker run -v ${PWD}:/usr/src/app -w /usr/src/app -it --rm node:4.0.0
 NAME = $(shell node -e "console.log(require('./package.json').name)")
 REPORTER ?= spec
@@ -20,9 +21,12 @@ lib:
 lib/%.js: src/%.ls lib
 	$(LSC) -c -o "$(@D)" "$<"
 
-all: compile
+all: compile build-web
 
 compile: $(LIB) package.json
+
+build-web: clean-web
+	NODE_ENV=production $(PARCEL) build --no-source-maps --out-dir web-dist web/index.html
 
 install: clean all
 	npm install -g .
@@ -39,6 +43,9 @@ dev-install: package.json
 
 clean:
 	rm -rf lib
+
+clean-web:
+	rm -rf web-dist
 
 publish: all test
 	git push --tags origin HEAD:master

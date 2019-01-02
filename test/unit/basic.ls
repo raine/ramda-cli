@@ -43,6 +43,18 @@ describe 'basic' (,) ->
         output `eq` '"bar"\n'
         done!
 
+    it 'passes undefined values through', (done) ->
+        args     = ['-> undefined']
+        expected = 'undefined\n'
+        output <-! run-main args, '[1,2,3]'
+        output `eq` expected
+        done!
+
+    it 'uses identity function by default' , (done) ->
+        output, errput <-! run-main [], '[1,2,3]'
+        output `eq` '[\n  1,\n  2,\n  3\n]\n'
+        done!
+
 describe 'match function' (,) ->
     cases =
         'match /foo/'
@@ -122,12 +134,6 @@ describe 'errors' (,) ->
         it 'shows terse error' (done) ->
             output, errput <-! run-main 'identity', 'b'
             errput `eq` 'Error: Invalid JSON (Unexpected "b" at position 0 in state STOP)\n'
-            done!
-
-    describe 'without arguments' (,) ->
-        it 'shows help' (done) ->
-            output, errput <-! run-main [], ''
-            (head lines errput) `eq` 'Usage: ramda [options] [function] ...'
             done!
 
 describe '--compact' (,) ->
@@ -340,6 +346,23 @@ describe '--input-type tsv' (,) ->
         output `strip-eq` expected
         done!
 
+describe '--output-type json' (,) ->
+    it 'prints functions as strings' (done) ->
+        args     = <[ take ]>
+        input    = '"foo"'
+        expected = """
+        function f1(a) {
+            if (arguments.length === 0 || _isPlaceholder(a)) {
+              return f1;
+            } else {
+              return fn.apply(this, arguments);
+            }
+          }\n
+        """
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--output-type raw' (,) ->
     it 'prints a string without quotes' (done) ->
         args     = <[ identity -o raw ]>
@@ -389,6 +412,22 @@ describe '--output-type raw' (,) ->
         output `eq` expected
         done!
 
+    it 'prints array of objects as json' (done) ->
+        args     = <[ identity -o raw ]>
+        input    = '[{"foo":"bar"},{"foo":"bar"}]'
+        expected = '{"foo":"bar"}\n{"foo":"bar"}\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
+    it 'prints objects as json' (done) ->
+        args     = <[ identity -o raw ]>
+        input    = '{"foo":"bar"}\n{"foo":"bar"}'
+        expected = '{"foo":"bar"}\n{"foo":"bar"}\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--output-type pretty' (,) ->
     it 'pretty prints objects' (done) ->
         args     = <[ identity -o pretty ]>
@@ -401,26 +440,26 @@ describe '--output-type pretty' (,) ->
         output `eq` expected
         done!
 
-describe '--pretty-depth' (,) ->
-    it 'configures pretty printing of objects up to specific depth' (done) ->
-        args     = <[ identity -o pretty --pretty-depth 1 ]>
-        input    = '{"a":{"b":{"c":[1,2,3]}}}'
-        expected = """
-        { a: { b: [Object] } }\n
-        """
-        output <-! run-main args, input
-        (strip-ansi output) `eq` expected
-        done!
+    describe '--pretty-depth' (,) ->
+        it 'configures pretty printing of objects up to specific depth' (done) ->
+            args     = <[ identity -o pretty --pretty-depth 1 ]>
+            input    = '{"a":{"b":{"c":[1,2,3]}}}'
+            expected = """
+            { a: { b: [Object] } }\n
+            """
+            output <-! run-main args, input
+            (strip-ansi output) `eq` expected
+            done!
 
-    it 'parses null as infinite' (done) ->
-        args     = <[ identity -o pretty --pretty-depth null ]>
-        input    = '{"a":{"b":{"c":[1,2,3]}}}'
-        expected = """
-        { a: { b: { c: [ 1, 2, 3 ] } } }\n
-        """
-        output <-! run-main args, input
-        (strip-ansi output) `eq` expected
-        done!
+        it 'parses null as infinite' (done) ->
+            args     = <[ identity -o pretty --pretty-depth null ]>
+            input    = '{"a":{"b":{"c":[1,2,3]}}}'
+            expected = """
+            { a: { b: { c: [ 1, 2, 3 ] } } }\n
+            """
+            output <-! run-main args, input
+            (strip-ansi output) `eq` expected
+            done!
 
 describe '--output-type csv' (,) ->
     it 'prints a list of objects as CSV with headers' (done) ->
