@@ -262,8 +262,6 @@ npm ls --json | ramda 'prop \dependencies' 'map-obj prop \version' -o table --co
 
 ##### Generate HTML with hyperscript
 
-With [`hyperscript`][hyperscript] installed to `${HOME,PWD}/node_modules`.
-
 ```sh
 cat <<EOF > shopping.txt
 milk
@@ -273,7 +271,7 @@ EOF
 ```
 
 ```sh
-cat shopping.txt | ramda --import h=hyperscript \
+cat shopping.txt | ramda --import hyperscript:h \
   -rR --slurp           `# read raw input into a list` \
   'map (h \li.item, _)' `# apply <li class="item"> into each item` \
   'h \ul#list, _'       `# wrap list inside <ul id="list">` \
@@ -587,7 +585,7 @@ Otherwise, module's name is used as the variable name.
 __Example__
 
 ```sh
-echo test | ramda -rR --import c=chalk 'c.bold'
+echo test | ramda -rR --import chalk:c 'c.bold'
 **test**
 ```
 
@@ -674,19 +672,20 @@ echo 1 | ramda '(x) => x + 1'
 
 ## using packages from npm
 
-Packages installed to `$HOME/node_modules` or `$PWD/node_modules` can used
-with `require()`.
+**New in v5.0**: `ramda-cli` installs specified modules transparently from npm,
+manual installation is no longer required.
+
+With the `--import` parameter, any module from npm can be installed and imported
+into the pipeline context. Invocations with a particular module will be instant
+once installed.
 
 ```sh
-date -v +7d +%s | ramda -rR --js 'require("moment").unix' 'x => x.fromNow()'
+date -v +7d +%s | ramda -rR --js --import moment 'moment.unix' 'x => x.fromNow()'
 in 7 days
 ```
 
-Additionally, there is `-I, --import` which can be used as a shorthand for
-`require()`.
-
 ```sh
-echo test | ramda -rR --import c=chalk 'c.bold'
+echo test | ramda -rR --import chalk:c 'c.bold.red'
 **test**
 ```
 
