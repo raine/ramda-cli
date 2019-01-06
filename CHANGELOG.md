@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 5.0.0 - UNRELEASED
+
+- Changed: `--import` parameter changes:
+    - Installs referenced npm modules transparently as needed, no `npm
+      install` required from user.
+    - Syntax for defining an alias changed:
+      Instead of `--import R=ramda`, use `--import ramda:R`.
+
 ## 4.0.0 - 2019-01-02
 
 - Added: Interactive mode! Use with `--interactive`.
