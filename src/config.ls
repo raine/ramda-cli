@@ -2,6 +2,8 @@ require! path: Path
 require! 'is-there'
 require! './utils': {HOME}
 
+# TODO: move config file to ~/.config/ramda-cli directory, now that it exists
+# because of npm installing
 export BASE_PATH = Path.join HOME, \.config, \ramda-cli
 export get-existing-config-file = ->
     exts = <[ .js .ls ]>
