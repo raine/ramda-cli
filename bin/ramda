@@ -3,7 +3,7 @@
 if (process.argv.indexOf('-v') >= 0 ||
     process.argv.indexOf('-vv') >= 0 ||
     process.argv.indexOf('--verbose') >= 0) {
-  require('debug').enable('ramda-cli:*');
+  require('debug').enable("ramda-cli:*,npm-install-to");
 }
 
 require('debug')('ramda-cli:bin')('init');
