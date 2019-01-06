@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react'
 import { pure } from 'recompose'
 import classNames from 'classnames'
 import ansi2html from './ansi2html'
-import isSafari from './is-safari'
 import { FixedSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
