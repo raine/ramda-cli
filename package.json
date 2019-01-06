@@ -77,5 +77,10 @@
     "string-to-stream": "^1.1.1",
     "strip-ansi": "^5.0.0",
     "watchy": "^0.9.5"
-  }
+  },
+  "files": [
+    "lib/*",
+    "web-dist/*",
+    "bin/ramda"
+  ]
 }
