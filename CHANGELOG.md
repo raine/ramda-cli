@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 5.0.0 - UNRELEASED
+## 5.0.0 - 2019-01-06
 
 - Changed: `--import` parameter changes:
     - Installs referenced npm modules transparently as needed, no `npm
