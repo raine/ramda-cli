@@ -29,7 +29,7 @@ HELP =
           --[no-]headers   csv/tsv has a header row
           --csv-delimiter  custom csv delimiter character
           --js             use javascript instead of livescript
-          --import         import a module
+          --import         import a module from npm
       -C, --configure      edit config in $EDITOR
       -v, --verbose        print debugging information (use -vv for even more)
           --version        print version
@@ -44,7 +44,7 @@ HELP =
       curl -Ls http://bit.do/countries-json | ramda 'find where-eq code: \\FI'
       curl -Ls http://bit.do/countries-json | ramda --js 'filter(c => test(/land$/, c.name))'
       seq 10 | ramda --raw-input --slurp 'map parse-int' sum
-      npm install moment && date +%s | ramda -r --import m=moment 'm.unix'
+      date +%s | ramda -r --import moment:m 'm.unix'
 
 
     README: https://github.com/raine/ramda-cli
