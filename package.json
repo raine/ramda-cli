@@ -39,6 +39,7 @@
     "opn": "^5.4.0",
     "polka": "^0.5.1",
     "ramda": "0.26.1",
+    "runtime-npm-install": "^1.0.3",
     "serve-static": "^1.13.2",
     "split2": "^3.0.0",
     "stream-concat": "^0.3.0",

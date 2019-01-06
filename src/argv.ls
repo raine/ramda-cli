@@ -60,6 +60,14 @@ starts-with        = (str) -> (?index-of(str) is 0)
 wrap-function      = if-else (starts-with '->'), wrap-in-parens, identity
 wrap-number-lookup = if-else (.match /^.\d+$/), wrap-in-parens, identity
 
+parse-raw-import = (str) ->
+    [package-spec, alias] = str.split ':'
+    {package-spec, alias}
+
+parse-imports = (argv-import) ->
+    imports-raw-arr = if typeof argv-import == 'string' then [argv-import] else argv-import
+    imports-raw-arr.map parse-raw-import
+
 export parse = (argv) ->
     # HACKS:
     # - wrap '-> it' style lambdas in parens, minimist thinks they're options
@@ -69,7 +77,7 @@ export parse = (argv) ->
         string: <[ file input-type output-type json-path csv-delimiter ]>
         boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce headers interactive ]>
         alias: parse-aliases HELP
-        default: {+stdin, +headers, 'csv-delimiter': \,}
+        default: {+stdin, +headers, 'csv-delimiter': \, 'import': []}
 
     opts._ = opts.''; delete opts.''
 
@@ -86,7 +94,7 @@ export parse = (argv) ->
     if '-vv' in argv then opts.very-verbose = true
     if '-n'  in argv then opts.stdin = false
 
-    opts.import = typeof opts.import == \string and [opts.import] or opts.import
+    opts.import = parse-imports opts.import
 
     if opts.input-type  in <[ csv tsv ]> then opts.slurp   = true
     if opts.output-type in <[ csv tsv ]> then opts.unslurp = true

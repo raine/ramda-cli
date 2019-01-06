@@ -43,10 +43,11 @@ main = (process-argv, stdin, stdout, stderr) ->>
 
     if opts.interactive
         require! 'string-argv'
-        server = await require './server' .start log-error, stdin, process-argv, (new-stdin, input) ->
+        server = await require './server' .start log-error, stdin, process-argv, (new-stdin, input) ->>
             server.close!
+            # TODO: should catch here
             new-opts = argv.parse string-argv input, 'node', 'dummy.js'
-            try fun = compile-fun new-opts
+            try fun = await compile-fun new-opts
             catch {message} then return die "Error: #{message}"
             # something in the server is keeping the process open despite the
             # close(), hence the manual exit. seems to work.
@@ -66,8 +67,8 @@ main = (process-argv, stdin, stdout, stderr) ->>
 
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
-        try fun = compile-fun opts
-        catch {message} then return die "Error: #{message}"
+        try fun = await compile-fun opts
+        catch err then return die err
 
     process-input-stream die, opts, fun, stdin, stdout
 

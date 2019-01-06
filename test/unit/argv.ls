@@ -51,9 +51,21 @@ describe 'argv.parse' (,) ->
             parse '--no-stdin identity' .stdin `eq` false
 
     describe '--import', (,) ->
-        it 'is always an array' ->
-            parse '--import foo' .import `deep-eq` ['foo']
-            parse '--import foo --import bar' .import `deep-eq` ['foo', 'bar']
+        it 'parses simple import' ->
+            parse '--import treis' .import `deep-eq` [
+                { alias: undefined, package-spec: 'treis' }
+            ]
+
+        it 'parses multiple imports' ->
+            parse '--import treis --import taim' .import `deep-eq` [
+                { alias: undefined, package-spec: 'treis' }
+                { alias: undefined, package-spec: 'taim' }
+            ]
+
+        it 'parses alias' ->
+            parse '--import ramda:R' .import `deep-eq` [
+                { alias: 'R', package-spec: 'ramda' }
+            ]
 
     describe '-H, --[no-]headers', (,) ->
         it 'defaults to true' ->

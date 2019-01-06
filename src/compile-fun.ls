@@ -1,5 +1,5 @@
 require! {vm, path: Path, fs}
-require! <[ ./get-user-config ]>
+require! <[ ./get-user-config ./config ]>
 require! ramda: {apply, map, join, is-empty, split, tap, pipe, identity, reverse, from-pairs, path, reduce, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
 require! './utils': {is-browser}
@@ -39,14 +39,10 @@ pick-dot-paths = (paths, obj) -->
         {},
         (map (split '.'), paths)
 
-make-sandbox = (opts) ->
-    imports = opts.import or []
-        |> map split('=')
-        |> map ([alias, pkg]) ->
-            pkg = pkg or alias
-            debug "requiring #pkg", require.resolve pkg
-            [camelize(alias), require pkg]
-        |> from-pairs
+make-sandbox = (opts, imports) ->
+    imports-obj = imports
+      |> (.map -> [it.alias, it.exports])
+      |> from-pairs
 
     helpers =
         flat           : -> apply (require 'flat'), &
@@ -63,14 +59,23 @@ make-sandbox = (opts) ->
     helpers._then = helpers.then
     user-config = get-user-config!
 
-    {R, require, console, process} <<< R <<< user-config <<< helpers <<< imports
+    {
+        R,
+        require,
+        console,
+        process,
+        ...R,
+        ...user-config,
+        ...helpers,
+        ...imports-obj
+    }
 
 compile-livescript = (code) ->
     require! livescript
     livescript.compile code, {+bare, -header}
 
-evaluate = (opts, code) -->
-    vm.run-in-new-context code, make-sandbox opts
+evaluate = (opts, sandbox, code) ->
+    vm.run-in-new-context code, sandbox
 
 select-compiler = (opts) ->
     | opts.js   => identity
@@ -79,19 +84,40 @@ select-compiler = (opts) ->
 compile-with-opts = (code, opts) ->
     code |> select-compiler opts
 
-compile-and-eval = (code, opts) ->
+compile-and-eval = (code, opts, imports) ->
+    sandbox = make-sandbox opts, imports
     compile-with-opts code, opts
     |> tap -> debug "#it", 'compiled code'
-    |> evaluate opts
+    |> evaluate opts, sandbox, _
 
-compile-fun = (opts) ->
+get-alias-for-installed = (opts-import, installed) ->
+  imported = opts-import.find -> it.package-spec is installed.spec
+  imported.alias or camelize installed.name
+
+npm-install = (opts) ->>
+    if opts.import.length
+        require! 'runtime-npm-install': {npm-install-async}
+        npm-install-result = await npm-install-async do
+            opts.import.map((.packageSpec))
+            config.BASE_PATH
+        npm-install-result
+            |> map ->
+                name: it.name
+                version: it.json.version
+                alias: get-alias-for-installed opts.import, it
+                exports: require it.path
+    else []
+
+compile-fun = (opts) ->>
+    imports = await npm-install opts
+    imports.for-each ->
+        debug "#{it.name}@#{it.version} installed as #{it.alias}"
     if is-empty opts._ then opts._ = <[ identity ]>
     fns = (if opts.transduce then reverse else identity) opts._
     piped-inline-functions = construct-pipe switch
         | opts.js   => fns
         | otherwise => map fix-match, fns
-
     debug (inspect piped-inline-functions), 'input code'
-    compile-and-eval piped-inline-functions, opts
+    compile-and-eval piped-inline-functions, opts, imports
 
 module.exports = compile-fun

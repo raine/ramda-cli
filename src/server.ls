@@ -48,14 +48,14 @@ export start = (log-error, stdin, process-argv, on-complete) ->>
                 else compression.filter(req, res)
         }
         .use serve-static (Path.join __dirname, '..', 'web-dist'), {'index': ['index.html']}
-        .post '/eval', body-parser.text!, (req, res) ->
+        .post '/eval', body-parser.text!, (req, res) ->>
             res.set-header 'Content-Type', 'text/plain'
             input := req.body
             opts = argv.parse string-argv input, 'node', 'dummy.js'
             on-error = (err) ->
                 res.write-head 400
                 res.end err.stack
-            try fun = compile-fun opts
+            try fun = await compile-fun opts
             catch err then return on-error err
             new-stdin =
                 # If --slurp is used, process-input-stream will wait for the
@@ -93,7 +93,7 @@ export start = (log-error, stdin, process-argv, on-complete) ->>
         .listen port, '127.0.0.1', (err) ->
             debug "listening at port #{app.server.address().port}"
             argv = process-argv .slice 2
-                |> without ["--interactive"]
+                |> without ["--interactive", "-I"]
             qs = querystring.stringify input: argv-to-string argv
             opn "http://localhost:#{app.server.address().port}?#qs", { wait: false }
     return app.server
