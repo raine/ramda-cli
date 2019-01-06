@@ -68,7 +68,7 @@ main = (process-argv, stdin, stdout, stderr) ->>
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
         try fun = await compile-fun opts
-        catch err then return die err
+        catch {message} then return die "Error: #{message}"
 
     process-input-stream die, opts, fun, stdin, stdout
 
