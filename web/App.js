@@ -90,11 +90,12 @@ class App extends React.Component {
     document.title = `ramda ${input !== '' ? input : 'identity'}`
   }
 
-  evalInput() {
+  evalInput(fromRunKeyDown) {
     let { input } = this.state
     if (input == null) input = 'identity'
     input = input.trim()
-    if (this.prevInput === input) return
+    // If evalInput is triggered by manual run, bypass prev check
+    if (!fromRunKeyDown && this.prevInput === input) return
 
     this.worker.postMessage({
       event: 'EVAL_INPUT',
@@ -144,7 +145,7 @@ class App extends React.Component {
             this.onInputChange(value)
           }}
           placeholder="identity"
-          onRunKeyDown={this.evalInput}
+          onRunKeyDown={() => this.evalInput(true)}
         />
         <Options
           options={this.state.options}
