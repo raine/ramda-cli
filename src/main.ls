@@ -8,14 +8,6 @@ require! util: {inspect}
 require! './utils': {HOME, lines, words, take-lines}
 require! './stream': {process-input-stream}
 debug = require 'debug' <| 'ramda-cli:main'
-Module = require 'module' .Module
-
-# caveat: require will still prioritize ramda-cli's own node_modules
-process.env.'NODE_PATH' = join ':', [
-    Path.join(process.cwd(), 'node_modules')
-    Path.join(HOME, 'node_modules') ]
-
-Module._init-paths!
 
 main = (process-argv, stdin, stdout, stderr) ->>
     stdout.on \error ->
