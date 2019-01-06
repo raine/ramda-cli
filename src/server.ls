@@ -26,7 +26,7 @@ clear-timer = ->
     clear-timeout timer
     timer := null
 
-export start = (log-error, stdin, process-argv, on-complete) ->>
+export start = (log-error, stdin, stderr, process-argv, on-complete) ->>
     stdin-finished = false
     tmp-file-path = tempfile!
     stdin-tmp-file = fs.create-write-stream tmp-file-path, flags: 'w'
@@ -55,7 +55,7 @@ export start = (log-error, stdin, process-argv, on-complete) ->>
             on-error = (err) ->
                 res.write-head 400
                 res.end err.stack
-            try fun = await compile-fun opts
+            try fun = await compile-fun opts, stderr
             catch err then return on-error err
             new-stdin =
                 # If --slurp is used, process-input-stream will wait for the
