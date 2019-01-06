@@ -171,19 +171,25 @@ __Output__
 > [`where-eq`](http://ramdajs.com/docs/#whereEq),
 > [`map`](http://ramdajs.com/docs/#map)
 
-##### List versions of npm module with dates formatted with [`node-timeago`](https://github.com/ecto/node-timeago)
-
-It looks for `ecto/node-timeago` installed to `$HOME/node_modules`.
+##### List versions of a npm module with ISO times formatted using a module from npm
 
 ```sh
-npm view ramda --json | ramda --import timeago \
-  'prop \time' 'to-pairs' \
-  'map -> version: it.0, time: timeago(it.1)' \
-  -o tsv | column -t -s $'\t'
+npm view ramda --json | ramda --import time-ago:ta \
+  'prop "time"' \
+  'to-pairs' \
+  'map -> version: it.0, time: ta.ago(it.1)' \
+  'reverse' \
+  -o table --compact
 ...
-0.12.0    2 months ago
-0.13.0    2 months ago
-0.14.0    12 days ago
+┌───────────────┬──────────────┐
+│ version       │ time         │
+├───────────────┼──────────────┤
+│ 0.26.1        │ 1 month ago  │
+│ 0.26.0        │ 2 months ago │
+│ 0.25.0        │ 1 year ago   │
+│ 0.24.1-es.rc3 │ 1 year ago   │
+│ 0.24.1-es.rc2 │ 1 year ago   │
+...
 ```
 
 ##### Search twitter for people who tweeted about ramda and pretty print [the result](https://raw.githubusercontent.com/raine/ramda-cli/media/twarc-ramda.png)
@@ -330,7 +336,7 @@ Usage: ramda [options] [function] ...
       --[no-]headers   csv/tsv has a header row
       --csv-delimiter  custom csv delimiter character
       --js             use javascript instead of livescript
-      --import         import a module
+      --import         import a module from npm
   -C, --configure      edit config in $EDITOR
   -v, --verbose        print debugging information (use -vv for even more)
       --version        print version
@@ -571,16 +577,14 @@ echo '[1,2,3]' | ramda --js 'map(x => Math.pow(x, 2))'
 ]
 ```
 
-#### `--import`
+#### `--import <package>`
 
-Make modules installed with `npm install` accessible in positional code
-arguments.
+Install given package from npm, and make it available in the pipeline.
 
-Modules are looked for in `$HOME/node_modules` and current directory's
-`node_modules`.
+Symbol `:` combined with a name can be used to declare the variable name module
+should appear as. Otherwise, it is imported as camelcased name of the module.
 
-Symbol `=` can be used to declare the variable module should appear as.
-Otherwise, module's name is used as the variable name.
+Can be used multiple times to import more than one module.
 
 __Example__
 
@@ -679,15 +683,7 @@ With the `--import` parameter, any module from npm can be installed and importe
 into the pipeline context. Invocations with a particular module will be instant
 once installed.
 
-```sh
-date -v +7d +%s | ramda -rR --js --import moment 'moment.unix' 'x => x.fromNow()'
-in 7 days
-```
-
-```sh
-echo test | ramda -rR --import chalk:c 'c.bold.red'
-**test**
-```
+![](https://raw.githubusercontent.com/raine/ramda-cli/media/import.png)
 
 ## promises
 
@@ -724,6 +720,12 @@ To debug individual functions in the pipeline, you can use something like [`trei
 
 ```sh
 echo 1 | ramda --import treis 'treis(add(1))'
+```
+
+```
+f1 a: 1
+f1 => 2
+2
 ```
 
 ## livescript?
