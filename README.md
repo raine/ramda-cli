@@ -213,7 +213,10 @@ graphite -t "summarize(stats_counts.status_codes.*, '1min', 'sum', false)" -f '-
     'sort-by prop \target' -o table
 ```
 
-[![graphite-http-codes](https://raw.githubusercontent.com/raine/ramda-cli/media/graphite-http-codes-thumb.png)](https://raw.githubusercontent.com/raine/ramda-cli/media/graphite-http-codes.png)
+
+<a href="https://raw.githubusercontent.com/raine/ramda-cli/media/graphite-http-codes.png">
+<img width="256" src="https://raw.githubusercontent.com/raine/ramda-cli/media/graphite-http-codes_thumb.png"/>
+</a>
 
 > Ramda functions used:
 > [`evolve`](http://ramdajs.com/docs/#evolve),
@@ -629,7 +632,7 @@ All of [Ramda's functions][ramda-docs] are available, and also:
 for example:
 
 ```sh
-  curl api | ramda 'tap (res) -> if res.error then console.error(res); process.exit(1)'
+curl api | ramda 'tap (res) -> if res.error then console.error(res); process.exit(1)'
 ```
 
 An alternative is to use `Maybe` type.
@@ -683,7 +686,7 @@ With the `--import` parameter, any module from npm can be installed and importe
 into the pipeline context. Invocations with a particular module will be instant
 once installed.
 
-![](https://raw.githubusercontent.com/raine/ramda-cli/media/import.png)
+<img src="https://raw.githubusercontent.com/raine/ramda-cli/media/import.png?1" width="874" height="443">
 
 ## promises
 
