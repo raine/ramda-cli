@@ -40,6 +40,7 @@ manipulation in command-line environment.
 - [Configuration](#configuration)
 - [Using packages from NPM](#using-packages-from-npm)
 - [Promises](#promises)
+- [Debugging](#debugging)
 - [LiveScript?](#livescript)
 
 ##### Resources
