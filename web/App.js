@@ -43,6 +43,7 @@ class App extends React.Component {
       lines: [],
       opts: {},
       error: false,
+      loading: false,
       options: JSON.parse(cookies.get(COOKIE_NAME)) || DEFAULT_OPTIONS
     }
     window.addEventListener('blur', this.setDocumentTitle, false)
@@ -75,6 +76,10 @@ class App extends React.Component {
         opts,
         error
       }))
+
+      setTimeout(() => {
+        this.setState({ loading: false })
+      }, 200)
     }
   }
 
@@ -103,6 +108,7 @@ class App extends React.Component {
     })
 
     this.prevInput = input
+    this.setState({ loading: true })
   }
 
   resumeOrPauseStream() {
@@ -150,6 +156,7 @@ class App extends React.Component {
         <Options
           options={this.state.options}
           onChange={this.onOptionsChange.bind(this)}
+          loading={this.state.loading}
         />
         <Output
           ref={this.outputRef}
