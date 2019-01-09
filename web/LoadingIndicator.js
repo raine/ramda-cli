@@ -11,20 +11,22 @@ class LoadingIndicator extends Component {
     return (
       <CSSTransition
         in={this.props.show}
-        timeout={1000}
+        timeout={{
+          enter: 250,
+          exit: 500
+        }}
         enter
         appear
-        classNames="hello"
-        onEnter={() => {
-          console.log('lol')
-          
+        classNames={{
+          enter: style.enter,
+          enterDone: style.enterDone,
+          exit: style.exit,
+          exitDone: style.exitDone
         }}
       >
-        <div>
-          <svg className={style.loadingIndicator}>
-            <circle cx="0.5em" cy="0.5em" r="0.5em" />
-          </svg>
-        </div>
+        <svg className={style.loadingIndicator}>
+          <circle cx="0.5em" cy="0.5em" r="0.5em" />
+        </svg>
       </CSSTransition>
     )
   }

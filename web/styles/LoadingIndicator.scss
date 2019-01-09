@@ -1,25 +1,56 @@
 .loading-indicator {
-  margin-left: 20px;
   width: 1em;
   height: 1em;
   display: inline-block;
   background-color: transparent;
 
   circle {
+    opacity: 0;
     fill: #3f525a;
     stroke-width: 0;
-    animation: blink-1 1s linear infinite both;
+    // animation: blink-1 1s linear infinite both;
+  }
+
+  &.exit {
+    circle {
+      animation: fade-out 0.5s ease-in;
+    }
+  }
+
+  &.enter-done {
+    circle {
+      opacity: 1;
+      animation: blink-1 0.3s linear infinite;
+    }
+  }
+
+  &.enter {
+    circle {
+      animation: fade-in 0.25s linear;
+    }
+  }
+}
+
+@keyframes fade-out {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
 @keyframes blink-1 {
-  0%,
-  50%,
-  100% {
-    opacity: 0;
+  50% {
+    opacity: 0.25;
   }
-  25%,
-  75% {
+  0%,
+  100% {
     fill: lighten(#3f525a, 5%);
     opacity: 1;
   }

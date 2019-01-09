@@ -1,11 +1,14 @@
 .options {
   background-color: #1b2327;
   color: #b9c6c6;
-  padding: 4px 0px 7px 14px;
+  padding: 5px 14px 5px 14px;
   box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
 }
 
 .checkbox {
+  flex-grow: 1;
   input[type='checkbox'] {
     display: none;
   }
