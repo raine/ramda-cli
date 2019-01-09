@@ -74,8 +74,7 @@ class App extends React.Component {
       this.setState((state, props) => ({
         lines: decode(this.output).split('\n'),
         opts,
-        error,
-        // loading: false
+        error
       }))
 
       setTimeout(() => {

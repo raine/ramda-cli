@@ -1,39 +1,32 @@
 .loading-indicator {
-  width: 1em;
-  height: 1em;
   display: inline-block;
-  background-color: transparent;
-
-  circle {
-    opacity: 0;
-    fill: #3f525a;
-    stroke-width: 0;
-    // animation: blink-1 1s linear infinite both;
-  }
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  opacity: 0;
+  background-color: #3f525a;
 
   &.exit {
-    circle {
-      animation: fade-out 0.5s ease-in;
-    }
+    animation: fade-out 0.5s ease-in;
   }
 
   &.enter-done {
-    circle {
-      opacity: 1;
-      animation: blink-1 0.3s linear infinite;
-    }
+    opacity: 1;
+    animation: blink-1 0.5s linear infinite, scale-1 1s ease-in-out infinite;
   }
 
   &.enter {
-    circle {
-      animation: fade-in 0.25s linear;
-    }
+    animation: fade-in 0.25s linear;
   }
 }
 
 @keyframes fade-out {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes fade-in {
@@ -51,7 +44,17 @@
   }
   0%,
   100% {
-    fill: lighten(#3f525a, 5%);
+    fill: lighten(#3f525a, 10%);
     opacity: 1;
+  }
+}
+
+@keyframes scale-1 {
+  50% {
+    transform: scale(0.9);
+  }
+  0%,
+  100% {
+    transform: scale(1);
   }
 }

@@ -24,9 +24,7 @@ class LoadingIndicator extends Component {
           exitDone: style.exitDone
         }}
       >
-        <svg className={style.loadingIndicator}>
-          <circle cx="0.5em" cy="0.5em" r="0.5em" />
-        </svg>
+        <div className={style.loadingIndicator}/>
       </CSSTransition>
     )
   }
