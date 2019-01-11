@@ -30,7 +30,10 @@ class Options extends Component {
           <label htmlFor="autorun">autorun</label>
           <HelpBall text="Use ⌘/Ctrl+Enter to run without autorun" />
         </div>
-        <LoadingIndicator show={this.props.loading} />
+        <LoadingIndicator
+          show={this.props.loading}
+          text={this.props.loadingText}
+        />
       </div>
     )
   }

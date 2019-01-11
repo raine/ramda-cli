@@ -2,11 +2,12 @@ import React from 'react'
 import { render } from 'react-dom'
 import querystring from 'querystring'
 import App from './App'
+import initDebug from 'debug'
 
 import './styles/reboot.css'
 import './styles/main.css'
 
-localStorage.debug = 'ramda-cli:*'
+initDebug.enable('ramda-cli:*')
 
 const doRender = (props) =>
   render(<App {...props} />, document.getElementById('root'))

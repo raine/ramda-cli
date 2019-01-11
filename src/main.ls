@@ -9,6 +9,12 @@ require! './utils': {HOME, lines, words, take-lines}
 require! './stream': {process-input-stream}
 debug = require 'debug' <| 'ramda-cli:main'
 
+install-imports = (opts, stderr) ->>
+    if opts.import.length
+        require! './npm-install': {npm-install}
+        pkg-specs = opts.import.map((.packageSpec))
+        await npm-install pkg-specs, opts.import, stderr
+
 main = (process-argv, stdin, stdout, stderr) ->>
     stdout.on \error ->
         if it.code is 'EPIPE' then process.exit 0
@@ -37,9 +43,10 @@ main = (process-argv, stdin, stdout, stderr) ->>
         require! 'string-argv'
         server = await require './server' .start log-error, stdin, stderr, process-argv, (new-stdin, input) ->>
             server.close!
-            # TODO: should catch here
-            new-opts = argv.parse string-argv input, 'node', 'dummy.js'
-            try fun = await compile-fun new-opts, stderr
+            try
+                new-opts = argv.parse string-argv input, 'node', 'dummy.js'
+                imports = await install-imports opts, stderr
+                fun = await compile-fun new-opts, imports, stderr
             catch {message} then return die "Error: #{message}"
             # something in the server is keeping the process open despite the
             # close(), hence the manual exit. seems to work.
@@ -59,8 +66,10 @@ main = (process-argv, stdin, stdout, stderr) ->>
 
         if fun.opts then opts <<< argv.parse [,,] ++ words fun.opts
     else
-        try fun = await compile-fun opts, stderr
-        catch {message} then return die "Error: #{message}"
+        try
+            imports = await install-imports opts, stderr
+            fun = await compile-fun opts, imports, stderr
+        catch err then return die "Error: #{err.message}"
 
     process-input-stream die, opts, fun, stdin, stdout
 

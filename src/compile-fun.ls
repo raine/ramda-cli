@@ -3,8 +3,6 @@ require! <[ ./get-user-config ./config ]>
 require! ramda: {apply, map, join, is-empty, split, tap, pipe, identity, reverse, from-pairs, path, reduce, assoc-path, adjust, to-pairs}: R
 require! util: {inspect}
 require! './utils': {is-browser}
-require! camelize
-require! 'term-color': {gray}
 
 debug = require 'debug' <| 'ramda-cli:compile-fun'
 debug.enabled = true if is-browser!
@@ -91,31 +89,7 @@ compile-and-eval = (code, opts, imports) ->
     |> tap -> debug "#it", 'compiled code'
     |> evaluate opts, sandbox, _
 
-get-alias-for-installed = (opts-import, installed) ->
-  imported = opts-import.find -> it.package-spec is installed.spec
-  imported.alias or camelize installed.name
-
-npm-install = (opts, stderr) ->>
-    if opts.import.length
-        require! 'runtime-npm-install': {npm-install-async}
-        npm-install-result = await npm-install-async do
-            opts.import.map((.packageSpec))
-            config.BASE_PATH
-
-        if npm-install-result.npm-output
-            stderr.write gray(npm-install-result.npm-output) + '\n'
-
-        npm-install-result.packages.map ->
-            name: it.name
-            version: it.json.version
-            alias: get-alias-for-installed opts.import, it
-            exports: require it.path
-    else []
-
-compile-fun = (opts, stderr) ->>
-    imports = await npm-install opts, stderr
-    imports.for-each ->
-        debug "#{it.name}@#{it.version} installed as #{it.alias}"
+compile-fun = (opts, imports = [], stderr) ->>
     if is-empty opts._ then opts._ = <[ identity ]>
     fns = (if opts.transduce then reverse else identity) opts._
     piped-inline-functions = construct-pipe switch

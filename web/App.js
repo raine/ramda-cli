@@ -23,8 +23,9 @@ const DEFAULT_OPTIONS = {
 class App extends React.Component {
   constructor(props) {
     super(props)
+    this.onWorkerMessage = this.onWorkerMessage.bind(this)
     this.worker = new Worker('./worker.js')
-    this.worker.addEventListener('message', this.onWorkerMessage.bind(this))
+    this.worker.addEventListener('message', this.onWorkerMessage)
     this.worker.addEventListener('error', console.error)
     this.outputRef = React.createRef()
     this.onInputChange = this.onInputChange.bind(this)
@@ -44,10 +45,15 @@ class App extends React.Component {
       opts: {},
       error: false,
       loading: false,
+      loadingText: null,
       options: JSON.parse(cookies.get(COOKIE_NAME)) || DEFAULT_OPTIONS
     }
     window.addEventListener('blur', this.setDocumentTitle, false)
-    this.evalInput()
+
+    this.onEventSourceMessage = this.onEventSourceMessage.bind(this)
+    this.eventSource = new EventSource('/sse')
+    this.eventSource.addEventListener('message', this.onEventSourceMessage)
+    this.evalInput(false, true)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -56,7 +62,23 @@ class App extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('blur', this.setDocumentTitle)
+    this.eventSource.removeEventListener('message', this.onEventSourceMessage)
+    this.eventSource.close()
+    this.worker.removeEventListener('message', this.onWorkerMessage)
     this.worker.terminate()
+  }
+
+  onEventSourceMessage({ data: rawData }) {
+    const data = JSON.parse(rawData)
+    const { event } = data
+    switch (event) {
+      case 'NPM_INSTALL_START':
+        this.setState({ loadingText: 'installing modules from npm...' })
+        break
+      case 'NPM_INSTALL_FINISH':
+        this.setState({ loadingText: null })
+        break
+    }
   }
 
   onWorkerMessage({ data }) {
@@ -95,7 +117,7 @@ class App extends React.Component {
     document.title = `ramda ${input !== '' ? input : 'identity'}`
   }
 
-  evalInput(fromRunKeyDown) {
+  evalInput(fromRunKeyDown, first) {
     let { input } = this.state
     if (input == null) input = 'identity'
     input = input.trim()
@@ -108,7 +130,8 @@ class App extends React.Component {
     })
 
     this.prevInput = input
-    this.setState({ loading: true })
+    if (first) this.state.loading = true
+    else this.setState({ loading: true })
   }
 
   resumeOrPauseStream() {
@@ -157,6 +180,7 @@ class App extends React.Component {
           options={this.state.options}
           onChange={this.onOptionsChange.bind(this)}
           loading={this.state.loading}
+          loadingText={this.state.loadingText}
         />
         <Output
           ref={this.outputRef}

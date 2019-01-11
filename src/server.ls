@@ -11,6 +11,7 @@ require! 'tempfile'
 require! 'compression'
 require! 'string-argv'
 require! 'get-port'
+require! 'sse': SSE
 require! <[ ./argv ./compile-fun ./argv-to-string ]>
 require! './stream': {process-input-stream}
 debug = require 'debug' <| 'ramda-cli:server'
@@ -32,6 +33,10 @@ export start = (log-error, stdin, stderr, process-argv, on-complete) ->>
     stdin-tmp-file = fs.create-write-stream tmp-file-path, flags: 'w'
     finished stdin, (err) -> stdin-finished := true
     input = null
+    sse-client = null
+    sse-send-json = (data) ->
+        if sse-client then sse-client.send JSON.stringify data
+
     stdin.pipe stdin-tmp-file
     temp-file-stream = -> fs.create-read-stream tmp-file-path, flags: 'r'
     on-close = ->
@@ -55,7 +60,16 @@ export start = (log-error, stdin, stderr, process-argv, on-complete) ->>
             on-error = (err) ->
                 res.write-head 400
                 res.end err.stack
-            try fun = await compile-fun opts, stderr
+
+            try
+                if opts.import.length
+                    require! './npm-install': {get-uninstalled, npm-install}
+                    pkg-specs = opts.import.map((.packageSpec))
+                    to-be-installed = await get-uninstalled pkg-specs
+                    if to-be-installed.length then sse-send-json { event: 'NPM_INSTALL_START' }
+                    imports = await npm-install pkg-specs, opts.import, stderr
+                    if to-be-installed.length then sse-send-json { event: 'NPM_INSTALL_FINISH' }
+                fun = await compile-fun opts, imports, stderr
             catch err then return on-error err
             new-stdin =
                 # If --slurp is used, process-input-stream will wait for the
@@ -91,9 +105,12 @@ export start = (log-error, stdin, stderr, process-argv, on-complete) ->>
             res.write-head 200
             res.end 'OK'
         .listen port, '127.0.0.1', (err) ->
+            sse = new SSE app.server
+            sse.on 'connection', (client) -> sse-client := client
             debug "listening at port #{app.server.address().port}"
             argv = process-argv .slice 2
                 |> without ["--interactive", "-I"]
             qs = querystring.stringify input: argv-to-string argv
             opn "http://localhost:#{app.server.address().port}?#qs", { wait: false }
+
     return app.server

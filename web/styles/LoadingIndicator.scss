@@ -1,22 +1,44 @@
 .loading-indicator {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border-radius: 8px;
-  opacity: 0;
-  background-color: #3f525a;
+  display: flex;
+  align-items: center;
 
-  &.exit {
-    animation: fade-out 0.5s ease-in;
+  .text {
+    display: inline-flex;
+    margin-right: 10px;
+    color: hsl(200, 21%, 64%);
+    line-height: 1rem;
+    text-shadow: 1px 1px rgba(0, 0, 0, 1);
+    font-size: 14px;
   }
 
-  &.enter-done {
+  .ball {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    opacity: 0;
+    background-color: lighten(#3f525a, 10%);
+  }
+
+  &.exit,
+  &.exit-done {
+    .ball,
+    .text {
+      animation: fade-out 0.5s ease-in 1;
+      animation-fill-mode: forwards;
+    }
+  }
+
+  &.enter-done .ball {
     opacity: 1;
     animation: blink-1 0.5s linear infinite, scale-1 1s ease-in-out infinite;
   }
 
   &.enter {
-    animation: fade-in 0.25s linear;
+    .ball,
+    .text {
+      animation: fade-in 0.25s linear;
+    }
   }
 }
 
@@ -44,7 +66,7 @@
   }
   0%,
   100% {
-    fill: lighten(#3f525a, 10%);
+    background-color: lighten(#3f525a, 10%);
     opacity: 1;
   }
 }
