@@ -6,8 +6,8 @@ interactively in browser.
 ```sh
 $ npm install -g ramda-cli
 $ curl -Ls https://bit.ly/gist-people-json | ramda \
-  'filter (p) -> p.city is /Port/ or p.name is /^Dr\./' \
-  'project <[ name city mac ]>' \
+  'filter (p) -> p.city?.match /Port/ or p.name.match /^Dr\./' \
+  'map pick ["name", "city", "mac"]' \
   'take 3' \
   -o table --compact
 ┌──────────────────┬─────────────────┬───────────────────┐
@@ -65,12 +65,33 @@ The idea is to [compose][composition] functions into a pipeline of operations
 that when applied to given data, produces the desired output.
 
 By default, the function is applied to a stream of JSON data read from stdin,
-and the output data is sent to standard out as stringified JSON.
+and the output data is sent to standard out as JSON.
 
 Technically, `function` should be a snippet of LiveScript (or JavaScript with
 `--js`) that evaluates into a function. If multiple `function` arguments are
 supplied as positional arguments, they are composed into a pipeline in order
-from left to right (see [`R.pipe`](http://ramdajs.com/docs/#pipe)).
+from left to right.
+
+For example, the command
+
+```sh
+echo '[1,2,3]' | ramda 'filter (> 1)' 'map multiply 2' 'product'
+24
+```
+
+is roughly equivalent in the following operation:
+
+```js
+R.pipe(
+  JSON.parse,
+  R.filter(x => x > 1),
+  R.map(R.multiply(2)),
+  R.product,
+  JSON.stringify
+)('[1,2,3]') // "24"
+```
+
+(see [`R.pipe`](http://ramdajs.com/docs/#pipe)).
 
 All Ramda's functions are available directly in the context. See
 http://ramdajs.com/docs/ for a full list and [Evaluation
