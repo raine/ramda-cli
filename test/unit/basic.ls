@@ -253,6 +253,15 @@ describe '--unslurp' (,) ->
         output `strip-eq` expected
         done!
 
+describe '--input-type json' (,) ->
+    it 'parses number without trailing newline at end of input', (done) ->
+        args  = <[ identity --input-type json ]>
+        input = '1\n2'
+        expected = '1\n2\n'
+        output <-! run-main args, input
+        output `eq` expected
+        done!
+
 describe '--input-type raw' (,) ->
     it 'reads raw strings through stdin' (done) ->
         args     = <[ -i raw identity ]>

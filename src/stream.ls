@@ -103,6 +103,17 @@ opts-to-input-parser-stream = (opts) ->
 
 make-stdin-parser = (on-error, opts, stdin) ->
     input-parser = opts-to-input-parser-stream opts
+    if opts.input-type is 'json'
+        # Fixes this bug:
+        # % echo -n '1\n2' | ramda
+        # 1
+        #
+        # A number without newline after at end of input is omitted because
+        # jsonparse library used by JSONStream is waiting for newline to
+        # recognize accumulated numbers as a token. This seems like something
+        # that should be fixed in JSONStream but the simple fix here is to
+        # always write a newline when input type is JSON.
+        stdin.on 'end', -> input-parser.write '\n'
     s = stdin
         .pipe debug-stream debug, opts, \stdin
         .pipe input-parser .on \error -> on-error it
