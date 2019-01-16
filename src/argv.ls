@@ -2,8 +2,8 @@ require! minimist
 require! camelize
 require! ramda: {map, split, match: match-str, pipe, replace, from-pairs, if-else, identity}
 
-OUTPUT_TYPES     = <[ pretty raw csv tsv table ]>
-INPUT_TYPES      = <[ raw csv tsv ]>
+OUTPUT_TYPES     = <[ json pretty raw csv tsv table ]>
+INPUT_TYPES      = <[ json raw csv tsv ]>
 format-enum-list = (.join ', ') >> ('one of: ' +)
 
 HELP =
@@ -77,7 +77,14 @@ export parse = (argv) ->
         string: <[ file input-type output-type json-path csv-delimiter ]>
         boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce headers interactive ]>
         alias: parse-aliases HELP
-        default: {+stdin, +headers, 'csv-delimiter': \, 'import': []}
+        default: {
+            +stdin,
+            +headers,
+            'csv-delimiter': \,
+            'import': [],
+            'input-type': 'json'
+            'output-type': 'json'
+        }
 
     opts._ = opts.''; delete opts.''
 
