@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 5.1.1 - 2019-01-16
+
+- Changed: Fix a bug where number without a trailing newline would not get
+           parsed in JSON input.
+
 ## 5.0.0 - 2019-01-06
 
 - Changed: `--import` parameter changes:
