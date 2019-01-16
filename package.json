@@ -1,6 +1,6 @@
 {
   "name": "ramda-cli",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "A command-line tool for processing JSON with Ramda and LiveScript",
   "repository": "raine/ramda-cli",
   "keywords": [
