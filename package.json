@@ -33,6 +33,7 @@
     "fast-csv": "^2.4.1",
     "flat": "^4.1.0",
     "get-port": "^4.1.0",
+    "hook-stream": "^2.1.2",
     "is-there": "^4.4.3",
     "livescript": "^1.6.0",
     "minimist": "^1.2.0",

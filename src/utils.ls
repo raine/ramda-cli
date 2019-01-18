@@ -1,4 +1,4 @@
-require! ramda: {split, join, take}: R
+require! ramda: {split, join, take, map}: R
 
 export lines   = split '\n'
 export words   = split ' '
@@ -15,6 +15,9 @@ export is-browser = ->
 
 export take-lines = (n, str) -->
     lines str |> take n |> unlines
+
+export map-lines = (fn, str) -->
+    lines str |> map fn |> unlines
 
 export remove-extra-newlines = (str) ->
     if /\n$/ == str then str.replace /\n*$/, '\n' else str

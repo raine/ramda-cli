@@ -1,6 +1,7 @@
 require! 'runtime-npm-install': {npm-install-async, get-pkgs-to-be-installed}
 require! <[ ./config ]>
 require! 'term-color': {gray}
+require! './utils': {map-lines}
 require! camelize
 debug = require 'debug' <| 'ramda-cli:npm-install'
 
@@ -17,7 +18,7 @@ npm-install = (packages, opts-import, stderr) ->>
         config.BASE_PATH
 
     if npm-install-result.npm-output
-        stderr.write gray(npm-install-result.npm-output) + '\n'
+        stderr.write (map-lines gray, (npm-install-result.npm-output)) + '\n'
 
     imports = npm-install-result.packages.map ->
         name: it.name

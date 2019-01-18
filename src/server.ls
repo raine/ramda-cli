@@ -14,6 +14,9 @@ require! 'get-port'
 require! 'sse': SSE
 require! <[ ./argv ./compile-fun ./argv-to-string ]>
 require! './stream': {process-input-stream}
+require! './utils': {map-lines}
+require! 'hook-stream'
+require! 'term-color': {red}
 debug = require 'debug' <| 'ramda-cli:server'
 
 TIMEOUT = 1000
@@ -55,11 +58,15 @@ export start = (stdin, stderr, process-argv, on-complete) ->>
         .use serve-static (Path.join __dirname, '..', 'web-dist'), {'index': ['index.html']}
         .post '/eval', body-parser.text!, (req, res) ->>
             res.set-header 'Content-Type', 'text/plain'
+            res.status-code = 200
             input := req.body
             opts = argv.parse string-argv input, 'node', 'dummy.js'
             on-error = (err) ->
-                res.write-head 400
-                res.end err.stack
+                unless res.headers-sent then res.write-head 400
+                res.end map-lines red, err.stack
+
+            [unhook, readable-stderr] = hook-stream stderr
+            readable-stderr.pipe res, {-end}
 
             try
                 if opts.import.length
@@ -85,12 +92,15 @@ export start = (stdin, stderr, process-argv, on-complete) ->>
                     combined = new StreamConcat([ read-stream, stdin ])
                     req.on 'close', -> combined.destroy!
                     combined
+
             process-input-stream do
                 on-error
                 opts
                 fun
                 new-stdin
                 res
+            .on 'end', unhook
+
         # Called on window's unload event, i.e. tab close or refresh
         # Used to determine when tab is closed
         .post '/unload', (req, res) ->

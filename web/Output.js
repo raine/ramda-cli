@@ -7,8 +7,6 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 
 import style from './styles/Output.scss'
 
-const hasAnsiColors = (outputType) => ['pretty', 'table'].includes(outputType)
-
 const AnsiPre = pure(({ str, style }) => (
   <pre
     style={style}
@@ -24,11 +22,7 @@ class OutputRow extends PureComponent {
   render() {
     const { data, index, style: rwStyle, outputType } = this.props
     const content = data[index]
-    return hasAnsiColors(outputType) ? (
-      <AnsiPre style={rwStyle} str={content} />
-    ) : (
-      <pre style={rwStyle}>{content}</pre>
-    )
+    return <AnsiPre style={rwStyle} str={content} />
   }
 }
 
