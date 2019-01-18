@@ -41,7 +41,7 @@ main = (process-argv, stdin, stdout, stderr) ->>
 
     if opts.interactive
         require! 'string-argv'
-        server = await require './server' .start log-error, stdin, stderr, process-argv, (new-stdin, input) ->>
+        server = await require './server' .start stdin, stderr, process-argv, (new-stdin, input) ->>
             server.close!
             try
                 new-opts = argv.parse string-argv input, 'node', 'dummy.js'

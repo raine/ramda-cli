@@ -27,7 +27,7 @@ clear-timer = ->
     clear-timeout timer
     timer := null
 
-export start = (log-error, stdin, stderr, process-argv, on-complete) ->>
+export start = (stdin, stderr, process-argv, on-complete) ->>
     stdin-finished = false
     tmp-file-path = tempfile!
     stdin-tmp-file = fs.create-write-stream tmp-file-path, flags: 'w'
