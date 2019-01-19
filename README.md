@@ -1,4 +1,4 @@
-# ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][gitter]
+# 🐑 ramda-cli [![npm version](https://badge.fury.io/js/ramda-cli.svg)](https://www.npmjs.com/package/ramda-cli) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][gitter]
 
 A tool for processing data with functional pipelines. In the command-line or
 interactively in browser.
@@ -23,12 +23,12 @@ Or, pass in [`--interactive`](#interactive-mode) to launch in browser.
 
 <img src="https://raw.githubusercontent.com/raine/ramda-cli/media/interactive.png" width="716" height="414">
 
-Unites [Ramda's][ramda] curried, data-last API and [LiveScript's][livescript]
-terse and powerful syntax.
+## ✨ highlights
 
-With a variety of supported input/output types and the ability [pull any module
-from npm](#using-packages-from-npm), ramda-cli is a potent tool for general data
-manipulation in command-line environment.
+- Build elegant data-processing pipelines in the command-line with Ramda's data-last API
+- No new syntax to learn: Use LiveScript or JavaScript, and the functions you know from Ramda
+- Use any npm module seamlessly
+- Interactive mode for building pipelines iteratively with instant feedback
 
 ##### Table of Contents
 
@@ -38,7 +38,7 @@ manipulation in command-line environment.
 - [Options](#options)
 - [Evaluation context](#evaluation-context)
 - [Configuration](#configuration)
-- [Using packages from NPM](#using-packages-from-npm)
+- [Using packages from npm](#using-packages-from-npm)
 - [Promises](#promises)
 - [Debugging](#debugging)
 - [LiveScript?](#livescript)
@@ -788,9 +788,7 @@ See also: [Essential LiveScript for ramda-cli][essential-livescript]
 
 - [Ask on Gitter][gitter]
 - [Open an issue](https://github.com/raine/ramda-cli/issues/new)
-- [Tweet at `@rane`](https://twitter.com/rane)
-
-[![wercker status](https://app.wercker.com/status/92dbf35ece249fade3e8198181d93ec1/s/master "wercker status")](https://app.wercker.com/project/bykey/92dbf35ece249fade3e8198181d93ec1)
+- [Ask on twitter](https://twitter.com/rane)
 
 [flat]: https://github.com/hughsk/flat
 [composition]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
