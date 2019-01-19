@@ -3,7 +3,7 @@ require! '@rane/cli-table': Table
 require! flat
 
 obj-to-objs = to-pairs >> map apply obj-of
-STYLE = head: <[ cyan bold ]>
+STYLE = head: <[ bold cyan ]>
 
 format-list = (list, opts) ->
     switch type list.0
