@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 5.2.0 - 2019-01-19
+
+- Interactive mode
+  - Added: Writes to `process.stderr` occurring while input is evaluated are
+           streamed to output panel, making use of libraries (like
+           [`treis`](https://github.com/raine/treis)) that print to `stderr` nicer.
+
 ## 5.1.1 - 2019-01-16
 
 - Changed: Fix a bug where number without a trailing newline would not get
