@@ -21,7 +21,7 @@ $ curl -Ls https://bit.ly/gist-people-json | ramda \
 
 Or, pass in [`--interactive`](#interactive-mode) to launch in browser.
 
-<img src="https://raw.githubusercontent.com/raine/ramda-cli/media/interactive.png" width="716" height="414">
+![](https://raw.githubusercontent.com/raine/ramda-cli/media/interactive.png)
 
 ## ✨ highlights
 
