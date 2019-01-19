@@ -21,7 +21,8 @@ const Editor = ({ value, onChange, placeholder, onRunKeyDown }) => (
         theme: 'material',
         viewportMargin: Infinity,
         autofocus: true,
-        placeholder
+        placeholder,
+        lineWrapping: true
       }}
       onBeforeChange={(editor, data, value) => {
         onChange(value)
