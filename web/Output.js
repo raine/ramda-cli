@@ -12,11 +12,16 @@ const AnsiPre = pure(({ str, style }) => (
     style={style}
     dangerouslySetInnerHTML={ansi2html(str, {
       escapeXML: true,
-      fg: '#afafaf',
-      bg: '#0a0a0a',
+      fg: '#AFAFAF',
+      bg: '#0A0A0A',
       colors: {
-        // error color
-        1: '#ff7043'
+        1: '#FF5252',
+        2: '#5CF19E',
+        3: '#FFD740',
+        4: '#40C4FF',
+        5: '#FF4081',
+        6: '#64FCDA',
+        7: '#FFFFFF'
       }
     })}
   />
