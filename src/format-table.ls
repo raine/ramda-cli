@@ -1,5 +1,5 @@
 require! ramda: {keys, props, map, to-pairs, apply, obj-of, type, merge, uniq, chain, if-else, is-nil, always, identity}
-require! '@rane/cli-table': Table
+require! 'cli-table3': Table
 require! flat
 
 obj-to-objs = to-pairs >> map apply obj-of
@@ -33,7 +33,7 @@ format-obj = (obj, opts) ->
 
 format-primitive-etc = (x, opts) ->
     table = new Table opts
-    table.push [x]
+    table.push [x.to-string!]
     table.to-string!
 
 module.exports = (x, style={}) ->
