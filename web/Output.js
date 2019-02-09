@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react'
-import { pure } from 'recompose'
 import classNames from 'classnames'
 import ansi2html from './ansi2html'
 import { FixedSizeList } from 'react-window'
@@ -7,7 +6,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 
 import style from './styles/Output.scss'
 
-const AnsiPre = pure(({ str, style }) => (
+const AnsiPre = React.memo(({ str, style }) => (
   <pre
     style={style}
     dangerouslySetInnerHTML={ansi2html(str, {
