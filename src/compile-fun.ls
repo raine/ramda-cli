@@ -22,7 +22,7 @@ unlines = join '\n'
 unwords = join ' '
 rename-keys-by = (fn, obj) -->
     to-pairs obj
-    |> map (adjust fn, 0)
+    |> map (adjust 0, fn)
     |> from-pairs
 
 construct-pipe = pipe do
