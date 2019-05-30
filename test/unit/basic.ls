@@ -322,20 +322,53 @@ describe '--input-type csv' (,) ->
         done!
 
     it 'reads csv without headers with --no-headers' (done) ->
-          args  = <[ --no-headers -i csv identity ]>
-          input = """
-          Afghanistan,AF
-          Åland Islands,AX
-          Albania,AL
-          """
-          expected = """
-          [ [ "Afghanistan", "AF" ],
-            [ "Åland Islands", "AX" ],
-            [ "Albania", "AL" ] ]
-          """
-          output <-! run-main args, input
-          output `strip-eq` expected
-          done!
+        args  = <[ --no-headers -i csv identity ]>
+        input = """
+        Afghanistan,AF
+        Åland Islands,AX
+        Albania,AL
+        """
+        expected = """
+        [ [ "Afghanistan", "AF" ],
+        [ "Åland Islands", "AX" ],
+        [ "Albania", "AL" ] ]
+        """
+        output <-! run-main args, input
+        output `strip-eq` expected
+        done!
+
+    it 'reads csv with headers unstrict' (done) ->
+        args = <[ -i csv -u identity ]>
+        input = """
+        name,code
+        Afghanistan,AF,XX
+        Åland Islands,AX
+        Albania
+        """
+        expected = """
+        [ { "name": "Afghanistan", "code": "AF" },
+          { "name": "Åland Islands", "code": "AX" },
+          { "name": "Albania", "code": "" } ]
+        """
+        output <-! run-main args, input
+        output `strip-eq` expected
+        done!
+
+    describe '--input-type csv/tsv default strict' (,) ->
+        stub-process-exit!
+        it 'strict mode, header mismatch' (done) ->
+            args = <[ -i csv ]>
+            input = """
+            Afghanistan,AF
+            Åland Islands,AX,XX
+            Albania,AL
+            """
+            expected = """
+            Error: Unexpected Error: column header mismatch expected: 2 columns got: 3\n
+            """
+            output, errput <-! run-main args, input
+            errput `eq` expected
+            done!
 
 describe '--input-type tsv' (,) ->
     it 'reads tsv with headers into a list of objects' (done) ->

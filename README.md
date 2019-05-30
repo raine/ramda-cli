@@ -362,7 +362,7 @@ Usage: ramda [options] [function] ...
       --csv-delimiter  custom csv delimiter character
       --js             use javascript instead of livescript
       --import         import a module from npm
-  -u, --csv-unstrict   use with input type CSV/TSV to ignore column mismatch
+  -u, --csv-unstrict   use with input type csv/tsv and headers to ignore column mismatch
   -C, --configure      edit config in $EDITOR
   -v, --verbose        print debugging information (use -vv for even more)
       --version        print version
