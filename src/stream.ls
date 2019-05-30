@@ -61,7 +61,7 @@ blank-obj-stream = ->
 
 csv-opts = (type, delimiter, headers, unstrict) ->
     opts = { headers, include-end-row-delimiter: true, delimiter }
-    opts <<< discardUnmappedColumn: !unstrict, strictColumnHandling: !!unstrict
+    opts <<< { -discardUnmappedColumn, +strictColumnHandling } if unstrict
     switch type
     | \csv => opts
     | \tsv => opts <<< delimiter: '\t'
