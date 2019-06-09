@@ -362,6 +362,7 @@ Usage: ramda [options] [function] ...
       --csv-delimiter  custom csv delimiter character
       --js             use javascript instead of livescript
       --import         import a module from npm
+  -u, --csv-unstrict   use with input type csv/tsv and headers to ignore column mismatch
   -C, --configure      edit config in $EDITOR
   -v, --verbose        print debugging information (use -vv for even more)
       --version        print version
@@ -511,6 +512,32 @@ EOF
   { "id": "2", "name": "Alice" }
 ]
 ```
+
+##### `-u, --csv-unstrict`
+
+Ignore CSV/TSV column mismatch, useful with some POSIX commands.
+
+__Examples__
+
+```sh
+$ ps aux | sed -E 's/ +/,/g'
+USER,PID,%CPU,%MEM,VSZ,RSS,TTY,STAT,START,TIME,COMMAND
+root,1,0.0,0.0,8324,152,?,Ss,May28,0:00,/init
+root,3,0.0,0.0,8332,156,tty1,Ss,May28,0:00,/init
+pi,17039,0.0,0.0,17380,1940,tty3,R,18:15,0:00,ps,aux
+pi,17040,0.0,0.0,14860,1160,tty3,S,18:15,0:00,sed,-E,s/,+/,/g
+```
+
+```sh
+$ ps aux | sed -E 's/ +/,/g' | ramda -i csv -p 'countBy (.USER)'
+Error: Unexpected Error: column header mismatch expected: 11 columns got: 12
+```
+
+```sh
+$ ps aux | sed -E 's/ +/,/g' | ramda -i csv -u -p 'countBy (.USER)'
+{ root: 2, pi: 2 }
+```
+
 
 #### `-o, --output-type`
 

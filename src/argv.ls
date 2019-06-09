@@ -30,6 +30,7 @@ HELP =
           --csv-delimiter  custom csv delimiter character
           --js             use javascript instead of livescript
           --import         import a module from npm
+      -u, --csv-unstrict   use with inupt type csv/tsv and headers to ignore column mismatch
       -C, --configure      edit config in $EDITOR
       -v, --verbose        print debugging information (use -vv for even more)
           --version        print version
@@ -75,7 +76,7 @@ export parse = (argv) ->
     argv = map (wrap-number-lookup << wrap-function), argv.slice 2
     opts = camelize minimist argv,
         string: <[ file input-type output-type json-path csv-delimiter ]>
-        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce headers interactive ]>
+        boolean: <[ compact slurp unslurp pretty verbose version raw-input raw-output configure no-stdin js transduce headers interactive csv-unstrict ]>
         alias: parse-aliases HELP
         default: {
             +stdin,
