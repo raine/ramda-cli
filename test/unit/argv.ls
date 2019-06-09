@@ -99,11 +99,3 @@ describe 'argv.parse' (,) ->
     it 'reads ".0" as string' ->
          args = argv.parse [,, '.0', '.foo']
          args._.0 `eq` '(.0)'
-
-    describe '-u, --unstrict', (,) ->
-        it 'defaults to false' ->
-            parse '' .csv-unstrict `eq` false
-        it 'set csv-unstrict to true, short' ->
-            parse '-u' .csv-unstrict `eq` true
-        it 'set csv-unstrict to true' ->
-            parse '--csv-unstrict' .csv-unstrict `eq` true

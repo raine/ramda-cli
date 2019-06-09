@@ -59,10 +59,14 @@ blank-obj-stream = ->
     PassThrough {+object-mode}
         ..end {}
 
-csv-opts = (type, delimiter, headers, unstrict = false) ->
-    opts = { headers, include-end-row-delimiter: true, delimiter }
-    if headers and unstrict
-        opts <<< { +discardUnmappedColumns, -strictColumnHandling }
+csv-opts = (type, delimiter, headers, unstrict = true) ->
+    opts = {
+      headers,
+      delimiter,
+      +include-end-row-delimiter,
+      +discard-unmapped-columns,
+      -strict-column-handling
+    }
     switch type
     | \csv => opts
     | \tsv => opts <<< delimiter: '\t'
@@ -100,7 +104,7 @@ opts-to-output-stream = (opts) ->
 opts-to-input-parser-stream = (opts) ->
     switch opts.input-type
     | \raw          => split2!
-    | <[ csv tsv ]> => (require 'fast-csv') csv-opts opts.input-type, opts.csv-delimiter, opts.headers, opts.csv-unstrict
+    | <[ csv tsv ]> => (require 'fast-csv') csv-opts opts.input-type, opts.csv-delimiter, opts.headers
     | otherwise     => JSONStream.parse opts.json-path
 
 make-stdin-parser = (on-error, opts, stdin) ->
