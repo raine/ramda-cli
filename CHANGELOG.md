@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 6.0.0 - 2019-06-09
+
+- Changed: CSV input mode (`--input-type csv`) allows empty lines and lines
+           with too few fields.
+
 ## 5.2.0 - 2019-01-19
 
 - Interactive mode
