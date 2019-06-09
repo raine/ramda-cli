@@ -784,11 +784,13 @@ ramda-cli.
 
 See also: [Essential LiveScript for ramda-cli][essential-livescript]
 
-## questions or comments?
+## questions or suggestions?
 
-- [Ask on Gitter][gitter]
-- [Open an issue](https://github.com/raine/ramda-cli/issues/new)
-- [Ask on twitter](https://twitter.com/rane)
+[Open an issue](https://github.com/raine/ramda-cli/issues/new)
+
+## contributors
+
+- [Kun Zhou](https://github.com/mmqmzk)
 
 [flat]: https://github.com/hughsk/flat
 [composition]: http://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
