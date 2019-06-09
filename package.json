@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "ansi-to-html": "^0.6.9",
+    "autoprefixer": "^9.6.0",
     "browser-cookies": "^1.2.0",
     "chai": "^4.2.0",
     "classnames": "^2.2.6",
