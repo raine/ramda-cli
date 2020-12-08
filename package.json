@@ -30,7 +30,7 @@
     "compression": "^1.7.3",
     "debug": "^4.1.0",
     "editor": "^1.0.0",
-    "fast-csv": "^2.5.0",
+    "fast-csv": "^4.3.6",
     "flat": "^4.1.0",
     "get-port": "^4.1.0",
     "hook-stream": "^2.1.2",
